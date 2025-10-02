@@ -5,6 +5,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     uint speed;
 
+    uint defaultSpeed = 10;
+
     [SerializeField]
     Logger logger;
     Camera mainCamera;
@@ -26,7 +28,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        logger.Fatal("TEST");
+        if (mainCamera == null)
+        {
+            logger.Fatal("Failed to load camera!");
+        }
+        if (speed <= 0)
+        {
+            logger.Warn($"Speed was not set or was invalid. Using default {defaultSpeed}");
+            speed = defaultSpeed;
+        }
     }
 
     void Update()
