@@ -1,48 +1,56 @@
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    uint speed;
+    [Header("Movement Settings")]
+    public float rotationSpeed = 10f;
+    public LayerMask groundMask;
 
-    uint defaultSpeed = 10;
+    [Header("References")]
+    public Camera mainCamera;
 
-    [SerializeField]
-    Logger logger;
-    Camera mainCamera;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private NavMeshAgent agent;
+
     void Start()
     {
-        mainCamera = Camera.main;
-
-
-        if (logger == null)
-        {
-            Debug.LogWarning("Failed to load error handler!");
-            logger = FindFirstObjectByType<Logger>();
-            if (logger == null)
-            {
-                Debug.LogError("[Fatal error] ErrorHandler not found in the scene!");
-                Application.Quit();
-                return;
-            }
-        }
-
+        agent = GetComponent<NavMeshAgent>();
         if (mainCamera == null)
-        {
-            logger.Fatal("Failed to load camera!");
-        }
-        if (speed <= 0)
-        {
-            logger.Warn($"Speed was not set or was invalid. Using default {defaultSpeed}");
-            speed = defaultSpeed;
-        }
+            mainCamera = Camera.main;
     }
 
     void Update()
     {
-
+        HandleMouseClick();
+        RotateTowardsMovementDirection();
     }
 
+    void HandleMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
+            {
+                agent.SetDestination(hit.point);
+            }
+        }
+    }
 
+    void RotateTowardsMovementDirection()
+    {
+        if (agent.velocity.sqrMagnitude > 0.1f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(agent.velocity.normalized);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        if (agent != null)
+            Gizmos.DrawSphere(agent.destination, 0.1f);
+    }
 }
