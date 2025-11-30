@@ -17,33 +17,33 @@ MonoBehaviour:
     stripPassesFromAllShaders: 0
     stripPasses: 0
   ImportPlugins:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 6823677444883500832}
+  - {fileID: 6194734461748636347}
+  - {fileID: -5576945829767979896}
+  - {fileID: -2591003614542266435}
+  - {fileID: 3169344961240574609}
+  - {fileID: -554935930450791350}
+  - {fileID: 6980641271019441143}
+  - {fileID: -1815896876031829317}
+  - {fileID: -6444323022254325553}
+  - {fileID: -4484765060423540772}
+  - {fileID: 6096469853152143655}
+  - {fileID: 8436154572135043766}
   ExportPlugins:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 5333745642555700216}
+  - {fileID: 6509880425049818579}
+  - {fileID: 1648377322446695004}
+  - {fileID: 910875778220567154}
+  - {fileID: 1553100860851598081}
+  - {fileID: 405207938474999265}
+  - {fileID: -7402595161368297452}
+  - {fileID: 9154613448492346157}
+  - {fileID: -8771541578492173581}
+  - {fileID: 8530424102063413368}
+  - {fileID: 1554646433782524614}
+  - {fileID: -5196644119828537163}
+  - {fileID: 2829797061755555686}
+  - {fileID: -6470287468597188371}
   exportNames: 1
   exportFullPath: 0
   EditorExportTransformMode: 0
