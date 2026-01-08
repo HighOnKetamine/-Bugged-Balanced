@@ -18,7 +18,7 @@ public class FireballProjectile : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return;
+        if (!IsServerInitialized) return;
         if (other.gameObject == owner) return;
 
         HealthSystem health = other.GetComponent<HealthSystem>();

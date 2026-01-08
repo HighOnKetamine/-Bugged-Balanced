@@ -49,6 +49,7 @@ public class AutoAttackSystem : NetworkBehaviour
 
         if (closestEnemy != null)
         {
+            Debug.Log("Found target!");
             PerformAttack(closestEnemy.gameObject);
         }
     }
