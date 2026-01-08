@@ -8,27 +8,28 @@ public class HealthSystem : NetworkBehaviour
      [Header("Health Settings")]
      [SerializeField] private float maxHealth = 100f;
 
-     [SyncVar(OnChange = nameof(OnHealthChanged))]
-     private float currentHealth;
+     [SerializeField]
+     public readonly SyncVar<float> currentHealth = new SyncVar<float>();
 
      public event Action<float, float> OnHealthChangedEvent; // current, max
      public event Action OnDeath;
 
-     public float CurrentHealth => currentHealth;
+     public float CurrentHealth => currentHealth.Value;
      public float MaxHealth => maxHealth;
-     public bool IsDead => currentHealth <= 0;
+     public bool IsDead => currentHealth.Value <= 0;
 
      private void Awake()
      {
-          currentHealth = maxHealth;
+          currentHealth.Value = maxHealth;
+          currentHealth.OnChange += OnHealthChanged;
      }
 
      public override void OnStartNetwork()
      {
           base.OnStartNetwork();
-          if (IsServer)
+          if (IsServerInitialized)
           {
-               currentHealth = maxHealth;
+               currentHealth.Value = maxHealth;
           }
      }
 
@@ -37,9 +38,9 @@ public class HealthSystem : NetworkBehaviour
      {
           if (IsDead) return;
 
-          currentHealth = Mathf.Max(0, currentHealth - damage);
+          currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
 
-          if (currentHealth <= 0)
+          if (currentHealth.Value <= 0)
           {
                Die();
           }
@@ -49,7 +50,7 @@ public class HealthSystem : NetworkBehaviour
      public void Heal(float amount)
      {
           if (IsDead) return;
-          currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+          currentHealth.Value = Mathf.Min(maxHealth, currentHealth.Value + amount);
      }
 
      [Server]
