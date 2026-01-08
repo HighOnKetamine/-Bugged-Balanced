@@ -1,26 +1,46 @@
 using UnityEngine;
+using UnityEngine.AI;
+using FishNet.Object;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    Camera mainCamera;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    Camera cam;
+    NavMeshAgent navMeshAgent;
+
     void Start()
     {
-        mainCamera = Camera.main;
+        navMeshAgent = GetComponent<NavMeshAgent>();
 
-        if (mainCamera == null)
+        if (navMeshAgent == null)
+            Debug.LogError("NavMeshAgent component not found on this GameObject!");
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (IsOwner)
         {
-            Debug.LogError("Failed to locate the main camera!");
-            Application.Quit();
-            return;
+            cam = GetComponentInChildren<Camera>();
+            cam.enabled = true;
+            if (cam == null)
+                Debug.LogError("Main Camera not found in the scene!");
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (!IsOwner || cam == null || navMeshAgent == null)
+            return;
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                navMeshAgent.SetDestination(hit.point);
+            }
+        }
     }
-
-    
 }
