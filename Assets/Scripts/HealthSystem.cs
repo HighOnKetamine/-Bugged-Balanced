@@ -37,6 +37,8 @@ public class HealthSystem : NetworkBehaviour
      public void TakeDamage(float damage, GameObject attacker = null)
      {
           if (IsDead) return;
+          
+          Debug.Log($"[Server] {gameObject.name} took {damage} damage. Old Health: {currentHealth.Value}");
 
           currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
 
