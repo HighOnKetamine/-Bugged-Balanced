@@ -12,15 +12,30 @@ public class FireballAbility : AbilityBase
 
     protected override void CastAbility()
     {
-        Vector3 shootDirection = transform.forward;
+        Camera cam = GetComponentInChildren<Camera>();
+        if (cam == null) cam = Camera.main;
+        if (cam == null) return;
 
-        // Raycast to get target position
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, range))
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            shootDirection = (hit.point - shootPoint.position).normalized;
-        }
+            // Rotate player towards target (ignore Y difference)
+            Vector3 lookTarget = hit.point;
+            lookTarget.y = transform.position.y;
+            transform.LookAt(lookTarget);
 
-        ServerSpawnFireball(shootPoint.position, shootDirection);
+            // Calculate shoot direction from shootPoint to actual hit point, but flat on Y
+            Vector3 targetPoint = hit.point;
+            targetPoint.y = shootPoint.position.y;
+            Vector3 shootDirection = (targetPoint - shootPoint.position).normalized;
+            
+            ServerSpawnFireball(shootPoint.position, shootDirection);
+        }
+        else
+        {
+            // Fallback if no hit (e.g. looking at sky): shoot forward
+            ServerSpawnFireball(shootPoint.position, transform.forward);
+        }
     }
 
     [ServerRpc]

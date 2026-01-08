@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HealthBarUI : MonoBehaviour
 {
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private Image fillImage;
-    [SerializeField] private Text healthText; // Optional
+    [SerializeField] private TextMeshProUGUI healthText; // Optional
     [SerializeField] private Canvas canvas;
 
     private Camera mainCamera;
