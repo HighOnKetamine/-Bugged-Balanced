@@ -8,6 +8,10 @@ public class HealthBarUI : MonoBehaviour
     [SerializeField] private Image fillImage;
     [SerializeField] private TextMeshProUGUI healthText; // Optional
     [SerializeField] private Canvas canvas;
+    
+    [Header("UI Settings")]
+    [SerializeField] private bool useFixedRotation = false;
+    [SerializeField] private Vector3 fixedRotation = new Vector3(45, 0, 0);
 
     private Camera mainCamera;
 
@@ -21,7 +25,6 @@ public class HealthBarUI : MonoBehaviour
 
         mainCamera = Camera.main;
 
-        // Make sure canvas faces camera
         if (canvas != null)
         {
             canvas.renderMode = RenderMode.WorldSpace;
@@ -30,8 +33,13 @@ public class HealthBarUI : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Make health bar face camera
-        if (mainCamera != null && canvas != null)
+        if (canvas == null) return;
+
+        if (useFixedRotation)
+        {
+            canvas.transform.rotation = Quaternion.Euler(fixedRotation);
+        }
+        else if (mainCamera != null)
         {
             canvas.transform.LookAt(canvas.transform.position + mainCamera.transform.rotation * Vector3.forward,
                 mainCamera.transform.rotation * Vector3.up);

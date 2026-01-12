@@ -46,16 +46,11 @@ public class FireballAbility : AbilityBase
         GameObject fireball = Instantiate(fireballPrefab, position, Quaternion.LookRotation(direction));
         Spawn(fireball);
 
-        Rigidbody rb = fireball.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = direction * speed;
-        }
-
         FireballProjectile projectile = fireball.GetComponent<FireballProjectile>();
         if (projectile != null)
         {
             projectile.Initialize(damage, this.gameObject);
+            projectile.Launch(direction * speed);
         }
 
         // Destroy after range time
