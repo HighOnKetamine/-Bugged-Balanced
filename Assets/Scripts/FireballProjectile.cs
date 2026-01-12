@@ -16,6 +16,31 @@ public class FireballProjectile : NetworkBehaviour
         owner = own;
     }
 
+    public void Launch(Vector3 velocity)
+    {
+        // Set on server
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = velocity;
+        }
+
+        // Tell clients to set it too
+        RpcLaunch(velocity);
+    }
+
+    [ObserversRpc]
+    private void RpcLaunch(Vector3 velocity)
+    {
+        if (IsServerInitialized) return; // Server already did it
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = velocity;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         HandleHit(other.gameObject, other.transform, other.isTrigger);
