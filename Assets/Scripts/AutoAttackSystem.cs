@@ -1,5 +1,7 @@
 using FishNet.Object;
+using FishNet.Connection;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AutoAttackSystem : NetworkBehaviour
 {
@@ -14,13 +16,19 @@ public class AutoAttackSystem : NetworkBehaviour
 
     private float lastAttackTime;
     private Transform currentTarget;
+    private NavMeshAgent navMeshAgent;
+
+    private void Start()
+    {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+    }
 
     private void Update()
     {
         if (!IsOwner) return;
 
-        // Auto-attack on mouse click or space
-        if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space))
+        // Auto-attack on Shift + Left Click
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetMouseButton(0))
         {
             TryAutoAttack();
         }
@@ -46,17 +54,23 @@ public class AutoAttackSystem : NetworkBehaviour
                 closestEnemy = hit.transform;
             }
         }
-
         if (closestEnemy != null)
         {
-            Debug.Log("Found target!");
-            PerformAttack(closestEnemy.gameObject);
+            Debug.Log($"Found target: {closestEnemy.name}");
+            PerformAttack(closestEnemy);
         }
     }
 
-    private void PerformAttack(GameObject target)
+    private void PerformAttack(Transform target)
     {
         lastAttackTime = Time.time;
+
+        // Stop the player from moving
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.ResetPath();
+            navMeshAgent.velocity = Vector3.zero;
+        }
 
         // Play animation
         if (animator != null)
@@ -65,26 +79,46 @@ public class AutoAttackSystem : NetworkBehaviour
         }
 
         // Look at target
-        Vector3 direction = (target.transform.position - transform.position).normalized;
+        Vector3 direction = (target.position - transform.position).normalized;
         direction.y = 0;
         if (direction != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direction);
         }
 
-        // Deal damage on server
-        ServerAttack(target);
+        // Get NetworkObject for network-safe reference
+        NetworkObject targetNetObj = target.GetComponentInParent<NetworkObject>();
+        if (targetNetObj != null)
+        {
+            Debug.Log($"Sending attack to server for target: {target.name} (NetObj ID: {targetNetObj.ObjectId})");
+            ServerAttack(targetNetObj);
+        }
+        else
+        {
+            Debug.LogWarning($"Target {target.name} has no NetworkObject component!");
+        }
     }
 
     [ServerRpc]
-    private void ServerAttack(GameObject target)
+    private void ServerAttack(NetworkObject targetNetObj)
     {
-        if (target == null) return;
+        if (targetNetObj == null)
+        {
+            Debug.LogWarning("ServerAttack: targetNetObj is null");
+            return;
+        }
 
-        HealthSystem targetHealth = target.GetComponent<HealthSystem>();
+        Debug.Log($"Server received attack for target: {targetNetObj.name}");
+
+        HealthSystem targetHealth = targetNetObj.GetComponent<HealthSystem>();
         if (targetHealth != null)
         {
+            Debug.Log($"Dealing {attackDamage} damage to {targetNetObj.name}");
             targetHealth.TakeDamage(attackDamage, gameObject);
+        }
+        else
+        {
+            Debug.LogWarning($"Target {targetNetObj.name} has no HealthSystem component!");
         }
     }
 

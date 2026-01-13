@@ -1,5 +1,6 @@
 using FishNet.Object;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class FireballAbility : AbilityBase
 {
@@ -10,8 +11,22 @@ public class FireballAbility : AbilityBase
     [SerializeField] private float range = 15f;
     [SerializeField] private Transform shootPoint;
 
+    private NavMeshAgent navMeshAgent;
+
+    private void Start()
+    {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+    }
+
     protected override void CastAbility()
     {
+        // Stop the player immediately at current position
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.ResetPath();
+            navMeshAgent.velocity = Vector3.zero;
+        }
+
         Camera cam = GetComponentInChildren<Camera>();
         if (cam == null) cam = Camera.main;
         if (cam == null) return;
@@ -28,7 +43,7 @@ public class FireballAbility : AbilityBase
             Vector3 targetPoint = hit.point;
             targetPoint.y = shootPoint.position.y;
             Vector3 shootDirection = (targetPoint - shootPoint.position).normalized;
-            
+
             ServerSpawnFireball(shootPoint.position, shootDirection);
         }
         else
