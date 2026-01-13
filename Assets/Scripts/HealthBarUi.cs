@@ -8,9 +8,9 @@ public class HealthBarUI : MonoBehaviour
     [SerializeField] private Image fillImage;
     [SerializeField] private TextMeshProUGUI healthText; // Optional
     [SerializeField] private Canvas canvas;
-    
+
     [Header("UI Settings")]
-    [SerializeField] private bool useFixedRotation = false;
+    [SerializeField] private bool useFixedRotation = true;
     [SerializeField] private Vector3 fixedRotation = new Vector3(45, 0, 0);
 
     private Camera mainCamera;
