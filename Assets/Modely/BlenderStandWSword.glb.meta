@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 936058caf9d83c34b997689f7cecdc65
+guid: 826dd2364f518654aa064168f3ec84a3
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -51,65 +51,45 @@ ScriptedImporter:
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
   textures:
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
-  - {instanceID: 0}
   hasSceneData: 1
-  hasAnimationData: 0
+  hasAnimationData: 1
   hasMaterialData: 1
   hasTextureData: 1
-  animations: []
-  _extensions: []
+  animations:
+  - name: 6113987528192_TempMotion
+  - name: 6113987528192_TempMotion.001
+  _extensions:
+  - name: KHR_materials_specular
+    supported: 1
+    used: 1
+    required: 0
   _textures:
   - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
+    shouldBeLinear: 1
+    shouldBeNormalMap: 1
   - texture: {instanceID: 0}
     shouldBeLinear: 0
     shouldBeNormalMap: 0
   - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
+    shouldBeLinear: 1
+    shouldBeNormalMap: 1
   - texture: {instanceID: 0}
     shouldBeLinear: 0
     shouldBeNormalMap: 0
   - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
+    shouldBeLinear: 1
+    shouldBeNormalMap: 1
   - texture: {instanceID: 0}
     shouldBeLinear: 0
     shouldBeNormalMap: 0
   - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
-  - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
-  - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
-  - texture: {instanceID: 0}
-    shouldBeLinear: 0
-    shouldBeNormalMap: 0
-  - texture: {instanceID: 0}
-    shouldBeLinear: 0
+    shouldBeLinear: 1
     shouldBeNormalMap: 0
   _mainAssetIdentifier: scenes/Scene
   _importPlugins: []

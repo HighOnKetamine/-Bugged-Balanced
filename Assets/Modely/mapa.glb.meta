@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 936058caf9d83c34b997689f7cecdc65
+guid: 9bc371959e2bb6c4f91804c968af1c28
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -59,9 +59,10 @@ ScriptedImporter:
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
+  - {instanceID: 0}
+  - {instanceID: 0}
+  - {instanceID: 0}
   textures:
-  - {instanceID: 0}
-  - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
   - {instanceID: 0}
@@ -76,8 +77,18 @@ ScriptedImporter:
   hasMaterialData: 1
   hasTextureData: 1
   animations: []
-  _extensions: []
+  _extensions:
+  - name: KHR_materials_unlit
+    supported: 1
+    used: 1
+    required: 0
   _textures:
+  - texture: {instanceID: 0}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
+  - texture: {instanceID: 0}
+    shouldBeLinear: 0
+    shouldBeNormalMap: 0
   - texture: {instanceID: 0}
     shouldBeLinear: 0
     shouldBeNormalMap: 0
