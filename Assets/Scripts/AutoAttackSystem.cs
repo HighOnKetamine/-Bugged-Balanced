@@ -9,7 +9,6 @@ public class AutoAttackSystem : NetworkBehaviour
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 1f;
-    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -17,6 +16,8 @@ public class AutoAttackSystem : NetworkBehaviour
     private float lastAttackTime;
     private Transform currentTarget;
     private NavMeshAgent navMeshAgent;
+
+    public Transform GetCurrentTarget() => currentTarget;
 
     private void Start()
     {
@@ -38,14 +39,38 @@ public class AutoAttackSystem : NetworkBehaviour
     {
         if (Time.time - lastAttackTime < attackCooldown) return;
 
-        // Find closest enemy in range
-        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange, enemyLayer);
+        // Find all entities with HealthSystem in range
+        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange);
         float closestDistance = attackRange;
         Transform closestEnemy = null;
+
+        TeamComponent myTeam = GetComponent<TeamComponent>();
+        
+        Debug.Log($"[AutoAttack] {gameObject.name} searching for targets. My team: {(myTeam != null ? myTeam.Team.ToString() : "NO TEAM")}");
 
         foreach (Collider hit in hits)
         {
             if (hit.transform == transform) continue;
+
+            // Check if it has a health system (is damageable)
+            HealthSystem healthSystem = hit.GetComponent<HealthSystem>();
+            if (healthSystem == null || healthSystem.IsDead) continue;
+
+            // Check if it's an enemy (not on our team)
+            TeamComponent targetTeam = hit.GetComponent<TeamComponent>();
+            if (targetTeam != null && myTeam != null)
+            {
+                // Skip allies and neutrals
+                if (!myTeam.IsEnemyOf(targetTeam))
+                {
+                    Debug.Log($"[AutoAttack] {gameObject.name} skipping {hit.name} (not enemy)");
+                    continue;
+                }
+            }
+            else if (targetTeam == null)
+            {
+                Debug.Log($"[AutoAttack] {hit.name} has no TeamComponent, treating as valid target");
+            }
 
             float distance = Vector3.Distance(transform.position, hit.transform.position);
             if (distance < closestDistance)
@@ -54,15 +79,21 @@ public class AutoAttackSystem : NetworkBehaviour
                 closestEnemy = hit.transform;
             }
         }
+        
         if (closestEnemy != null)
         {
-            Debug.Log($"Found target: {closestEnemy.name}");
+            Debug.Log($"[AutoAttack] {gameObject.name} found target: {closestEnemy.name}");
             PerformAttack(closestEnemy);
+        }
+        else
+        {
+            Debug.Log($"[AutoAttack] {gameObject.name} found no valid targets in range");
         }
     }
 
     private void PerformAttack(Transform target)
     {
+        currentTarget = target;
         lastAttackTime = Time.time;
 
         // Stop the player from moving

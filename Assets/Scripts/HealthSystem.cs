@@ -14,9 +14,12 @@ public class HealthSystem : NetworkBehaviour
      public event Action<float, float> OnHealthChangedEvent; // current, max
      public event Action OnDeath;
 
+     private GameObject lastAttacker;
+
      public float CurrentHealth => currentHealth.Value;
      public float MaxHealth => maxHealth;
      public bool IsDead => currentHealth.Value <= 0;
+     public GameObject GetLastAttacker() => lastAttacker;
 
      private void Awake()
      {
@@ -37,6 +40,12 @@ public class HealthSystem : NetworkBehaviour
      public void TakeDamage(float damage, GameObject attacker = null)
      {
           if (IsDead) return;
+          
+          // Track the last attacker for economy attribution
+          if (attacker != null)
+          {
+               lastAttacker = attacker;
+          }
           
           Debug.Log($"[Server] {gameObject.name} took {damage} damage. Old Health: {currentHealth.Value}");
 

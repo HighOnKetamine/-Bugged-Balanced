@@ -1,3 +1,5 @@
+using System;
+
 public abstract class Effect
 {
     // Duration in seconds
@@ -14,9 +16,9 @@ public abstract class Effect
     // Variable to store damage, healing or buff
     protected float value;
 
-    public bool CanStack => maxStack > 1;
+    public bool CanStack => maxStacks > 1;
 
-    public bool IsActive => started;
+    public bool IsActive => started > 0;
 
     public uint Stacks => stacks;
 
@@ -36,6 +38,6 @@ public abstract class Effect
         this.maxStacks = maxStacks;
     }
 
-    public abstract Tick() { }
+    public abstract void Tick();
 }
 

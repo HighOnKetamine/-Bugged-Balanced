@@ -6,6 +6,9 @@ public class PlayerController : NetworkBehaviour
 {
     Camera cam;
     NavMeshAgent navMeshAgent;
+    private bool isInputEnabled = true;
+
+    public bool IsInputEnabled => isInputEnabled;
 
     void Start()
     {
@@ -13,6 +16,15 @@ public class PlayerController : NetworkBehaviour
 
         if (navMeshAgent == null)
             Debug.LogError("NavMeshAgent component not found on this GameObject!");
+    }
+
+    /// <summary>
+    /// Enable or disable player input. Used by GameStateManager and RespawnManager.
+    /// </summary>
+    public void SetInputEnabled(bool enabled)
+    {
+        isInputEnabled = enabled;
+        Debug.Log($"[PlayerController] Input {(enabled ? "enabled" : "disabled")} for {gameObject.name}");
     }
 
     public override void OnStartClient()
@@ -29,7 +41,7 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
-        if (!IsOwner || cam == null || navMeshAgent == null)
+        if (!IsOwner || cam == null || navMeshAgent == null || !isInputEnabled)
             return;
 
         if (Input.GetMouseButtonDown(0))

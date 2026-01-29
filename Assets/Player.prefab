@@ -802,6 +802,7 @@ GameObject:
   - component: {fileID: 52866301472513111}
   - component: {fileID: 6362828596189383826}
   - component: {fileID: 1294890919490082658}
+  - component: {fileID: 5102843001882829023}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -893,11 +894,11 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 5861726631329569297}
-  - {fileID: 7358819634111055886}
-  - {fileID: 52866301472513111}
-  - {fileID: 6362828596189383826}
-  - {fileID: 1294890919490082658}
-  - {fileID: 33634212575432957}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects:
   - {fileID: 6387340445563552002}
@@ -1027,9 +1028,6 @@ MonoBehaviour:
   attackDamage: 10
   attackRange: 4
   attackCooldown: 1
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 64
   animator: {fileID: 0}
 --- !u!114 &6362828596189383826
 MonoBehaviour:
@@ -1071,6 +1069,22 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6826850103445032174}
   _networkObjectCache: {fileID: 6826850103445032174}
   maxHealth: 100
+--- !u!114 &5102843001882829023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8530637161468687174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e55dccd5763664bb64bd5f97c08996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6826850103445032174}
+  _networkObjectCache: {fileID: 0}
+  initialTeam: 2
 --- !u!1 &8860647871465888981
 GameObject:
   m_ObjectHideFlags: 0
