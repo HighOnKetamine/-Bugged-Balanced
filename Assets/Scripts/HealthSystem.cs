@@ -37,25 +37,32 @@ public class HealthSystem : NetworkBehaviour
      }
 
      [Server]
-     public void TakeDamage(float damage, GameObject attacker = null)
-     {
-          if (IsDead) return;
-          
-          // Track the last attacker for economy attribution
-          if (attacker != null)
-          {
-               lastAttacker = attacker;
-          }
-          
-          Debug.Log($"[Server] {gameObject.name} took {damage} damage. Old Health: {currentHealth.Value}");
+    public void TakeDamage(float damage, GameObject attacker)
+    {
+        if (IsDead) return;
 
-          currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
+        // Track last attacker for economy/kill attribution
+        lastAttacker = attacker;
 
-          if (currentHealth.Value <= 0)
-          {
-               Die();
-          }
-     }
+        // If we're neutral and got attacked, become hostile to attacker's team
+        TeamComponent myTeam = GetComponent<TeamComponent>();
+        if (myTeam != null && myTeam.Team == TeamId.Neutral && attacker != null)
+        {
+            TeamComponent attackerTeam = attacker.GetComponent<TeamComponent>();
+            if (attackerTeam != null)
+            {
+                myTeam.ProvokeByTeam(attackerTeam.Team);
+            }
+        }
+
+        currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
+        Debug.Log($"[HealthSystem] {gameObject.name} took {damage} damage. Current health: {currentHealth.Value}/{MaxHealth}");
+
+        if (currentHealth.Value <= 0 && !IsDead)
+        {
+            Die();
+        }
+    }
 
      [Server]
      public void Heal(float amount)
