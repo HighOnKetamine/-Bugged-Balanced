@@ -16,6 +16,8 @@ public class EconomyManager : NetworkBehaviour
     [SerializeField] private int minionGoldReward = 20;
     [SerializeField] private int championGoldReward = 300;
     [SerializeField] private int towerGoldReward = 150;
+    [SerializeField] private int neutralGoldReward = 50;
+    [SerializeField] private int neutralXPReward = 100;
     [SerializeField] private int minionXPReward = 50;
     [SerializeField] private int championXPReward = 200;
     [SerializeField] private float xpDistributionRange = 15f;
@@ -106,7 +108,7 @@ public class EconomyManager : NetworkBehaviour
         }
 
         playerGold[recipient] += amount;
-        
+
         Debug.Log($"[EconomyManager] {killerName} earned {amount} gold (Total: {playerGold[recipient]})");
 
         // Send gold update to the specific player
@@ -166,7 +168,7 @@ public class EconomyManager : NetworkBehaviour
             }
 
             playerXP[conn] += xpPerPlayer;
-            
+
             Debug.Log($"[EconomyManager] Player earned {xpPerPlayer} XP (Total: {playerXP[conn]})");
 
             // Send XP update to the specific player
@@ -190,6 +192,20 @@ public class EconomyManager : NetworkBehaviour
     }
 
     [Server]
+    public void SpendGold(NetworkConnection conn, int amount)
+    {
+        if (!playerGold.ContainsKey(conn)) return;
+
+        playerGold[conn] -= amount;
+        if (playerGold[conn] < 0) playerGold[conn] = 0;
+
+        Debug.Log($"[EconomyManager] {conn} spent {amount} gold (Remaining: {playerGold[conn]})");
+
+        // Send gold update to the specific player
+        TargetUpdateGold(conn, playerGold[conn], -amount);
+    }
+
+    [Server]
     public int GetPlayerGold(NetworkConnection conn)
     {
         return playerGold.ContainsKey(conn) ? playerGold[conn] : 0;
@@ -207,3 +223,4 @@ public class EconomyManager : NetworkBehaviour
             Instance = null;
     }
 }
+

@@ -6,9 +6,11 @@ using UnityEngine.AI;
 public class AutoAttackSystem : NetworkBehaviour
 {
     [Header("Attack Settings")]
-    [SerializeField] private float attackDamage = 10f;
+    [SerializeField] private float baseAttackDamage = 10f;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 1f;
+
+    public float AttackDamage { get; set; }
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -22,6 +24,7 @@ public class AutoAttackSystem : NetworkBehaviour
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        AttackDamage = baseAttackDamage;
     }
 
     private void Update()
@@ -45,7 +48,7 @@ public class AutoAttackSystem : NetworkBehaviour
         Transform closestEnemy = null;
 
         TeamComponent myTeam = GetComponent<TeamComponent>();
-        
+
         Debug.Log($"[AutoAttack] {gameObject.name} searching for targets. My team: {(myTeam != null ? myTeam.Team.ToString() : "NO TEAM")}");
 
         foreach (Collider hit in hits)
@@ -79,7 +82,7 @@ public class AutoAttackSystem : NetworkBehaviour
                 closestEnemy = hit.transform;
             }
         }
-        
+
         if (closestEnemy != null)
         {
             Debug.Log($"[AutoAttack] {gameObject.name} found target: {closestEnemy.name}");
@@ -144,8 +147,8 @@ public class AutoAttackSystem : NetworkBehaviour
         HealthSystem targetHealth = targetNetObj.GetComponent<HealthSystem>();
         if (targetHealth != null)
         {
-            Debug.Log($"Dealing {attackDamage} damage to {targetNetObj.name}");
-            targetHealth.TakeDamage(attackDamage, gameObject);
+            Debug.Log($"Dealing {AttackDamage} damage to {targetNetObj.name}");
+            targetHealth.TakeDamage(AttackDamage, gameObject);
         }
         else
         {

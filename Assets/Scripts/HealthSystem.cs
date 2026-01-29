@@ -6,10 +6,13 @@ using System;
 public class HealthSystem : NetworkBehaviour
 {
      [Header("Health Settings")]
-     [SerializeField] private float maxHealth = 100f;
+     [SerializeField] private float baseMaxHealth = 100f;
 
      [SerializeField]
      public readonly SyncVar<float> currentHealth = new SyncVar<float>();
+
+     private float maxHealthModifier = 0f;
+     public float MaxHealth => baseMaxHealth + maxHealthModifier;
 
      public event Action<float, float> OnHealthChangedEvent; // current, max
      public event Action OnDeath;
@@ -17,13 +20,12 @@ public class HealthSystem : NetworkBehaviour
      private GameObject lastAttacker;
 
      public float CurrentHealth => currentHealth.Value;
-     public float MaxHealth => maxHealth;
      public bool IsDead => currentHealth.Value <= 0;
      public GameObject GetLastAttacker() => lastAttacker;
 
      private void Awake()
      {
-          currentHealth.Value = maxHealth;
+          currentHealth.Value = MaxHealth;
           currentHealth.OnChange += OnHealthChanged;
      }
 
@@ -32,43 +34,53 @@ public class HealthSystem : NetworkBehaviour
           base.OnStartNetwork();
           if (IsServerInitialized)
           {
-               currentHealth.Value = maxHealth;
+               currentHealth.Value = MaxHealth;
           }
      }
 
      [Server]
-    public void TakeDamage(float damage, GameObject attacker)
-    {
-        if (IsDead) return;
+     public void TakeDamage(float damage, GameObject attacker)
+     {
+          if (IsDead) return;
 
-        // Track last attacker for economy/kill attribution
-        lastAttacker = attacker;
+          // Track last attacker for economy/kill attribution
+          lastAttacker = attacker;
 
-        // If we're neutral and got attacked, become hostile to attacker's team
-        TeamComponent myTeam = GetComponent<TeamComponent>();
-        if (myTeam != null && myTeam.Team == TeamId.Neutral && attacker != null)
-        {
-            TeamComponent attackerTeam = attacker.GetComponent<TeamComponent>();
-            if (attackerTeam != null)
-            {
-                myTeam.ProvokeByTeam(attackerTeam.Team);
-            }
-        }
+          // If we're neutral and got attacked, become hostile to attacker's team
+          TeamComponent myTeam = GetComponent<TeamComponent>();
+          if (myTeam != null && myTeam.Team == TeamId.Neutral && attacker != null)
+          {
+               TeamComponent attackerTeam = attacker.GetComponent<TeamComponent>();
+               if (attackerTeam != null)
+               {
+                    myTeam.ProvokeByTeam(attackerTeam.Team);
+               }
+          }
 
-        currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
-        Debug.Log($"[HealthSystem] {gameObject.name} took {damage} damage. Current health: {currentHealth.Value}/{MaxHealth}");
+          currentHealth.Value = Mathf.Max(0, currentHealth.Value - damage);
+          Debug.Log($"[HealthSystem] {gameObject.name} took {damage} damage. Current health: {currentHealth.Value}/{MaxHealth}");
 
-        if (currentHealth.Value <= 0 && !IsDead)
-        {
-            Die();
-        }
-    }
+          if (currentHealth.Value <= 0 && !IsDead)
+          {
+               Die();
+          }
+     }
 
      [Server]
      public void Heal(float amount)
      {
           if (IsDead) return;
-          currentHealth.Value = Mathf.Min(maxHealth, currentHealth.Value + amount);
+          currentHealth.Value = Mathf.Min(MaxHealth, currentHealth.Value + amount);
+     }
+
+     public void UpdateMaxHealthModifier(float modifier)
+     {
+          maxHealthModifier = modifier;
+          // Adjust current health if necessary
+          if (currentHealth.Value > MaxHealth)
+          {
+               currentHealth.Value = MaxHealth;
+          }
      }
 
      [Server]
@@ -85,6 +97,6 @@ public class HealthSystem : NetworkBehaviour
 
      private void OnHealthChanged(float oldValue, float newValue, bool asServer)
      {
-          OnHealthChangedEvent?.Invoke(newValue, maxHealth);
+          OnHealthChangedEvent?.Invoke(newValue, MaxHealth);
      }
 }
