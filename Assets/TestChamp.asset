@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 366685ab115a71af59b81fd671d78185, type: 3}
+  m_Name: TestChamp
+  m_EditorClassIdentifier: 
+  unitName: BLEH
+  baseMaxHealth: 2000
+  baseHealthRegen: 3
+  baseMaxMana: 500
+  baseManaRegen: 3
+  resourceType: 0
+  baseAttackDamage: 20
+  baseAbilityPower: 20
+  baseAttackSpeed: 0.65
+  baseAttackRange: 600
+  baseAbilityHaste: 100
+  baseLethality: 0
+  baseArmorPenPercent: 0
+  baseFlatMagicPen: 0
+  baseMagicPenPercent: 0
+  baseArmor: 20
+  baseMagicResist: 20
+  baseMoveSpeed: 350
+  baseVisionRange: 1500
