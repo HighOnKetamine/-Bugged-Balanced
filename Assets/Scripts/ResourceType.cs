@@ -1,0 +1,1 @@
+public enum ResourceType { Mana, Energy, None }
