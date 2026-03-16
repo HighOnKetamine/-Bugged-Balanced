@@ -1,7 +1,8 @@
-using System;
+using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using UnityEngine;
+using System;
+using System.Collections;
 
 public class HealthComponent : NetworkBehaviour
 {
@@ -29,11 +30,14 @@ public class HealthComponent : NetworkBehaviour
     {
         base.OnStartNetwork();
         if (IsServerInitialized)
+        {
             currentHealth.Value = Max;
+            StartCoroutine(RegenTick());
+        }
     }
 
     [Server]
-    public void TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker)
+    public void TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null)
     {
         if (IsDead) return;
 
@@ -50,7 +54,18 @@ public class HealthComponent : NetworkBehaviour
     public void Heal(float amount)
     {
         if (IsDead) return;
+        amount *= GetHealingModifier();
         currentHealth.Value = Mathf.Min(Max, currentHealth.Value + amount);
+    }
+
+    private IEnumerator RegenTick()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            if (!IsDead)
+                Heal(_stats.healthRegen.Value);
+        }
     }
 
     private float CalculateDamage(float rawDamage, DamageType damageType, CharacterStats attacker)
@@ -61,10 +76,8 @@ public class HealthComponent : NetworkBehaviour
                 return rawDamage * (100f / (100f + GetEffectiveArmor(attacker)));
             case DamageType.Magical:
                 return rawDamage * (100f / (100f + GetEffectiveMagicResist(attacker)));
-
             case DamageType.True:
                 return rawDamage;
-
             default:
                 return rawDamage;
         }
@@ -73,27 +86,28 @@ public class HealthComponent : NetworkBehaviour
     private float GetEffectiveArmor(CharacterStats attacker)
     {
         float armor = _stats.armor.Value;
-
         if (attacker != null)
         {
             armor *= (1f - attacker.armorPenPercent.Value);
             armor -= attacker.lethality.Value;
         }
-
         return Mathf.Max(0, armor);
     }
 
     private float GetEffectiveMagicResist(CharacterStats attacker)
     {
         float mr = _stats.magicResist.Value;
-
         if (attacker != null)
         {
-            mr *= (1f - attacker.magicPenPercent.Value);   // % pen first
-            mr -= attacker.flatMagicPen.Value;              // flat pen second
+            mr *= (1f - attacker.magicPenPercent.Value);
+            mr -= attacker.flatMagicPen.Value;
         }
-
         return Mathf.Max(0, mr);
+    }
+
+    private float GetHealingModifier()
+    {
+        return 1f;
     }
 
     [Server]
