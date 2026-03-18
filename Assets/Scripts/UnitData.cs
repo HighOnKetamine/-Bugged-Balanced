@@ -22,6 +22,7 @@ public class UnitData : ScriptableObject
     public float baseArmorPenPercent;
     public float baseFlatMagicPen;
     public float baseMagicPenPercent;
+    public DamageType basicAttackDamageType = DamageType.Physical;
 
     [Header("Defense")]
     public float baseArmor;
