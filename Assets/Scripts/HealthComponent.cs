@@ -37,9 +37,9 @@ public class HealthComponent : NetworkBehaviour
     }
 
     [Server]
-    public void TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null)
+    public float TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null)
     {
-        if (IsDead) return;
+        if (IsDead) return 0f;
 
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
@@ -48,6 +48,8 @@ public class HealthComponent : NetworkBehaviour
 
         if (currentHealth.Value <= 0)
             Die(attacker?.gameObject);
+
+        return finalDamage;
     }
 
     [Server]

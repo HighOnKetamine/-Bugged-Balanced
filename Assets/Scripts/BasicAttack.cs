@@ -10,7 +10,7 @@ public class BasicAttack : NetworkBehaviour
     private float _lastAttackTime;
 
     public event Action<GameObject> OnPreAttack;
-    public event Action<GameObject> OnPostAttack;
+    public event Action<GameObject, float> OnPostAttack; // target, damage done
 
     private void Awake()
     {
@@ -79,16 +79,16 @@ public class BasicAttack : NetworkBehaviour
             ? _stats.abilityPower.Value
             : _stats.attackDamage.Value;
 
-        health.TakeDamage(damage, damageType, _stats);
+        float recievedDamage = health.TakeDamage(damage, damageType, _stats);
 
-        RpcOnPostAttack(targetNetObj.gameObject);
+        RpcOnPostAttack(targetNetObj.gameObject, recievedDamage);
 
     }
 
     [ObserversRpc]
-    private void RpcOnPostAttack(GameObject target)
+    private void RpcOnPostAttack(GameObject target, float damage)
     {
-        OnPostAttack?.Invoke(target);
+        OnPostAttack?.Invoke(target, damage);
     }
 
     private void OnDrawGizmosSelected()
