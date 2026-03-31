@@ -5,7 +5,8 @@ using FishNet.Object;
 public class PlayerController : NetworkBehaviour
 {
     #region Settings
-    [SerializeField] private float attackMoveRadius = 8f;
+    // World-space radius for attack-move target search (tune to match your NavMesh scale)
+    [SerializeField] private float attackMoveRadius = 5f;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
     #endregion
@@ -25,6 +26,11 @@ public class PlayerController : NetworkBehaviour
         _stateMachine = GetComponent<PlayerStateMachine>();
         _teamComponent = GetComponent<TeamComponent>();
 
+        // Disable built-in agent rotation — we handle it manually
+        // so direction changes are instant instead of lerped.
+        if (_navMeshAgent != null)
+            _navMeshAgent.angularSpeed = 0f;
+
         if (_navMeshAgent == null)
             Debug.LogError("[PlayerController] No NavMeshAgent found!");
         if (_basicAttack == null)
@@ -38,6 +44,14 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+        // Disable NavMeshAgent on non-owner clients.
+        // The agent only runs meaningfully on the server; leaving it enabled
+        // on remote clients causes it to fight FishNet's position sync,
+        // producing jitter and ghost movement.
+        if (!IsOwner)
+            _navMeshAgent.enabled = false;
+
         if (IsOwner)
         {
             // Camera starts disabled on the prefab intentionally —
@@ -52,11 +66,26 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
+        // Rotation runs on the server where NavMeshAgent has real velocity.
+        // NetworkTransform will sync the resulting rotation to all clients.
+        if (IsServerInitialized)
+            RotateTowardMovement();
+
         if (!IsOwner || _cam == null || _navMeshAgent == null) return;
 
         HandleMovement();
         HandleAttackMove();
         HandleAbilities();
+    }
+
+    // Snaps transform.forward to the agent's current velocity direction.
+    // We set angularSpeed = 0 in Awake so the agent never competes with this.
+    // Why snap instead of Slerp? In a MOBA the character should always face
+    // where it's going immediately — a slow turn feels sluggish and wrong.
+    private void RotateTowardMovement()
+    {
+        if (_navMeshAgent.velocity.sqrMagnitude > 0.01f)
+            transform.forward = _navMeshAgent.velocity.normalized;
     }
 
     //! Handles right click movement
@@ -142,7 +171,11 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     private void ServerSetDestination(Vector3 destination)
     {
+        _navMeshAgent.isStopped = true;
+        _navMeshAgent.ResetPath();
+        _navMeshAgent.velocity = Vector3.zero;
         _navMeshAgent.SetDestination(destination);
+        _navMeshAgent.isStopped = false;
     }
 
     /// <summary>
