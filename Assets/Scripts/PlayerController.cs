@@ -4,15 +4,35 @@ using FishNet.Object;
 
 public class PlayerController : NetworkBehaviour
 {
-    Camera cam;
-    NavMeshAgent navMeshAgent;
+    #region Settings
+    [SerializeField] private float attackMoveRadius = 300f;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private LayerMask groundLayer;
+    #endregion
 
-    void Start()
+    #region References
+    private Camera _cam;
+    private NavMeshAgent _navMeshAgent;
+    private BasicAttack _basicAttack;
+    private PlayerStateMachine _stateMachine;
+    private TeamComponent _teamComponent;
+    #endregion
+
+    private void Awake()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+        _basicAttack = GetComponent<BasicAttack>();
+        _stateMachine = GetComponent<PlayerStateMachine>();
+        _teamComponent = GetComponent<TeamComponent>();
 
-        if (navMeshAgent == null)
-            Debug.LogError("NavMeshAgent component not found on this GameObject!");
+        if (_navMeshAgent == null)
+            Debug.LogError("[PlayerController] No NavMeshAgent found!");
+        if (_basicAttack == null)
+            Debug.LogError("[PlayerController] No BasicAttack found!");
+        if (_stateMachine == null)
+            Debug.LogError("[PlayerController] No PlayerStateMachine found!");
+        if (_teamComponent == null)
+            Debug.LogError("[PlayerController] No TeamComponent found!");
     }
 
     public override void OnStartClient()
@@ -20,27 +40,87 @@ public class PlayerController : NetworkBehaviour
         base.OnStartClient();
         if (IsOwner)
         {
-            cam = GetComponentInChildren<Camera>();
-            cam.enabled = true;
-            if (cam == null)
-                Debug.LogError("Main Camera not found in the scene!");
+            _cam = GetComponentInChildren<Camera>();
+            if (_cam == null)
+                Debug.LogError("[PlayerController] No Camera found!");
+            else
+                _cam.enabled = true;
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (!IsOwner || cam == null || navMeshAgent == null)
-            return;
+        if (!IsOwner || _cam == null || _navMeshAgent == null) return;
 
-        if (Input.GetMouseButtonDown(0))
+        HandleMovement();
+        HandleAttackMove();
+        HandleAbilities();
+    }
+
+    //! Handles right click movement
+    private void HandleMovement()
+    {
+        if (!Input.GetMouseButtonDown(1)) return;
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return;
+        if (!_stateMachine.CanMove) return;
+
+        Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer))
+            _navMeshAgent.SetDestination(hit.point);
+    }
+
+    //! Handles shift + right click attack move
+    private void HandleAttackMove()
+    {
+        if (!Input.GetMouseButtonDown(1)) return;
+        if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift)) return;
+        if (!_stateMachine.CanAttack) return;
+
+        Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer)) return;
+
+        //! find nearest enemy around cursor point
+        Collider[] cols = Physics.OverlapSphere(hit.point, attackMoveRadius, enemyLayer);
+        GameObject nearestEnemy = null;
+        float nearestDistance = Mathf.Infinity;
+
+        foreach (Collider col in cols)
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            if (col.gameObject == gameObject) continue;
 
-            if (Physics.Raycast(ray, out hit))
+            TeamComponent targetTeam = col.GetComponent<TeamComponent>();
+            if (targetTeam == null || !_teamComponent.IsEnemy(targetTeam)) continue;
+
+            float distance = Vector3.Distance(hit.point, col.transform.position);
+            if (distance < nearestDistance)
             {
-                navMeshAgent.SetDestination(hit.point);
+                nearestDistance = distance;
+                nearestEnemy = col.gameObject;
             }
         }
+
+        if (nearestEnemy != null)
+        {
+            if (_basicAttack.CanAttack(nearestEnemy))
+                _basicAttack.Attack(nearestEnemy);
+            else
+                _navMeshAgent.SetDestination(nearestEnemy.transform.position);
+        }
+        else
+        {
+            if (_stateMachine.CanMove)
+                _navMeshAgent.SetDestination(hit.point);
+        }
+    }
+
+    // Handles ability input - placeholders for ability system
+    private void HandleAbilities()
+    {
+        if (!_stateMachine.CanCast) return;
+
+        if (Input.GetKeyDown(KeyCode.Q)) { /* cast Q */ }
+        if (Input.GetKeyDown(KeyCode.W)) { /* cast W */ }
+        if (Input.GetKeyDown(KeyCode.E)) { /* cast E */ }
+        if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
     }
 }
