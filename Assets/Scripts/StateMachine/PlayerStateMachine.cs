@@ -15,6 +15,12 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private PlayerState _currentState;
 
+    #region Input Gates
+    public bool CanMove { get; set; } = true;
+    public bool CanAttack { get; set; } = true;
+    public bool CanCast { get; set; } = true;
+    #endregion
+
     private void Awake()
     {
         Animator = GetComponent<Animator>();
