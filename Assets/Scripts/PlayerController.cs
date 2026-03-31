@@ -5,7 +5,7 @@ using FishNet.Object;
 public class PlayerController : NetworkBehaviour
 {
     #region Settings
-    [SerializeField] private float attackMoveRadius = 300f;
+    [SerializeField] private float attackMoveRadius = 8f;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
     #endregion
@@ -40,6 +40,8 @@ public class PlayerController : NetworkBehaviour
         base.OnStartClient();
         if (IsOwner)
         {
+            // Camera starts disabled on the prefab intentionally —
+            // only the owning client should enable it to avoid duplicate views.
             _cam = GetComponentInChildren<Camera>();
             if (_cam == null)
                 Debug.LogError("[PlayerController] No Camera found!");
@@ -66,7 +68,7 @@ public class PlayerController : NetworkBehaviour
 
         Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer))
-            _navMeshAgent.SetDestination(hit.point);
+            ServerSetDestination(hit.point);
     }
 
     //! Handles shift + right click attack move
@@ -101,19 +103,27 @@ public class PlayerController : NetworkBehaviour
 
         if (nearestEnemy != null)
         {
+            NetworkObject targetNob = nearestEnemy.GetComponent<NetworkObject>();
+            if (targetNob == null)
+            {
+                Debug.LogWarning("[PlayerController] Attack-move target has no NetworkObject!");
+                return;
+            }
+
             if (_basicAttack.CanAttack(nearestEnemy))
-                _basicAttack.Attack(nearestEnemy);
+                ServerRequestAttack(targetNob);
             else
-                _navMeshAgent.SetDestination(nearestEnemy.transform.position);
+                ServerSetDestination(nearestEnemy.transform.position);
         }
         else
         {
+            // No target found — fall back to moving toward the clicked point
             if (_stateMachine.CanMove)
-                _navMeshAgent.SetDestination(hit.point);
+                ServerSetDestination(hit.point);
         }
     }
 
-    // Handles ability input - placeholders for ability system
+    // TODO: wire up ability system
     private void HandleAbilities()
     {
         if (!_stateMachine.CanCast) return;
@@ -123,4 +133,29 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.E)) { /* cast E */ }
         if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
     }
+
+    #region ServerRpcs
+
+    /// <summary>
+    /// Sends a move order to the server. Only the owning client may call this.
+    /// </summary>
+    [ServerRpc]
+    private void ServerSetDestination(Vector3 destination)
+    {
+        _navMeshAgent.SetDestination(destination);
+    }
+
+    /// <summary>
+    /// Sends an attack order to the server. Target is passed as NetworkObject
+    /// so the reference survives the server round-trip.
+    /// Only the owning client may call this.
+    /// </summary>
+    [ServerRpc]
+    private void ServerRequestAttack(NetworkObject target)
+    {
+        if (target == null) return;
+        _basicAttack.Attack(target.gameObject);
+    }
+
+    #endregion
 }
