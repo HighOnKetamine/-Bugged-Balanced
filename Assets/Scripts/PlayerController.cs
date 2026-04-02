@@ -88,9 +88,16 @@ public class PlayerController : NetworkBehaviour
             transform.forward = _navMeshAgent.velocity.normalized;
     }
 
-    //! Handles right click movement
+    //! Handles right click movement and S key stop
     private void HandleMovement()
     {
+        // S key — immediately stop all movement
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            ServerStop();
+            return;
+        }
+
         if (!Input.GetMouseButtonDown(1)) return;
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) return;
         if (!_stateMachine.CanMove) return;
@@ -163,17 +170,38 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
     }
 
-    #region ServerRpcs
+    #region Server Methods
 
     /// <summary>
-    /// Sends a move order to the server. Only the owning client may call this.
+    /// Client-facing tunnel for stopping movement (e.g. S key).
+    /// Calls StopMovement() which contains the actual logic.
+    /// [ServerRpc] is only the door — logic always lives in a plain method
+    /// so it can also be called directly from other server-side code.
     /// </summary>
     [ServerRpc]
-    private void ServerSetDestination(Vector3 destination)
+    private void ServerStop() => StopMovement();
+
+    /// <summary>
+    /// Actual stop logic. Called by ServerStop (via client input) and
+    /// internally by ServerSetDestination before issuing a new path.
+    /// Plain method — no network hop needed when already on the server.
+    /// </summary>
+    private void StopMovement()
     {
         _navMeshAgent.isStopped = true;
         _navMeshAgent.ResetPath();
         _navMeshAgent.velocity = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Sends a move order to the server. Only the owning client may call this.
+    /// Stops current movement first to prevent the agent briefly continuing
+    /// its old path before snapping to the new destination.
+    /// </summary>
+    [ServerRpc]
+    private void ServerSetDestination(Vector3 destination)
+    {
+        StopMovement();
         _navMeshAgent.SetDestination(destination);
         _navMeshAgent.isStopped = false;
     }
