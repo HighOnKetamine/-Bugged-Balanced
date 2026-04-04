@@ -45,11 +45,6 @@ public class BasicAttack : NetworkBehaviour
 
         _lastAttackTime = Time.time;
 
-        Vector3 direction = (target.transform.position - transform.position).normalized;
-        direction.y = 0;
-        if (direction != Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(direction);
-
         OnPreAttack?.Invoke(target);
 
         NetworkObject targetNetObj = target.GetComponent<NetworkObject>();

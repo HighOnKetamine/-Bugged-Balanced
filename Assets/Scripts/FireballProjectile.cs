@@ -1,85 +1,85 @@
-using UnityEngine;
-using FishNet.Object;
+// using UnityEngine;
+// using FishNet.Object;
 
 
 
-public class FireballProjectile : NetworkBehaviour
-{
-    private float damage;
-    private GameObject owner;
+// public class FireballProjectile : NetworkBehaviour
+// {
+//     private float damage;
+//     private GameObject owner;
 
-    [SerializeField] private GameObject hitEffectPrefab;
+//     [SerializeField] private GameObject hitEffectPrefab;
 
-    public void Initialize(float dmg, GameObject own)
-    {
-        damage = dmg;
-        owner = own;
-    }
+//     public void Initialize(float dmg, GameObject own)
+//     {
+//         damage = dmg;
+//         owner = own;
+//     }
 
-    public void Launch(Vector3 velocity)
-    {
-        // Set on server
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = velocity;
-        }
+//     public void Launch(Vector3 velocity)
+//     {
+//         // Set on server
+//         Rigidbody rb = GetComponent<Rigidbody>();
+//         if (rb != null)
+//         {
+//             rb.linearVelocity = velocity;
+//         }
 
-        // Tell clients to set it too
-        RpcLaunch(velocity);
-    }
+//         // Tell clients to set it too
+//         RpcLaunch(velocity);
+//     }
 
-    [ObserversRpc]
-    private void RpcLaunch(Vector3 velocity)
-    {
-        if (IsServerInitialized) return; // Server already did it
+//     [ObserversRpc]
+//     private void RpcLaunch(Vector3 velocity)
+//     {
+//         if (IsServerInitialized) return; // Server already did it
 
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = velocity;
-        }
-    }
+//         Rigidbody rb = GetComponent<Rigidbody>();
+//         if (rb != null)
+//         {
+//             rb.linearVelocity = velocity;
+//         }
+//     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        HandleHit(other.gameObject, other.transform, other.isTrigger);
-    }
+//     private void OnTriggerEnter(Collider other)
+//     {
+//         HandleHit(other.gameObject, other.transform, other.isTrigger);
+//     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        HandleHit(collision.gameObject, collision.transform, false);
-    }
+//     private void OnCollisionEnter(Collision collision)
+//     {
+//         HandleHit(collision.gameObject, collision.transform, false);
+//     }
 
-    private void HandleHit(GameObject hitObj, Transform hitTransform, bool isTrigger)
-    {
-        if (!IsServerInitialized) return;
-        if (isTrigger) return; // Don't explode on other triggers
-        if (hitTransform.root == owner.transform.root) return; // Don't hit owner or owner's children
+//     private void HandleHit(GameObject hitObj, Transform hitTransform, bool isTrigger)
+//     {
+//         if (!IsServerInitialized) return;
+//         if (isTrigger) return; // Don't explode on other triggers
+//         if (hitTransform.root == owner.transform.root) return; // Don't hit owner or owner's children
 
-        // Create a separate variable for hit log to avoid spam if feasible, but here we just log
-        Debug.Log($"Fireball hit object: {hitObj.name}");
+//         // Create a separate variable for hit log to avoid spam if feasible, but here we just log
+//         Debug.Log($"Fireball hit object: {hitObj.name}");
 
-        HealthSystem health = hitObj.GetComponentInParent<HealthSystem>();
-        if (health != null)
-        {
-            Debug.Log($"Found HealthSystem on {health.gameObject.name}, dealing {damage} damage.");
-            health.TakeDamage(damage, owner);
-        }
-        else
-        {
-            Debug.Log("No HealthSystem found on hit object.");
-        }
+//         HealthSystem health = hitObj.GetComponentInParent<HealthSystem>();
+//         if (health != null)
+//         {
+//             Debug.Log($"Found HealthSystem on {health.gameObject.name}, dealing {damage} damage.");
+//             health.TakeDamage(damage, owner);
+//         }
+//         else
+//         {
+//             Debug.Log("No HealthSystem found on hit object.");
+//         }
 
-        // Spawn hit effect
-        if (hitEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
-            Spawn(effect);
-            Destroy(effect, 2f);
-        }
+//         // Spawn hit effect
+//         if (hitEffectPrefab != null)
+//         {
+//             GameObject effect = Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
+//             Spawn(effect);
+//             Destroy(effect, 2f);
+//         }
 
-        Despawn(gameObject);
-    }
-}
+//         Despawn(gameObject);
+//     }
+// }
 
