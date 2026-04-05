@@ -23,12 +23,18 @@ public class BasicAttack : NetworkBehaviour
             Debug.LogError($"[BasicAttack] No TeamComponent found on {gameObject.name}!");
     }
 
-    public bool CanAttack(GameObject target)
+    public bool IsOffCooldown()
+    {
+        float attackCooldown = 1f / _stats.attackSpeed.Value;
+        return Time.time - _lastAttackTime >= attackCooldown;
+    }
+
+    public bool IsInRange(GameObject target)
     {
         if (target == null) return false;
 
-        float attackCooldown = 1f / _stats.attackSpeed.Value;
-        if (Time.time - _lastAttackTime < attackCooldown) return false;
+        HealthComponent health = target.GetComponent<HealthComponent>();
+        if (health == null || health.IsDead) return false;
 
         float distance = Vector3.Distance(transform.position, target.transform.position);
         if (distance > _stats.attackRange.Value) return false;
@@ -37,6 +43,12 @@ public class BasicAttack : NetworkBehaviour
         if (!_team.IsEnemy(targetTeam)) return false;
 
         return true;
+    }
+
+    public bool CanAttack(GameObject target)
+    {
+        if (target == null) return false;
+        return IsOffCooldown() && IsInRange(target);
     }
 
     public void Attack(GameObject target)

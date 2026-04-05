@@ -5,7 +5,6 @@ using FishNet.Object;
 public class PlayerController : NetworkBehaviour
 {
     #region Settings
-    // World-space radius for attack-move target search (tune to match your NavMesh scale)
     [SerializeField] private float attackMoveRadius = 5f;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
@@ -26,36 +25,24 @@ public class PlayerController : NetworkBehaviour
         _stateMachine = GetComponent<PlayerStateMachine>();
         _teamComponent = GetComponent<TeamComponent>();
 
-        // Disable built-in agent rotation — we handle it manually
-        // so direction changes are instant instead of lerped.
         if (_navMeshAgent != null)
             _navMeshAgent.angularSpeed = 0f;
 
-        if (_navMeshAgent == null)
-            Debug.LogError("[PlayerController] No NavMeshAgent found!");
-        if (_basicAttack == null)
-            Debug.LogError("[PlayerController] No BasicAttack found!");
-        if (_stateMachine == null)
-            Debug.LogError("[PlayerController] No PlayerStateMachine found!");
-        if (_teamComponent == null)
-            Debug.LogError("[PlayerController] No TeamComponent found!");
+        if (_navMeshAgent == null) Debug.LogError("[PlayerController] No NavMeshAgent found!");
+        if (_basicAttack == null) Debug.LogError("[PlayerController] No BasicAttack found!");
+        if (_stateMachine == null) Debug.LogError("[PlayerController] No PlayerStateMachine found!");
+        if (_teamComponent == null) Debug.LogError("[PlayerController] No TeamComponent found!");
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
 
-        // Disable NavMeshAgent on non-owner clients.
-        // The agent only runs meaningfully on the server; leaving it enabled
-        // on remote clients causes it to fight FishNet's position sync,
-        // producing jitter and ghost movement.
         if (!IsOwner)
             _navMeshAgent.enabled = false;
 
         if (IsOwner)
         {
-            // Camera starts disabled on the prefab intentionally —
-            // only the owning client should enable it to avoid duplicate views.
             _cam = GetComponentInChildren<Camera>();
             if (_cam == null)
                 Debug.LogError("[PlayerController] No Camera found!");
@@ -66,8 +53,6 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
-        // Rotation runs on the server where NavMeshAgent has real velocity.
-        // NetworkTransform will sync the resulting rotation to all clients.
         if (IsServerInitialized)
             RotateTowardMovement();
 
@@ -78,20 +63,14 @@ public class PlayerController : NetworkBehaviour
         HandleAbilities();
     }
 
-    // Snaps transform.forward to the agent's current velocity direction.
-    // We set angularSpeed = 0 in Awake so the agent never competes with this.
-    // Why snap instead of Slerp? In a MOBA the character should always face
-    // where it's going immediately — a slow turn feels sluggish and wrong.
     private void RotateTowardMovement()
     {
         if (_navMeshAgent.velocity.sqrMagnitude > 0.01f)
             transform.forward = _navMeshAgent.velocity.normalized;
     }
 
-    //! Handles right click movement and S key stop
     private void HandleMovement()
     {
-        // S key — immediately stop all movement
         if (Input.GetKeyDown(KeyCode.S))
         {
             ServerStop();
@@ -107,7 +86,6 @@ public class PlayerController : NetworkBehaviour
             ServerSetDestination(hit.point);
     }
 
-    //! Handles shift + right click attack move
     private void HandleAttackMove()
     {
         if (!Input.GetMouseButtonDown(1)) return;
@@ -117,7 +95,6 @@ public class PlayerController : NetworkBehaviour
         Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer)) return;
 
-        //! find nearest enemy around cursor point
         Collider[] cols = Physics.OverlapSphere(hit.point, attackMoveRadius, enemyLayer);
         GameObject nearestEnemy = null;
         float nearestDistance = Mathf.Infinity;
@@ -125,6 +102,9 @@ public class PlayerController : NetworkBehaviour
         foreach (Collider col in cols)
         {
             if (col.gameObject == gameObject) continue;
+
+            HealthComponent health = col.GetComponent<HealthComponent>();
+            if (health == null || health.IsDead) continue;
 
             TeamComponent targetTeam = col.GetComponent<TeamComponent>();
             if (targetTeam == null || !_teamComponent.IsEnemy(targetTeam)) continue;
@@ -146,23 +126,37 @@ public class PlayerController : NetworkBehaviour
                 return;
             }
 
-            if (_basicAttack.CanAttack(nearestEnemy))
+            if (!_basicAttack.IsOffCooldown())
+            {
+                // On cooldown — just move to cursor, ignore the target entirely
+                if (_stateMachine.CanMove)
+                    ServerSetDestination(hit.point);
+            }
+            else if (_basicAttack.IsInRange(nearestEnemy))
+            {
+                // In range and off cooldown — attack immediately
                 ServerRequestAttack(targetNob);
+            }
             else
-                ServerSetDestination(nearestEnemy.transform.position);
+            {
+                // Off cooldown but out of range — chase until in range
+                ServerChaseForAttack(targetNob);
+            }
         }
         else
         {
-            // No target found — fall back to moving toward the clicked point
             if (_stateMachine.CanMove)
                 ServerSetDestination(hit.point);
         }
     }
 
-    // TODO: wire up ability system
     private void HandleAbilities()
     {
         if (!_stateMachine.CanCast) return;
+
+        // Temp test keys — remove when game manager exists
+        if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
+        if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
 
         if (Input.GetKeyDown(KeyCode.Q)) { /* cast Q */ }
         if (Input.GetKeyDown(KeyCode.W)) { /* cast W */ }
@@ -170,22 +164,18 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
     }
 
+    [ServerRpc]
+    private void ServerSetTeam(sbyte teamId) => GetComponent<TeamComponent>().SetTeam(teamId);
+
     #region Server Methods
 
-    /// <summary>
-    /// Client-facing tunnel for stopping movement (e.g. S key).
-    /// Calls StopMovement() which contains the actual logic.
-    /// [ServerRpc] is only the door — logic always lives in a plain method
-    /// so it can also be called directly from other server-side code.
-    /// </summary>
     [ServerRpc]
-    private void ServerStop() => StopMovement();
+    private void ServerStop()
+    {
+        StopMovement();
+        _stateMachine.ChangeState(new IdleState(_stateMachine));
+    }
 
-    /// <summary>
-    /// Actual stop logic. Called by ServerStop (via client input) and
-    /// internally by ServerSetDestination before issuing a new path.
-    /// Plain method — no network hop needed when already on the server.
-    /// </summary>
     private void StopMovement()
     {
         _navMeshAgent.isStopped = true;
@@ -193,24 +183,26 @@ public class PlayerController : NetworkBehaviour
         _navMeshAgent.velocity = Vector3.zero;
     }
 
-    /// <summary>
-    /// Sends a move order to the server. Only the owning client may call this.
-    /// Stops current movement first to prevent the agent briefly continuing
-    /// its old path before snapping to the new destination.
-    /// </summary>
     [ServerRpc]
     private void ServerSetDestination(Vector3 destination)
     {
+        _stateMachine.AttackMoveTarget = null;
         StopMovement();
         _navMeshAgent.SetDestination(destination);
         _navMeshAgent.isStopped = false;
+        _stateMachine.ChangeState(new RunState(_stateMachine));
     }
 
-    /// <summary>
-    /// Sends an attack order to the server. Target is passed as NetworkObject
-    /// so the reference survives the server round-trip.
-    /// Only the owning client may call this.
-    /// </summary>
+    [ServerRpc]
+    private void ServerChaseForAttack(NetworkObject target)
+    {
+        _stateMachine.AttackMoveTarget = target.gameObject;
+        StopMovement();
+        _navMeshAgent.SetDestination(target.transform.position);
+        _navMeshAgent.isStopped = false;
+        _stateMachine.ChangeState(new RunState(_stateMachine));
+    }
+
     [ServerRpc]
     private void ServerRequestAttack(NetworkObject target)
     {

@@ -18,15 +18,16 @@ MonoBehaviour:
   baseMaxMana: 500
   baseManaRegen: 3
   resourceType: 0
-  baseAttackDamage: 20
+  baseAttackDamage: 2000
   baseAbilityPower: 20
   baseAttackSpeed: 0.65
-  baseAttackRange: 600
+  baseAttackRange: 10
   baseAbilityHaste: 100
   baseLethality: 0
   baseArmorPenPercent: 0
   baseFlatMagicPen: 0
   baseMagicPenPercent: 0
+  basicAttackDamageType: 0
   baseArmor: 20
   baseMagicResist: 20
   baseMoveSpeed: 350
