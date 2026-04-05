@@ -6,6 +6,7 @@ public class TeamComponent : NetworkBehaviour
 {
     public const sbyte Neutral = -1;
 
+    [SerializeField]
     public readonly SyncVar<sbyte> teamId = new SyncVar<sbyte>();
 
     public bool IsEnemy(TeamComponent other)
@@ -20,5 +21,11 @@ public class TeamComponent : NetworkBehaviour
         if (other == null) return false;
         if (teamId.Value == Neutral || other.teamId.Value == Neutral) return false;
         return teamId.Value == other.teamId.Value;
+    }
+
+    [Server]
+    public void SetTeam(sbyte newTeamId)
+    {
+        teamId.Value = newTeamId;
     }
 }
