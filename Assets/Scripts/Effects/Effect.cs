@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -15,6 +16,10 @@ public abstract class Effect
     protected uint maxStacks;
     protected float value;
     protected GameObject target;
+
+    private readonly List<float> _stackElapsed = new List<float>();
+    private readonly StackBehavior _stackBehavior;
+    protected StackBehavior StackBehavior => _stackBehavior;
 
     /// <summary>True if the effect can be applied more than once on the same target.</summary>
     public bool CanStack => maxStacks > 1;
@@ -42,7 +47,15 @@ public abstract class Effect
     /// <param name="value">Generic magnitude — damage, heal amount, modifier value, etc.</param>
     /// <param name="maxStacks">Maximum number of times this effect can stack on one target.</param>
     /// <param name="interval">How often <see cref="Apply"/> is called, in seconds.</param>
-    public Effect(GameObject target, float duration, float value, uint maxStacks = 1, float interval = 1f)
+    /// <param name="stackBehavior">Whether stacks refresh the shared duration or decay independently.</param>
+    public Effect(
+        GameObject target,
+        float duration,
+        float value,
+        uint maxStacks = 1,
+        float interval = 1f,
+        StackBehavior stackBehavior = StackBehavior.RefreshDuration
+    )
     {
         if (target == null) throw new Exception("Target cannot be null!");
         if (duration < 0) throw new Exception("Duration cannot be negative!");
@@ -54,6 +67,7 @@ public abstract class Effect
         this.maxStacks = maxStacks;
         this.interval = interval;
         this.elapsed = -1f;
+        _stackBehavior = stackBehavior;
     }
 
     /// <summary>
@@ -63,17 +77,29 @@ public abstract class Effect
     {
         elapsed = 0f;
         stacks = 1;
+        _stackElapsed.Clear();
+        _stackElapsed.Add(0f);
         OnStart?.Invoke();
     }
 
     /// <summary>
-    /// Adds a stack and refreshes the duration. No-op if the effect cannot stack or is already at max stacks.
+    /// Adds a stack. For <see cref="StackBehavior.RefreshDuration"/>, resets the shared timer.
+    /// For <see cref="StackBehavior.IndependentDecay"/>, adds a new independent timer.
+    /// No-op if the effect cannot stack or is already at max stacks.
     /// </summary>
     public void AddStack()
     {
         if (!CanStack || stacks >= maxStacks) return;
         stacks++;
-        elapsed = 0f;
+
+        if (_stackBehavior == StackBehavior.RefreshDuration)
+        {
+            elapsed = 0f;
+        }
+        else
+        {
+            _stackElapsed.Add(0f);
+        }
     }
 
     /// <summary>
@@ -82,20 +108,48 @@ public abstract class Effect
     /// </summary>
     public void Tick(float deltaTime)
     {
-        if (!IsActive) return;
+        if (!IsActive && _stackBehavior == StackBehavior.RefreshDuration) return;
+        if (stacks == 0) return;
 
-        elapsed += deltaTime;
-        intervalElapsed += deltaTime;
-
-        if (intervalElapsed >= interval)
+        if (_stackBehavior == StackBehavior.IndependentDecay)
         {
-            intervalElapsed -= interval;
-            OnTick?.Invoke(duration - elapsed, stacks);
-            Apply();
-        }
+            for (int i = _stackElapsed.Count - 1; i >= 0; i--)
+            {
+                _stackElapsed[i] += deltaTime;
+                if (_stackElapsed[i] >= duration)
+                {
+                    _stackElapsed.RemoveAt(i);
+                    stacks--;
+                }
+            }
 
-        if (IsExpired)
-            OnEnd?.Invoke();
+            intervalElapsed += deltaTime;
+            if (intervalElapsed >= interval)
+            {
+                intervalElapsed -= interval;
+                float remaining = _stackElapsed.Count > 0 ? duration - _stackElapsed[0] : 0f;
+                OnTick?.Invoke(remaining, stacks);
+                Apply();
+            }
+
+            if (stacks == 0)
+                OnEnd?.Invoke();
+        }
+        else
+        {
+            elapsed += deltaTime;
+            intervalElapsed += deltaTime;
+
+            if (intervalElapsed >= interval)
+            {
+                intervalElapsed -= interval;
+                OnTick?.Invoke(duration - elapsed, stacks);
+                Apply();
+            }
+
+            if (IsExpired)
+                OnEnd?.Invoke();
+        }
     }
 
     /// <summary>
