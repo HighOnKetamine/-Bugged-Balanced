@@ -178,7 +178,7 @@ PrefabInstance:
     - target: {fileID: 7443408887813606060, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: _playerPrefab
       value: 
-      objectReference: {fileID: 2606557240988048400, guid: 98cc8e57f52478745981549d3ab985e8, type: 3}
+      objectReference: {fileID: 3588969001032707141, guid: 7f7782e6ac2fd3bc1acce8c6303781e6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -738,7 +738,7 @@ Transform:
   m_GameObject: {fileID: 1123345226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.48, y: -0.093673706, z: 2.687296}
+  m_LocalPosition: {x: 7.5627027, y: -0.093673706, z: 2.687296}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []

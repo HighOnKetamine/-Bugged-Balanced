@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 5508574720422657896}
   - component: {fileID: 1994198241842722854}
   - component: {fileID: 7462283160100122393}
-  - component: {fileID: 3923127796482018897}
   - component: {fileID: 6953676247758753242}
+  - component: {fileID: 2499653136299963267}
   m_Layer: 5
   m_Name: DamagePopup
   m_TagString: Untagged
@@ -85,22 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
---- !u!114 &3923127796482018897
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 75400672876573301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 848c6e781bcee6f48874eadc517f316f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floatSpeed: 2
-  visibleTimer: 0.6
-  fadeOutSpeed: 3.5
+  m_PresetInfoIsWorld: 0
 --- !u!225 &6953676247758753242
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -113,6 +98,21 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2499653136299963267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75400672876573301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 342b8fc5aac4b75e48f4f06fe67f7789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _text: {fileID: 778948246611967206}
+  _floatSpeed: 1.5
+  _fadeDuration: 0.8
 --- !u!1 &4435734247510659629
 GameObject:
   m_ObjectHideFlags: 0

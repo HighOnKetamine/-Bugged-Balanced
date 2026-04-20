@@ -40,17 +40,17 @@ public class HealthComponent : NetworkBehaviour
     public float TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null)
     {
         if (IsDead) return 0f;
-
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
 
-        Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
+        RpcShowDamagePopup(finalDamage, damageType, transform.position);
 
         if (currentHealth.Value <= 0)
             Die(attacker?.gameObject);
-
         return finalDamage;
     }
+
+
 
     [Server]
     public void Heal(float amount)
@@ -122,6 +122,12 @@ public class HealthComponent : NetworkBehaviour
     private void RpcOnDeath(GameObject killer)
     {
         OnDeath?.Invoke(killer);
+    }
+
+    [ObserversRpc]
+    private void RpcShowDamagePopup(float damage, DamageType damageType, Vector3 position)
+    {
+        DamagePopupManager.Instance?.Show(damage, damageType, position);
     }
 
     private void HandleHealthChanged(float oldValue, float newValue, bool asServer)

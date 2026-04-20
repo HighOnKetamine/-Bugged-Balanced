@@ -162,6 +162,11 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.W)) { /* cast W */ }
         if (Input.GetKeyDown(KeyCode.E)) { /* cast E */ }
         if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ServerSetTeam(1);
+        }
+
     }
 
     [ServerRpc]
