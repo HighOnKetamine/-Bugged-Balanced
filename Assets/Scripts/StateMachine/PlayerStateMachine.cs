@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.AI;
-using FishNet.Object;
 using FishNet.Component.Animating;
+using UnityEngine.AI;
 
-public class PlayerStateMachine : NetworkBehaviour
+public class PlayerStateMachine : StateMachine<PlayerStateMachine>
 {
     public Animator Animator { get; private set; }
     public NetworkAnimator NetworkAnimator { get; private set; }
@@ -11,15 +10,12 @@ public class PlayerStateMachine : NetworkBehaviour
     public CharacterStats Stats { get; private set; }
     public BasicAttack BasicAttack { get; private set; }
     public HealthComponent Health { get; private set; }
-    public GameObject CurrentAttackTarget { get; private set; }
+    public GameObject CurrentAttackTarget { get; set; }
+    public GameObject AttackMoveTarget { get; set; }
 
-    private PlayerState _currentState;
-
-    #region Input Gates
     public bool CanMove { get; set; } = true;
     public bool CanAttack { get; set; } = true;
     public bool CanCast { get; set; } = true;
-    #endregion
 
     private void Awake()
     {
@@ -30,18 +26,12 @@ public class PlayerStateMachine : NetworkBehaviour
         BasicAttack = GetComponent<BasicAttack>();
         Health = GetComponent<HealthComponent>();
 
-        if (Animator == null)
-            Debug.LogError($"[PlayerStateMachine] No Animator found on {gameObject.name}!");
-        if (NetworkAnimator == null)
-            Debug.LogError($"[PlayerStateMachine] No NetworkAnimator found on {gameObject.name}!");
-        if (NavMeshAgent == null)
-            Debug.LogError($"[PlayerStateMachine] No NavMeshAgent found on {gameObject.name}!");
-        if (Stats == null)
-            Debug.LogError($"[PlayerStateMachine] No CharacterStats found on {gameObject.name}!");
-        if (BasicAttack == null)
-            Debug.LogError($"[PlayerStateMachine] No BasicAttack found on {gameObject.name}!");
-        if (Health == null)
-            Debug.LogError($"[PlayerStateMachine] No HealthComponent found on {gameObject.name}!");
+        if (Animator == null) Debug.LogError($"[PlayerStateMachine] Missing Animator on {gameObject.name}");
+        if (NetworkAnimator == null) Debug.LogError($"[PlayerStateMachine] Missing NetworkAnimator on {gameObject.name}");
+        if (NavMeshAgent == null) Debug.LogError($"[PlayerStateMachine] Missing NavMeshAgent on {gameObject.name}");
+        if (Stats == null) Debug.LogError($"[PlayerStateMachine] Missing CharacterStats on {gameObject.name}");
+        if (BasicAttack == null) Debug.LogError($"[PlayerStateMachine] Missing BasicAttack on {gameObject.name}");
+        if (Health == null) Debug.LogError($"[PlayerStateMachine] Missing HealthComponent on {gameObject.name}");
     }
 
     private void Start()
@@ -54,17 +44,5 @@ public class PlayerStateMachine : NetworkBehaviour
         };
 
         ChangeState(new IdleState(this));
-    }
-
-    private void Update()
-    {
-        _currentState?.Update();
-    }
-
-    public void ChangeState(PlayerState newState)
-    {
-        _currentState?.Exit();
-        _currentState = newState;
-        _currentState.Enter();
     }
 }

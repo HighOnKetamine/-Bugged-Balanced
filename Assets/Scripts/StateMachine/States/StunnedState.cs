@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StunnedState : PlayerState
+public class StunnedState : State<PlayerStateMachine>
 {
     private float _duration;
     private float _timer;
@@ -13,20 +13,20 @@ public class StunnedState : PlayerState
     public override void Enter()
     {
         _timer = 0f;
-        _machine.NavMeshAgent.ResetPath();
-        _machine.NavMeshAgent.velocity = Vector3.zero;
-        _machine.Animator.SetBool("IsStunned", true);
+        Machine.NavMeshAgent.ResetPath();
+        Machine.NavMeshAgent.velocity = Vector3.zero;
+        Machine.Animator.SetBool("IsStunned", true);
     }
 
     public override void Update()
     {
         _timer += Time.deltaTime;
         if (_timer >= _duration)
-            _machine.ChangeState(new IdleState(_machine));
+            Machine.ChangeState(new IdleState(Machine));
     }
 
     public override void Exit()
     {
-        _machine.Animator.SetBool("IsStunned", false);
+        Machine.Animator.SetBool("IsStunned", false);
     }
 }

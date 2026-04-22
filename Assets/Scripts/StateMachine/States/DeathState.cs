@@ -1,24 +1,27 @@
 using UnityEngine;
 
-public class DeathState : PlayerState
+public class DeathState : State<PlayerStateMachine>
 {
     public DeathState(PlayerStateMachine machine) : base(machine) { }
 
     public override void Enter()
     {
-        _machine.NavMeshAgent.ResetPath();
-        _machine.NavMeshAgent.velocity = Vector3.zero;
-        _machine.Animator.SetTrigger("Death");
+        Debug.Log("[DeathState] Enter");
+        Machine.NavMeshAgent.ResetPath();
+        Machine.NavMeshAgent.velocity = Vector3.zero;
+        Machine.CanAttack = false;
+        Machine.CanCast = false;
+        Machine.CanMove = false;
+        Machine.Animator.SetTrigger("Death");
     }
 
-    public override void Update()
-    {
-        // dead, no transitions
-    }
+    public override void Update() { }
 
     public override void Exit()
     {
-        // called on respawn
-        _machine.Animator.Rebind();
+        Machine.Animator.Rebind();
+        Machine.CanAttack = true;
+        Machine.CanCast = true;
+        Machine.CanMove = true;
     }
 }
