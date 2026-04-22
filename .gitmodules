@@ -1,3 +1,0 @@
-[submodule "rust_esc"]
-	path = server
-	url = https://github.com/PeetyUwU/rust_esc.git
