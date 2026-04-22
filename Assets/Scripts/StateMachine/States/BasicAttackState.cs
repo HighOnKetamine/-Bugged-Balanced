@@ -1,27 +1,28 @@
 using UnityEngine;
 
-public class BasicAttackState : PlayerState
+public class BasicAttackState : State<PlayerStateMachine>
 {
     public BasicAttackState(PlayerStateMachine machine) : base(machine) { }
 
     public override void Enter()
     {
-        _machine.NavMeshAgent.ResetPath();
-        _machine.NavMeshAgent.velocity = Vector3.zero;
-
-        // rotate toward target
-        Vector3 direction = (_machine.CurrentAttackTarget.transform.position - _machine.transform.position).normalized;
-        direction.y = 0;
-        if (direction != Vector3.zero)
-            _machine.transform.rotation = Quaternion.LookRotation(direction);
-
-        _machine.NetworkAnimator.SetTrigger("Attack");
+        Machine.NavMeshAgent.ResetPath();
+        Machine.NavMeshAgent.velocity = Vector3.zero;
+        Machine.NetworkAnimator.SetTrigger("Attack");
     }
 
     public override void Update()
     {
-        if (!_machine.Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            _machine.ChangeState(new IdleState(_machine));
+        if (Machine.CurrentAttackTarget != null)
+        {
+            Vector3 direction = (Machine.CurrentAttackTarget.transform.position - Machine.transform.position).normalized;
+            direction.y = 0;
+            if (direction != Vector3.zero)
+                Machine.transform.rotation = Quaternion.LookRotation(direction);
+        }
+
+        if (!Machine.Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            Machine.ChangeState(new IdleState(Machine));
     }
 
     public override void Exit() { }
