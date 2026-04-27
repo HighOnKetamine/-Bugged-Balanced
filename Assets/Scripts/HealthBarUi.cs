@@ -1,69 +1,63 @@
-// using UnityEngine;
-// using UnityEngine.UI;
-// using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-// public class HealthBarUI : MonoBehaviour
-// {
-//     [SerializeField] private HealthComponent healthSystem;
-//     [SerializeField] private Image fillImage;
-//     [SerializeField] private TextMeshProUGUI healthText; // Optional
-//     [SerializeField] private Canvas canvas;
+public class HealthBarUI : MonoBehaviour
+{
+    [SerializeField] private HealthComponent healthComponent;
+    [SerializeField] private Image fillImage;
+    [SerializeField] private TextMeshProUGUI healthText;
 
-//     [Header("UI Settings")]
-//     [SerializeField] private bool useFixedRotation = true;
-//     [SerializeField] private Vector3 fixedRotation = new Vector3(45, 0, 0);
+    [Header("World Space Settings")]
+    [SerializeField] private bool useFixedRotation = true;
+    [SerializeField] private Vector3 fixedRotation = new Vector3(45, 0, 0);
 
-//     private Camera mainCamera;
+    private Canvas _canvas;
 
-//     private void Start()
-//     {
-//         if (healthSystem != null)
-//         {
-//             healthSystem.OnHealthChangedEvent += UpdateHealthBar;
-//             UpdateHealthBar(healthSystem.CurrentHealth, healthSystem.MaxHealth);
-//         }
+    private void Awake()
+    {
+        _canvas = GetComponentInChildren<Canvas>();
+        if (_canvas != null)
+            _canvas.renderMode = RenderMode.WorldSpace;
+    }
 
-//         mainCamera = Camera.main;
+    private void Start()
+    {
+        if (healthComponent == null)
+        {
+            Debug.LogError("[HealthBarUI] No HealthComponent assigned!", this);
+            return;
+        }
 
-//         if (canvas != null)
-//         {
-//             canvas.renderMode = RenderMode.WorldSpace;
-//         }
-//     }
+        healthComponent.OnHealthChanged += Refresh;
 
-//     private void LateUpdate()
-//     {
-//         if (canvas == null) return;
+        Refresh(healthComponent.Current, healthComponent.Max);
+    }
 
-//         if (useFixedRotation)
-//         {
-//             canvas.transform.rotation = Quaternion.Euler(fixedRotation);
-//         }
-//         else if (mainCamera != null)
-//         {
-//             canvas.transform.LookAt(canvas.transform.position + mainCamera.transform.rotation * Vector3.forward,
-//                 mainCamera.transform.rotation * Vector3.up);
-//         }
-//     }
+    private void LateUpdate()
+    {
+        if (_canvas == null) return;
 
-//     private void UpdateHealthBar(float currentHealth, float maxHealth)
-//     {
-//         if (fillImage != null)
-//         {
-//             fillImage.fillAmount = currentHealth / maxHealth;
-//         }
+        if (useFixedRotation)
+        {
+            _canvas.transform.rotation = Quaternion.Euler(fixedRotation);
+        }
+    }
 
-//         if (healthText != null)
-//         {
-//             healthText.text = $"{Mathf.CeilToInt(currentHealth)}/{Mathf.CeilToInt(maxHealth)}";
-//         }
-//     }
+    private void Refresh(float current, float max)
+    {
+        if (max <= 0) return;
 
-//     private void OnDestroy()
-//     {
-//         if (healthSystem != null)
-//         {
-//             healthSystem.OnHealthChangedEvent -= UpdateHealthBar;
-//         }
-//     }
-// }
+        if (fillImage != null)
+            fillImage.fillAmount = current / max;
+
+        if (healthText != null)
+            healthText.text = $"{Mathf.CeilToInt(current)}/{Mathf.CeilToInt(max)}";
+    }
+
+    private void OnDestroy()
+    {
+        if (healthComponent != null)
+            healthComponent.OnHealthChanged -= Refresh;
+    }
+}
