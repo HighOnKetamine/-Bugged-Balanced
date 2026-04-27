@@ -48,6 +48,10 @@ public class PlayerController : NetworkBehaviour
                 Debug.LogError("[PlayerController] No Camera found!");
             else
                 _cam.enabled = true;
+
+            // Initialize ability HUD for the local player
+            AbilityHUD hud = FindFirstObjectByType<AbilityHUD>();
+            hud?.Initialize(gameObject);
         }
     }
 
