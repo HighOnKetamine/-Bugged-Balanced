@@ -11,6 +11,7 @@ public abstract class AbilityBase : NetworkBehaviour
 
     protected float lastCastTime = -999f;
     private ManaComponent _mana;
+    private PlayerStateMachine _stateMachine;
 
     // Cooldown queries
     public float Cooldown => cooldown;
@@ -26,11 +27,13 @@ public abstract class AbilityBase : NetworkBehaviour
     protected virtual void Awake()
     {
         _mana = GetComponent<ManaComponent>();
+        _stateMachine = GetComponent<PlayerStateMachine>();
     }
 
     protected virtual void Update()
     {
         if (!IsOwner) return;
+        if (_stateMachine != null && !_stateMachine.CanCast) return;
         if (Input.GetKeyDown(hotkey))
             TryCastAbility();
     }
