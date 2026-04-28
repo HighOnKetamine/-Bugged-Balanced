@@ -13,13 +13,10 @@ public abstract class AbilityBase : NetworkBehaviour
     private ManaComponent _mana;
     private PlayerStateMachine _stateMachine;
 
-    // Cooldown queries
     public float Cooldown => cooldown;
     public float RemainingCooldown => Mathf.Max(0, cooldown - (Time.time - lastCastTime));
-    public float CooldownProgress => Mathf.Clamp01(1f - (RemainingCooldown / cooldown)); // 0=fresh cooldown, 1=ready
+    public float CooldownProgress => Mathf.Clamp01(1f - (RemainingCooldown / cooldown));
     public bool IsOnCooldown => RemainingCooldown > 0f;
-
-    // Info
     public KeyCode Hotkey => hotkey;
     public string AbilityName => abilityName;
     public float ManaCost => manaCost;
@@ -28,14 +25,6 @@ public abstract class AbilityBase : NetworkBehaviour
     {
         _mana = GetComponent<ManaComponent>();
         _stateMachine = GetComponent<PlayerStateMachine>();
-    }
-
-    protected virtual void Update()
-    {
-        if (!IsOwner) return;
-        if (_stateMachine != null && !_stateMachine.CanCast) return;
-        if (Input.GetKeyDown(hotkey))
-            TryCastAbility();
     }
 
     public virtual bool TryCastAbility()
@@ -54,11 +43,9 @@ public abstract class AbilityBase : NetworkBehaviour
         return true;
     }
 
-    // Base check: mana. Subclasses override this and call base.CanCast()
-    // so mana is always validated in the chain.
     protected virtual bool CanCast()
     {
-        if (_mana == null) return true; // no mana system on this unit — allow cast
+        if (_mana == null) return true;
 
         if (_mana.Current < manaCost)
         {
@@ -66,8 +53,6 @@ public abstract class AbilityBase : NetworkBehaviour
             return false;
         }
 
-        // Consume here on the owner so the cooldown doesn't start
-        // on a failed cast. Server-side consumption happens in ServerCast.
         ConsumeMana();
         return true;
     }

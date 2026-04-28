@@ -47,6 +47,5 @@ public abstract class AoeAbility : AbilityBase
         return inFan.ToArray();
     }
 
-    [FishNet.Object.ServerRpc]
     protected abstract void ServerCast(Vector3 position);
 }
