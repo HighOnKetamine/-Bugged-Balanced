@@ -1077,6 +1077,7 @@ GameObject:
   - component: {fileID: 6803932234606327116}
   - component: {fileID: 1548710247460741818}
   - component: {fileID: 4528726647532828206}
+  - component: {fileID: 6643151507186185867}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1499,6 +1500,29 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   vfxPrefab: {fileID: 0}
+--- !u!114 &6643151507186185867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0b1535dbe1d12dd5b6b49fccd6bb658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 0}
+  abilityName: WE WO
+  cooldown: 5
+  manaCost: 20
+  hotkey: 101
+  range: 15
+  projectileSpeed: 10
+  shootPoint: {fileID: 260579401929815904}
+  dashDistance: 5
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0
