@@ -40,6 +40,5 @@ public abstract class TargetedAbility : AbilityBase
         return hit.collider.gameObject;
     }
 
-    [FishNet.Object.ServerRpc]
     protected abstract void ServerCast(GameObject target);
 }
