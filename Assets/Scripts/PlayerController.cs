@@ -158,6 +158,13 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
         if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
 
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.K) && IsOwner)
+        {
+            GetComponent<HealthComponent>().TakeDamage(99999f, DamageType.True);
+        }
+#endif
+
         if (!_stateMachine.CanCast) return;
 
         foreach (AbilityBase ability in _abilities)

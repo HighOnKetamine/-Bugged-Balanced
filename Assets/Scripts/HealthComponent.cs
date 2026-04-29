@@ -43,7 +43,6 @@ public class HealthComponent : NetworkBehaviour
 
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
-
         Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
         if (currentHealth.Value <= 0)
@@ -58,6 +57,15 @@ public class HealthComponent : NetworkBehaviour
         if (IsDead) return;
         amount *= GetHealingModifier();
         currentHealth.Value = Mathf.Min(Max, currentHealth.Value + amount);
+    }
+
+    // NEW: Called by PlayerRespawnHandler.Respawn() to restore HP to full.
+    // [Server] because currentHealth is a SyncVar — only the server may write it.
+    // The change then automatically replicates to all clients via FishNet.
+    [Server]
+    public void ResetToFull()
+    {
+        currentHealth.Value = Max;
     }
 
     private IEnumerator RegenTick()
@@ -107,14 +115,22 @@ public class HealthComponent : NetworkBehaviour
         return Mathf.Max(0, mr);
     }
 
-    private float GetHealingModifier()
-    {
-        return 1f;
-    }
+    private float GetHealingModifier() => 1f;
 
     [Server]
     private void Die(GameObject killer)
     {
+        // NEW: Report the kill to the feed before broadcasting death.
+        // This runs server-side only — KillFeedManager then pushes it to
+        // all clients via ObserversRpc internally.
+        // We use CharacterStats.CharacterName if available, fall back to
+        // the GameObject name so it always shows something readable.
+        string killerName = killer != null ? killer.name : "Environment";
+        string victimName = gameObject.name;
+
+        KillFeedManager.Instance.ReportKill(killerName, victimName);
+
+        // Broadcast the death event to all clients (unchanged from before)
         RpcOnDeath(killer);
     }
 
