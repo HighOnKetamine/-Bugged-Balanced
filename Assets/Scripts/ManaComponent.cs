@@ -63,4 +63,11 @@ public class ManaComponent : NetworkBehaviour
     {
         OnManaChanged?.Invoke(newValue, Max);
     }
+
+
+    [Server]
+    public void ResetToFull()
+    {
+        currentMana.Value = Max;
+    }
 }

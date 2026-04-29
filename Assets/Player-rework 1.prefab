@@ -1077,6 +1077,8 @@ GameObject:
   - component: {fileID: 6803932234606327116}
   - component: {fileID: 1548710247460741818}
   - component: {fileID: 4528726647532828206}
+  - component: {fileID: 6717665880531568710}
+  - component: {fileID: 3302962189199773943}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1499,6 +1501,41 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   vfxPrefab: {fileID: 0}
+--- !u!114 &6717665880531568710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 143650222b527ec1fad04321d83fbf4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 0}
+--- !u!114 &3302962189199773943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aeb26fb089dc037a90469db7214cdf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 0}
+  health: {fileID: 6152039501473825873}
+  mana: {fileID: 2585458511202501381}
+  stateMachine: {fileID: 7342036148961670440}
+  agent: {fileID: 88117526587501377}
+  visualObjects: []
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0
