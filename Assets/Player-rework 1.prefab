@@ -1076,6 +1076,7 @@ GameObject:
   - component: {fileID: 4849787816764113830}
   - component: {fileID: 6803932234606327116}
   - component: {fileID: 1548710247460741818}
+  - component: {fileID: 4528726647532828206}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1188,6 +1189,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 2394205969364998840
+  SceneId: 0
+  SerializedTransformProperties:
+    Position: {x: 0, y: 1.49, z: 2.29}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
   <IsNested>k__BackingField: 0
   WasActiveDuringEdit: 0
   WasActiveDuringEdit_Set1: 1
@@ -1215,29 +1239,6 @@ MonoBehaviour:
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
   _initializedTimestamp: -8584252702160803057
-  NetworkObserver: {fileID: 0}
-  _enablePrediction: 0
-  _predictionType: 0
-  _graphicalObject: {fileID: 0}
-  _detachGraphicalObject: 0
-  _enableStateForwarding: 1
-  _networkTransform: {fileID: 0}
-  _ownerInterpolation: 1
-  _ownerSmoothedProperties: 255
-  _adaptiveInterpolation: 3
-  _spectatorSmoothedProperties: 255
-  _spectatorInterpolation: 2
-  _enableTeleport: 0
-  _teleportThreshold: 1
-  <PrefabId>k__BackingField: 0
-  <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 2394205969364998840
-  SceneId: 0
-  SerializedTransformProperties:
-    Position: {x: 0, y: 1.49, z: 2.29}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
-    Scale: {x: 1, y: 1, z: 1}
-    IsValid: 1
 --- !u!195 &88117526587501377
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1469,8 +1470,35 @@ MonoBehaviour:
   blankCoinPrefab: {fileID: 919132149155446097, guid: 1abb435a432b8994d9f4a07660b74c48, type: 3}
   testSceneRoot: {fileID: 0}
   duration: 3
-  initialSpinSpeed: 5000
-  spawnPos: {x: 0, y: 0, z: 0}
+  totalFullFlips: 5
+--- !u!114 &4528726647532828206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d47772fe082e4aa7d985171587970eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 0}
+  abilityName: YAY
+  cooldown: 5
+  manaCost: 20
+  hotkey: 119
+  shape: 0
+  radius: 4
+  fanAngle: 90
+  damage: 60
+  damageType: 1
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 64
+  vfxPrefab: {fileID: 0}
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0

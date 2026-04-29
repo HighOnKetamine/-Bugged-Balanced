@@ -16,6 +16,7 @@ public class PlayerController : NetworkBehaviour
     private BasicAttack _basicAttack;
     private PlayerStateMachine _stateMachine;
     private TeamComponent _teamComponent;
+    private AbilityBase[] _abilities;
     #endregion
 
     private void Awake()
@@ -24,6 +25,7 @@ public class PlayerController : NetworkBehaviour
         _basicAttack = GetComponent<BasicAttack>();
         _stateMachine = GetComponent<PlayerStateMachine>();
         _teamComponent = GetComponent<TeamComponent>();
+        _abilities = GetComponents<AbilityBase>();
 
         if (_navMeshAgent != null)
             _navMeshAgent.angularSpeed = 0f;
@@ -49,7 +51,6 @@ public class PlayerController : NetworkBehaviour
             else
                 _cam.enabled = true;
 
-            // Initialize ability HUD for the local player
             AbilityHUD hud = FindFirstObjectByType<AbilityHUD>();
             hud?.Initialize(gameObject);
         }
@@ -132,18 +133,15 @@ public class PlayerController : NetworkBehaviour
 
             if (!_basicAttack.IsOffCooldown())
             {
-                // On cooldown — just move to cursor, ignore the target entirely
                 if (_stateMachine.CanMove)
                     ServerSetDestination(hit.point);
             }
             else if (_basicAttack.IsInRange(nearestEnemy))
             {
-                // In range and off cooldown — attack immediately
                 ServerRequestAttack(targetNob);
             }
             else
             {
-                // Off cooldown but out of range — chase until in range
                 ServerChaseForAttack(targetNob);
             }
         }
@@ -156,16 +154,20 @@ public class PlayerController : NetworkBehaviour
 
     private void HandleAbilities()
     {
-        if (!_stateMachine.CanCast) return;
-
         // Temp test keys — remove when game manager exists
         if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
         if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
 
-        if (Input.GetKeyDown(KeyCode.Q)) { /* cast Q */ }
-        if (Input.GetKeyDown(KeyCode.W)) { /* cast W */ }
-        if (Input.GetKeyDown(KeyCode.E)) { /* cast E */ }
-        if (Input.GetKeyDown(KeyCode.R)) { /* cast R */ }
+        if (!_stateMachine.CanCast) return;
+
+        foreach (AbilityBase ability in _abilities)
+        {
+            if (Input.GetKeyDown(ability.Hotkey))
+            {
+                ability.TryCastAbility();
+                break; // one ability per frame
+            }
+        }
     }
 
     [ServerRpc]
