@@ -5,15 +5,20 @@ public class MinionDeathState : State<MinionStateMachine>
 {
     private const float DespawnDelay = 2f;
     private float _timer;
+    private readonly GameObject _killer;
 
-    public MinionDeathState(MinionStateMachine machine) : base(machine) { }
+    public MinionDeathState(MinionStateMachine machine, GameObject killer) : base(machine)
+    {
+        _killer = killer;
+    }
 
     public override void Enter()
     {
-        Machine.NavMeshAgent.isStopped = true;
         Machine.NavMeshAgent.enabled = false;
+        Machine.NavMeshObstacle.enabled = false; // dead minion shouldn't block pathing
         _timer = 0f;
-        // TODO: gold drop event
+
+        AwardGold();
     }
 
     public override void Update()
@@ -24,4 +29,18 @@ public class MinionDeathState : State<MinionStateMachine>
     }
 
     public override void Exit() { }
+
+    private void AwardGold()
+    {
+        if (_killer == null) return;
+
+        GoldComponent gold = _killer.GetComponent<GoldComponent>();
+        if (gold == null)
+        {
+            Debug.LogWarning($"[MinionDeathState] Killer {_killer.name} has no GoldComponent.");
+            return;
+        }
+
+        gold.Award(Machine.Stats.goldReward);
+    }
 }

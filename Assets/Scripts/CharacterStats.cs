@@ -31,6 +31,9 @@ public class CharacterStats : MonoBehaviour
     public Stat moveSpeed = new();
     public Stat visionRange = new();
 
+    [Header("Misc")]
+    public int goldReward;
+
     private void Awake()
     {
         if (data == null)
@@ -60,5 +63,6 @@ public class CharacterStats : MonoBehaviour
 
         moveSpeed.BaseValue = data.baseMoveSpeed;
         visionRange.BaseValue = data.baseVisionRange;
+        goldReward = data.baseGoldReward;
     }
 }

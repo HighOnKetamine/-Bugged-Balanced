@@ -6,7 +6,7 @@ public class MinionRunState : State<MinionStateMachine>
 
     public override void Enter()
     {
-        Machine.NavMeshAgent.isStopped = false;
+        Machine.SetMoving(true);
         AdvanceToWaypoint();
     }
 
@@ -24,17 +24,14 @@ public class MinionRunState : State<MinionStateMachine>
             Machine.NavMeshAgent.remainingDistance < 0.5f)
         {
             if (Machine.AssignedLane.IsLastWaypoint(Machine.CurrentWaypointIndex))
-                return; // TODO: útok na nexus
+                return; // TODO: attack nexus
 
             Machine.CurrentWaypointIndex++;
             AdvanceToWaypoint();
         }
     }
 
-    public override void Exit()
-    {
-        Machine.NavMeshAgent.isStopped = true;
-    }
+    public override void Exit() { }
 
     private void AdvanceToWaypoint()
     {
@@ -48,7 +45,7 @@ public class MinionRunState : State<MinionStateMachine>
         Collider[] hits = Physics.OverlapSphere(
             Machine.transform.position,
             Machine.aggroRange,
-            LayerMask.GetMask("Characters")
+            LayerMask.GetMask("Targetable")
         );
 
         GameObject nearest = null;
