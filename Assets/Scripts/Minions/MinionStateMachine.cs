@@ -1,52 +1,68 @@
 using UnityEngine;
 using UnityEngine.AI;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshObstacle))]
 [RequireComponent(typeof(HealthComponent))]
 [RequireComponent(typeof(TeamComponent))]
+[RequireComponent(typeof(CharacterStats))]
 public class MinionStateMachine : StateMachine<MinionStateMachine>
 {
-    [Header("Stats")]
-    public float attackDamage = 25f;
-    public float attackRange = 2f;
-    public float attackCooldown = 1.25f;
+    [Header("AI")]
     public float aggroRange = 8f;
-    public int goldReward = 25;
 
-    // --- References ---
     public NavMeshAgent NavMeshAgent { get; private set; }
+    public NavMeshObstacle NavMeshObstacle { get; private set; }
     public HealthComponent Health { get; private set; }
     public TeamComponent Team { get; private set; }
+    public CharacterStats Stats { get; private set; }
 
-    // --- Lane state ---
     public Lane AssignedLane { get; private set; }
     public int CurrentWaypointIndex { get; set; }
-
-    // --- Combat state ---
     public GameObject CurrentTarget { get; set; }
     public float LastAttackTime { get; set; }
 
     private void Awake()
     {
         NavMeshAgent = GetComponent<NavMeshAgent>();
+        NavMeshObstacle = GetComponent<NavMeshObstacle>();
         Health = GetComponent<HealthComponent>();
         Team = GetComponent<TeamComponent>();
+        Stats = GetComponent<CharacterStats>();
 
         if (NavMeshAgent == null) Debug.LogError($"[MinionStateMachine] Missing NavMeshAgent on {gameObject.name}");
+        if (NavMeshObstacle == null) Debug.LogError($"[MinionStateMachine] Missing NavMeshObstacle on {gameObject.name}");
         if (Health == null) Debug.LogError($"[MinionStateMachine] Missing HealthComponent on {gameObject.name}");
         if (Team == null) Debug.LogError($"[MinionStateMachine] Missing TeamComponent on {gameObject.name}");
+        if (Stats == null) Debug.LogError($"[MinionStateMachine] Missing CharacterStats on {gameObject.name}");
     }
 
     [Server]
-    public void Initialize(Lane lane)
+    public void Initialize(Lane lane, sbyte teamId)
     {
         AssignedLane = lane;
-        Team.SetTeam(lane.teamId);
         CurrentWaypointIndex = 0;
+        Team.SetTeam(teamId);
 
-        Health.OnDeath += _ => ChangeState(new MinionDeathState(this));
+        Health.OnDeath += killer => ChangeState(new MinionDeathState(this, killer));
         ChangeState(new MinionRunState(this));
+    }
+
+    public void SetMoving(bool moving)
+    {
+        if (moving)
+        {
+            NavMeshObstacle.enabled = false;
+            NavMeshAgent.enabled = true;
+            NavMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+        }
+        else
+        {
+            NavMeshAgent.isStopped = true;
+            NavMeshAgent.ResetPath();
+            NavMeshAgent.enabled = false;
+            NavMeshObstacle.enabled = true;
+        }
     }
 }

@@ -8,13 +8,16 @@ public class WaveSpawner : NetworkBehaviour
     [Header("Prefabs")]
     [SerializeField] private NetworkObject minionPrefab;
 
+    [Header("Team")]
+    [SerializeField] private sbyte teamId; // 0 = Blue, 1 = Red
+
     [Header("Lanes")]
-    [SerializeField] private Lane[] lanes; // přiřaď všechny lane objekty ze scény
+    [SerializeField] private Lane[] lanes;
 
     [Header("Wave Settings")]
     [SerializeField] private int minionsPerWave = 6;
     [SerializeField] private float timeBetweenWaves = 30f;
-    [SerializeField] private float timeBetweenSpawns = 0.5f; // interval mezi spawnem jednotlivých minionů v jedné vlně
+    [SerializeField] private float timeBetweenSpawns = 0.5f;
 
     private int _waveNumber = 0;
 
@@ -26,7 +29,7 @@ public class WaveSpawner : NetworkBehaviour
 
     private IEnumerator WaveLoop()
     {
-        yield return new WaitForSeconds(5f); // krátká pauza na začátku hry
+        yield return new WaitForSeconds(5f);
 
         while (true)
         {
@@ -54,12 +57,12 @@ public class WaveSpawner : NetworkBehaviour
         Transform spawnPoint = lane.GetWaypoint(0);
         if (spawnPoint == null)
         {
-            Debug.LogError($"[WaveSpawner] Lane {lane.name} má null waypoint na indexu 0!");
+            Debug.LogError($"[WaveSpawner] Lane {lane.name} has null waypoint at index 0!");
             return;
         }
 
         NetworkObject nob = Instantiate(minionPrefab, spawnPoint.position, spawnPoint.rotation);
         InstanceFinder.ServerManager.Spawn(nob);
-        nob.GetComponent<MinionStateMachine>().Initialize(lane);
+        nob.GetComponent<MinionStateMachine>().Initialize(lane, teamId);
     }
 }

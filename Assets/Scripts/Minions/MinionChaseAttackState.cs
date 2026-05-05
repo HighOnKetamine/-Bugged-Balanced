@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class MinionChaseAttackState : State<MinionStateMachine>
 {
+    private bool _isStopped = false;
+
     public MinionChaseAttackState(MinionStateMachine machine) : base(machine) { }
 
     public override void Enter()
     {
-        Machine.NavMeshAgent.isStopped = false;
+        _isStopped = false;
+        Machine.SetMoving(true);
     }
 
     public override void Update()
@@ -28,25 +31,36 @@ public class MinionChaseAttackState : State<MinionStateMachine>
             return;
         }
 
-        if (dist <= Machine.attackRange)
+        if (dist <= Machine.Stats.attackRange.Value)
         {
-            Machine.NavMeshAgent.isStopped = true;
+            if (!_isStopped)
+            {
+                Machine.SetMoving(false);
+                _isStopped = true;
+            }
 
-            if (Time.time - Machine.LastAttackTime >= Machine.attackCooldown)
+            float cooldown = 1f / Machine.Stats.attackSpeed.Value;
+            if (Time.time - Machine.LastAttackTime >= cooldown)
             {
                 Machine.LastAttackTime = Time.time;
-                Machine.CurrentTarget.GetComponent<HealthComponent>()?.TakeDamage(Machine.attackDamage, DamageType.Physical);
+                Machine.CurrentTarget.GetComponent<HealthComponent>()?
+                    .TakeDamage(Machine.Stats.attackDamage.Value, DamageType.Physical);
             }
         }
         else
         {
-            Machine.NavMeshAgent.isStopped = false;
+            if (_isStopped)
+            {
+                Machine.SetMoving(true);
+                _isStopped = false;
+            }
             Machine.NavMeshAgent.SetDestination(Machine.CurrentTarget.transform.position);
         }
     }
 
     public override void Exit()
     {
-        Machine.NavMeshAgent.isStopped = false;
+        _isStopped = false;
+        Machine.SetMoving(true);
     }
 }
