@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using FishNet.Object;
+using FishNet;
 
 public class WaveSpawner : NetworkBehaviour
 {
