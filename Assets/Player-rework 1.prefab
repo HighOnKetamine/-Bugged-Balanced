@@ -1314,6 +1314,7 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
+  autoAttackOnly: 0
 --- !u!114 &404463658085044408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1373,6 +1374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: ee63f3d0f5d1d819988c63d56539dc5d, type: 2}
   resourceType: 0
+  goldReward: 0
 --- !u!114 &7342036148961670440
 MonoBehaviour:
   m_ObjectHideFlags: 0
