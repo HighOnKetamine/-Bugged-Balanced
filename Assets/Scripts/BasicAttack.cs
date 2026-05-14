@@ -6,11 +6,10 @@ public class BasicAttack : NetworkBehaviour
 {
     private CharacterStats _stats;
     private TeamComponent _team;
-
     private float _lastAttackTime;
 
     public event Action<GameObject> OnPreAttack;
-    public event Action<GameObject, float> OnPostAttack; // target, damage done
+    public event Action<GameObject, float> OnPostAttack;
 
     private void Awake()
     {
@@ -32,16 +31,12 @@ public class BasicAttack : NetworkBehaviour
     public bool IsInRange(GameObject target)
     {
         if (target == null) return false;
-
         HealthComponent health = target.GetComponent<HealthComponent>();
         if (health == null || health.IsDead) return false;
-
         float distance = Vector3.Distance(transform.position, target.transform.position);
         if (distance > _stats.attackRange.Value) return false;
-
         TeamComponent targetTeam = target.GetComponent<TeamComponent>();
         if (!_team.IsEnemy(targetTeam)) return false;
-
         return true;
     }
 
@@ -54,18 +49,14 @@ public class BasicAttack : NetworkBehaviour
     public void Attack(GameObject target)
     {
         if (!CanAttack(target)) return;
-
         _lastAttackTime = Time.time;
-
         OnPreAttack?.Invoke(target);
-
         NetworkObject targetNetObj = target.GetComponent<NetworkObject>();
         if (targetNetObj == null)
         {
             Debug.LogWarning($"[BasicAttack] Target {target.name} has no NetworkObject!");
             return;
         }
-
         ServerAttack(targetNetObj);
     }
 
@@ -73,23 +64,18 @@ public class BasicAttack : NetworkBehaviour
     private void ServerAttack(NetworkObject targetNetObj)
     {
         if (targetNetObj == null) return;
-
         HealthComponent health = targetNetObj.GetComponent<HealthComponent>();
         if (health == null)
         {
             Debug.LogWarning($"[BasicAttack] Target {targetNetObj.name} has no HealthComponent!");
             return;
         }
-
         DamageType damageType = _stats.data.basicAttackDamageType;
         float damage = damageType == DamageType.Magical
             ? _stats.abilityPower.Value
             : _stats.attackDamage.Value;
-
-        float recievedDamage = health.TakeDamage(damage, damageType, _stats);
-
-        RpcOnPostAttack(targetNetObj.gameObject, recievedDamage);
-
+        float receivedDamage = health.TakeDamage(damage, damageType, _stats, DamageSource.AutoAttack);
+        RpcOnPostAttack(targetNetObj.gameObject, receivedDamage);
     }
 
     [ObserversRpc]
