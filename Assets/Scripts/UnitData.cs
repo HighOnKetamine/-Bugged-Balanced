@@ -31,4 +31,7 @@ public class UnitData : ScriptableObject
     [Header("Mobility")]
     public float baseMoveSpeed;
     public float baseVisionRange;
+
+    [Header("Misc")]
+    public int baseGoldReward;
 }
