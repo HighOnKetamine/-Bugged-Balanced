@@ -1079,6 +1079,7 @@ GameObject:
   - component: {fileID: 4528726647532828206}
   - component: {fileID: 6717665880531568710}
   - component: {fileID: 3302962189199773943}
+  - component: {fileID: 6643151507186185867}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1315,6 +1316,7 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
+  autoAttackOnly: 0
 --- !u!114 &404463658085044408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1374,6 +1376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: ee63f3d0f5d1d819988c63d56539dc5d, type: 2}
   resourceType: 0
+  goldReward: 0
 --- !u!114 &7342036148961670440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1536,6 +1539,14 @@ MonoBehaviour:
   stateMachine: {fileID: 7342036148961670440}
   agent: {fileID: 88117526587501377}
   visualObjects: []
+  abilityName: WE WO
+  cooldown: 5
+  manaCost: 20
+  hotkey: 101
+  range: 15
+  projectileSpeed: 10
+  shootPoint: {fileID: 260579401929815904}
+  dashDistance: 5
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0

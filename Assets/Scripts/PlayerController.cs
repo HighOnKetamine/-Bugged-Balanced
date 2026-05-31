@@ -34,6 +34,8 @@ public class PlayerController : NetworkBehaviour
         if (_basicAttack == null) Debug.LogError("[PlayerController] No BasicAttack found!");
         if (_stateMachine == null) Debug.LogError("[PlayerController] No PlayerStateMachine found!");
         if (_teamComponent == null) Debug.LogError("[PlayerController] No TeamComponent found!");
+
+        // _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     public override void OnStartClient()

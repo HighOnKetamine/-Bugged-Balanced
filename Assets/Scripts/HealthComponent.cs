@@ -8,8 +8,9 @@ public class HealthComponent : NetworkBehaviour
 {
     private CharacterStats _stats;
 
-    public readonly SyncVar<float> currentHealth = new SyncVar<float>();
+    [SerializeField] public bool autoAttackOnly = false;
 
+    public readonly SyncVar<float> currentHealth = new SyncVar<float>();
     public event Action<float, float> OnHealthChanged;
     public event Action<GameObject> OnDeath;
 
@@ -22,7 +23,6 @@ public class HealthComponent : NetworkBehaviour
         _stats = GetComponent<CharacterStats>();
         if (_stats == null)
             Debug.LogError($"[HealthComponent] No CharacterStats found on {gameObject.name}!");
-
         currentHealth.OnChange += HandleHealthChanged;
     }
 
@@ -37,9 +37,10 @@ public class HealthComponent : NetworkBehaviour
     }
 
     [Server]
-    public float TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null)
+    public float TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null, DamageSource source = DamageSource.Ability)
     {
         if (IsDead) return 0f;
+        if (autoAttackOnly && source != DamageSource.AutoAttack) return 0f;
 
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
