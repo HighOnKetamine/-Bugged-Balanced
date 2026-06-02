@@ -156,9 +156,9 @@ public class PlayerController : NetworkBehaviour
 
     private void HandleAbilities()
     {
-        // Temp test keys — remove when game manager exists
-        if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
-        if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
+        // // Temp test keys — remove when game manager exists
+        // if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
+        // if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
 
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.K) && IsOwner)
@@ -174,7 +174,7 @@ public class PlayerController : NetworkBehaviour
             if (Input.GetKeyDown(ability.Hotkey))
             {
                 ability.TryCastAbility();
-                break; // one ability per frame
+                break;
             }
         }
     }
