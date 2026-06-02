@@ -54,27 +54,27 @@ public class HeroVFXManager : MonoBehaviour
 
     void Update()
     {
-        // Q to Die
-        if (Input.GetKeyDown(KeyCode.Q) && !_isDead)
-        {
-            _isDead = true;
-            StopAllCoroutines();
-            StartCoroutine(DeathRoutine());
-        }
+        // // Q to Die
+        // if (Input.GetKeyDown(KeyCode.Q) && !_isDead)
+        // {
+        //     _isDead = true;
+        //     StopAllCoroutines();
+        //     StartCoroutine(DeathRoutine());
+        // }
 
-        // W to Revive
-        if (Input.GetKeyDown(KeyCode.W) && _isDead)
-        {
-            _isDead = false;
-            StopAllCoroutines();
-            StartCoroutine(ReviveRoutine());
-        }
+        // // W to Revive
+        // if (Input.GetKeyDown(KeyCode.W) && _isDead)
+        // {
+        //     _isDead = false;
+        //     StopAllCoroutines();
+        //     StartCoroutine(ReviveRoutine());
+        // }
 
-        // Space to spawn Damage Popup
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SpawnDamagePopup(Random.Range(10, 99));
-        }
+        // // Space to spawn Damage Popup
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     SpawnDamagePopup(Random.Range(10, 99));
+        // }
     }
 
     public void SpawnDamagePopup(int amount)
