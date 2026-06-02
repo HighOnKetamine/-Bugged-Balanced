@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 366685ab115a71af59b81fd671d78185, type: 3}
+  m_Name: MinionData
+  m_EditorClassIdentifier: 
+  unitName: 
+  baseMaxHealth: 100
+  baseHealthRegen: 0
+  baseMaxMana: 0
+  baseManaRegen: 0
+  resourceType: 2
+  baseAttackDamage: 10
+  baseAbilityPower: 0
+  baseAttackSpeed: 0
+  baseAttackRange: 0
+  baseAbilityHaste: 0
+  baseLethality: 0
+  baseArmorPenPercent: 0
+  baseFlatMagicPen: 0
+  baseMagicPenPercent: 0
+  basicAttackDamageType: 0
+  baseArmor: 10
+  baseMagicResist: 15
+  baseMoveSpeed: 5
+  baseVisionRange: 10
+  baseGoldReward: 0

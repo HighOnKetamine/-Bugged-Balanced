@@ -22,6 +22,7 @@ public class TowerStateMachine : StateMachine<TowerStateMachine>
     public override void OnStartServer()
     {
         base.OnStartServer();
+        Debug.Log($"[TowerStateMachine] OnStartServer fired on {gameObject.name}");
         Initialize(_teamId);
     }
 

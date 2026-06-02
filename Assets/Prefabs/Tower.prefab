@@ -159,7 +159,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 65535
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 17810487542110927894
+  <AssetPathHash>k__BackingField: 1320573448033232951
   SceneId: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 0ab0d9a44986b6457a9a320028daa73d, type: 2}
   resourceType: 2
-  goldReward: 0
+  goldReward: 300
 --- !u!114 &2658795347722530382
 MonoBehaviour:
   m_ObjectHideFlags: 0
