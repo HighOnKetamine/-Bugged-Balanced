@@ -1,7 +1,7 @@
 using System.Collections;
-using UnityEngine;
-using FishNet.Object;
 using FishNet;
+using FishNet.Object;
+using UnityEngine;
 
 public class WaveSpawner : NetworkBehaviour
 {
@@ -9,7 +9,7 @@ public class WaveSpawner : NetworkBehaviour
     [SerializeField] private NetworkObject minionPrefab;
 
     [Header("Team")]
-    [SerializeField] private sbyte teamId; // 0 = Blue, 1 = Red
+    [SerializeField] private sbyte teamId;
 
     [Header("Lanes")]
     [SerializeField] private Lane[] lanes;
@@ -19,18 +19,18 @@ public class WaveSpawner : NetworkBehaviour
     [SerializeField] private float timeBetweenWaves = 30f;
     [SerializeField] private float timeBetweenSpawns = 0.5f;
 
-    private int _waveNumber = 0;
+    private int _waveNumber;
 
-    public override void OnStartServer()
+    // Called by NetworkGameManager.StartGameRoutine() — not auto-started.
+    [Server]
+    public void StartWaves()
     {
-        base.OnStartServer();
         StartCoroutine(WaveLoop());
     }
 
     private IEnumerator WaveLoop()
     {
         yield return new WaitForSeconds(5f);
-
         while (true)
         {
             _waveNumber++;
@@ -60,7 +60,6 @@ public class WaveSpawner : NetworkBehaviour
             Debug.LogError($"[WaveSpawner] Lane {lane.name} has null waypoint at index 0!");
             return;
         }
-
         NetworkObject nob = Instantiate(minionPrefab, spawnPoint.position, spawnPoint.rotation);
         InstanceFinder.ServerManager.Spawn(nob);
         nob.GetComponent<MinionStateMachine>().Initialize(lane, teamId);
