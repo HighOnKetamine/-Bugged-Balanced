@@ -11,15 +11,7 @@ public class TowerIdleState : State<TowerStateMachine>
 
     public override void Update()
     {
-        Collider[] hits = Physics.OverlapSphere(
-            Machine.transform.position,
-            Machine.aggroRange,
-            LayerMask.GetMask("Targetable")
-        );
-        Debug.Log($"[TowerIdle] OverlapSphere hit {hits.Length} colliders in range {Machine.aggroRange}");
-
         GameObject target = FindPriorityTarget();
-        Debug.Log($"[TowerIdle] FindPriorityTarget returned: {(target != null ? target.name : "null")}");
 
         if (target != null)
         {
@@ -46,7 +38,6 @@ public class TowerIdleState : State<TowerStateMachine>
         foreach (Collider col in hits)
         {
             if (col.gameObject == Machine.gameObject) continue;
-            Debug.Log($"[TowerIdle] Hit: {col.gameObject.name}, parent: {col.transform.parent?.name}, hasPlayer: {col.GetComponent<PlayerStateMachine>() != null}, hasMinion: {col.GetComponent<MinionStateMachine>() != null}, hasTeam: {col.GetComponent<TeamComponent>() != null}");
             TeamComponent tc = col.GetComponent<TeamComponent>();
             HealthComponent hc = col.GetComponent<HealthComponent>();
 
