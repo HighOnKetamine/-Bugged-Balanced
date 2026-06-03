@@ -2957,7 +2957,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5195936302609348300, guid: 421b6a94185a91e15b9b1dc9bf74b953, type: 3}
       propertyPath: lanes.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5195936302609348300, guid: 421b6a94185a91e15b9b1dc9bf74b953, type: 3}
       propertyPath: 'lanes.Array.data[0]'
@@ -2966,7 +2966,7 @@ PrefabInstance:
     - target: {fileID: 5195936302609348300, guid: 421b6a94185a91e15b9b1dc9bf74b953, type: 3}
       propertyPath: 'lanes.Array.data[1]'
       value: 
-      objectReference: {fileID: 750627346}
+      objectReference: {fileID: 993750393}
     - target: {fileID: 9055288213106949241, guid: 421b6a94185a91e15b9b1dc9bf74b953, type: 3}
       propertyPath: m_LocalPosition.x
       value: -51.694565

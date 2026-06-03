@@ -18,7 +18,7 @@ MonoBehaviour:
   baseMaxMana: 500
   baseManaRegen: 3
   resourceType: 0
-  baseAttackDamage: 10000
+  baseAttackDamage: 500
   baseAbilityPower: 10000
   baseAttackSpeed: 1
   baseAttackRange: 10

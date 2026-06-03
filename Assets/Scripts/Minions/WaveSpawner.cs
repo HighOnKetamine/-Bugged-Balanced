@@ -21,11 +21,16 @@ public class WaveSpawner : NetworkBehaviour
 
     private int _waveNumber;
 
-    // Called by NetworkGameManager.StartGameRoutine() — not auto-started.
     [Server]
     public void StartWaves()
     {
         StartCoroutine(WaveLoop());
+    }
+
+    [Server]
+    public void StopWaves()
+    {
+        StopAllCoroutines();
     }
 
     private IEnumerator WaveLoop()
@@ -41,13 +46,12 @@ public class WaveSpawner : NetworkBehaviour
 
     private IEnumerator SpawnWave()
     {
-        foreach (Lane lane in lanes)
+        for (int i = 0; i < minionsPerWave; i++)
         {
-            for (int i = 0; i < minionsPerWave; i++)
-            {
+            foreach (Lane lane in lanes)
                 SpawnMinion(lane);
-                yield return new WaitForSeconds(timeBetweenSpawns);
-            }
+
+            yield return new WaitForSeconds(timeBetweenSpawns);
         }
     }
 
