@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 366685ab115a71af59b81fd671d78185, type: 3}
-  m_Name: MinionData
+  m_Name: Nexus
   m_EditorClassIdentifier: 
   unitName: 
-  baseMaxHealth: 100
-  baseHealthRegen: 0
+  baseMaxHealth: 1500
+  baseHealthRegen: 5
   baseMaxMana: 0
   baseManaRegen: 0
-  resourceType: 2
-  baseAttackDamage: 10
+  resourceType: 0
+  baseAttackDamage: 0
   baseAbilityPower: 0
-  baseAttackSpeed: 1
-  baseAttackRange: 2
+  baseAttackSpeed: 0
+  baseAttackRange: 0
   baseAbilityHaste: 0
   baseLethality: 0
   baseArmorPenPercent: 0
   baseFlatMagicPen: 0
   baseMagicPenPercent: 0
   basicAttackDamageType: 0
-  baseArmor: 10
-  baseMagicResist: 15
-  baseMoveSpeed: 5
-  baseVisionRange: 10
-  baseGoldReward: 0
+  baseArmor: 0
+  baseMagicResist: 0
+  baseMoveSpeed: 0
+  baseVisionRange: 0
+  baseGoldReward: 10000

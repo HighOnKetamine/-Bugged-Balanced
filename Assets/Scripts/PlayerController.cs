@@ -4,6 +4,8 @@ using FishNet.Object;
 
 public class PlayerController : NetworkBehaviour
 {
+    public static bool InputDisabled = false;
+
     #region Settings
     [SerializeField] private float attackMoveRadius = 5f;
     [SerializeField] private LayerMask enemyLayer;
@@ -34,8 +36,6 @@ public class PlayerController : NetworkBehaviour
         if (_basicAttack == null) Debug.LogError("[PlayerController] No BasicAttack found!");
         if (_stateMachine == null) Debug.LogError("[PlayerController] No PlayerStateMachine found!");
         if (_teamComponent == null) Debug.LogError("[PlayerController] No TeamComponent found!");
-
-        // _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     public override void OnStartClient()
@@ -55,7 +55,16 @@ public class PlayerController : NetworkBehaviour
 
             AbilityHUD hud = FindFirstObjectByType<AbilityHUD>();
             hud?.Initialize(gameObject);
+
+            NetworkGameManager.OnGameOver += _ => InputDisabled = true;
         }
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        if (IsOwner)
+            NetworkGameManager.OnGameOver -= _ => InputDisabled = true;
     }
 
     private void Update()
@@ -64,6 +73,7 @@ public class PlayerController : NetworkBehaviour
             RotateTowardMovement();
 
         if (!IsOwner || _cam == null || _navMeshAgent == null) return;
+        if (InputDisabled) return;
 
         HandleMovement();
         HandleAttackMove();
@@ -156,15 +166,9 @@ public class PlayerController : NetworkBehaviour
 
     private void HandleAbilities()
     {
-        // // Temp test keys — remove when game manager exists
-        // if (Input.GetKeyDown(KeyCode.T)) ServerSetTeam(0);
-        // if (Input.GetKeyDown(KeyCode.Y)) ServerSetTeam(1);
-
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.K) && IsOwner)
-        {
             GetComponent<HealthComponent>().TakeDamage(99999f, DamageType.True);
-        }
 #endif
 
         if (!_stateMachine.CanCast) return;

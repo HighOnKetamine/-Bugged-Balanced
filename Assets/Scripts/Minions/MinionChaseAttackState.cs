@@ -3,12 +3,15 @@ using UnityEngine;
 public class MinionChaseAttackState : State<MinionStateMachine>
 {
     private bool _isStopped = false;
+    private Vector3 _leashPoint;
+    private const float LeashRadius = 10f;
 
     public MinionChaseAttackState(MinionStateMachine machine) : base(machine) { }
 
     public override void Enter()
     {
         _isStopped = false;
+        _leashPoint = Machine.transform.position;
         Machine.SetMoving(true);
     }
 
@@ -16,6 +19,14 @@ public class MinionChaseAttackState : State<MinionStateMachine>
     {
         if (Machine.CurrentTarget == null ||
             Machine.CurrentTarget.GetComponent<HealthComponent>()?.IsDead == true)
+        {
+            Machine.CurrentTarget = null;
+            Machine.ChangeState(new MinionRunState(Machine));
+            return;
+        }
+
+        float distFromLeash = Vector3.Distance(Machine.transform.position, _leashPoint);
+        if (distFromLeash > LeashRadius)
         {
             Machine.CurrentTarget = null;
             Machine.ChangeState(new MinionRunState(Machine));
@@ -44,7 +55,7 @@ public class MinionChaseAttackState : State<MinionStateMachine>
             {
                 Machine.LastAttackTime = Time.time;
                 Machine.CurrentTarget.GetComponent<HealthComponent>()?
-                    .TakeDamage(Machine.Stats.attackDamage.Value, DamageType.Physical);
+                    .TakeDamage(Machine.Stats.attackDamage.Value, DamageType.Physical, Machine.Stats, DamageSource.AutoAttack);
             }
         }
         else

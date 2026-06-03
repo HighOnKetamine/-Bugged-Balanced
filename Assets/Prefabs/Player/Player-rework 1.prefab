@@ -792,7 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad5b8c92008f4d47a9d001933acf143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 8
+  _componentIndexCache: 12
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
 --- !u!1 &2637252870292049350
@@ -1204,9 +1204,9 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 5
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 3520957700750082057
+  <AssetPathHash>k__BackingField: 17913525889748278210
   SceneId: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 1.49, z: 2.29}
@@ -1228,6 +1228,10 @@ MonoBehaviour:
   - {fileID: 2585458511202501381}
   - {fileID: 7342036148961670440}
   - {fileID: 1326120678031281589}
+  - {fileID: 4528726647532828206}
+  - {fileID: 6717665880531568710}
+  - {fileID: 3302962189199773943}
+  - {fileID: 5588413251143475360}
   - {fileID: 7611761869268265707}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
@@ -1239,7 +1243,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584252702160803057
+  _initializedTimestamp: -8584210889385091338
 --- !u!195 &88117526587501377
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1372,7 +1376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 651245f1ad7ed5f7c805154e8d001841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: ee63f3d0f5d1d819988c63d56539dc5d, type: 2}
+  data: {fileID: 11400000, guid: 2e4e5b3155b10763b86a31eed3f6335a, type: 2}
   resourceType: 0
   goldReward: 0
 --- !u!114 &7342036148961670440
@@ -1446,9 +1450,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d47772fe082e4aa7d985171587970eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 8
   _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: YAY
   cooldown: 5
   manaCost: 20
@@ -1474,9 +1478,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 143650222b527ec1fad04321d83fbf4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 9
   _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2606557240988048400}
 --- !u!114 &3302962189199773943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1489,9 +1493,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aeb26fb089dc037a90469db7214cdf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 10
   _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2606557240988048400}
   health: {fileID: 6152039501473825873}
   mana: {fileID: 2585458511202501381}
   stateMachine: {fileID: 7342036148961670440}
@@ -1509,9 +1513,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b1535dbe1d12dd5b6b49fccd6bb658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 11
   _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: NO
   cooldown: 5
   manaCost: 20
