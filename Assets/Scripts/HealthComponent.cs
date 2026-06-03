@@ -9,6 +9,7 @@ public class HealthComponent : NetworkBehaviour
     private CharacterStats _stats;
 
     [SerializeField] public bool autoAttackOnly = false;
+    [NonSerialized] public bool Invulnerable = false;
 
     public readonly SyncVar<float> currentHealth = new SyncVar<float>();
     public event Action<float, float> OnHealthChanged;
@@ -40,6 +41,7 @@ public class HealthComponent : NetworkBehaviour
     public float TakeDamage(float rawDamage, DamageType damageType, CharacterStats attacker = null, DamageSource source = DamageSource.Ability)
     {
         if (IsDead) return 0f;
+        if (Invulnerable) return 0f;
         if (autoAttackOnly && source != DamageSource.AutoAttack) return 0f;
 
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
@@ -122,7 +124,6 @@ public class HealthComponent : NetworkBehaviour
         string victimName = gameObject.name;
         KillFeedManager.Instance.ReportKill(killerName, victimName);
 
-        // Pass as NetworkObject so FishNet can serialize null safely
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);
     }
