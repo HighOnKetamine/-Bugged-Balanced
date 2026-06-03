@@ -1074,8 +1074,6 @@ GameObject:
   - component: {fileID: 7342036148961670440}
   - component: {fileID: 1326120678031281589}
   - component: {fileID: 4849787816764113830}
-  - component: {fileID: 6803932234606327116}
-  - component: {fileID: 1548710247460741818}
   - component: {fileID: 4528726647532828206}
   - component: {fileID: 6717665880531568710}
   - component: {fileID: 3302962189199773943}
@@ -1436,46 +1434,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6803932234606327116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 200fca8e53124284b917a85ee4a0c2f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterRenderer: {fileID: 3779466796594001418}
-  transitionSpeed: 3
-  plasticColor: {r: 1, g: 1, b: 1, a: 1}
-  sinkDepth: 0.5
-  damagePopupPrefab: {fileID: 2763516297145477364, guid: 96afe94c5f7134d4f8ad82ecf130fc7b, type: 3}
-  spawnHeightOffset: 1.5
-  jitterAmount: 0.5
-  boxColor: {r: 0.2, g: 0.6, b: 1, a: 1}
-  boxHeightMultiplier: 1.3
-  boxWidthMultiplier: 1.2
-  boxLineWidth: 0.04
-  unboxDuration: 1.8
---- !u!114 &1548710247460741818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0436860d423103c41b7d54b861498ee3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blankCoinPrefab: {fileID: 919132149155446097, guid: 1abb435a432b8994d9f4a07660b74c48, type: 3}
-  testSceneRoot: {fileID: 0}
-  duration: 3
-  totalFullFlips: 5
 --- !u!114 &4528726647532828206
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -137,6 +137,5 @@ public class HealthComponent : NetworkBehaviour
     private void HandleHealthChanged(float oldValue, float newValue, bool asServer)
     {
         OnHealthChanged?.Invoke(newValue, Max);
-        Debug.Log($"[{this.gameObject.name}]Health changed {newValue}/{Max}");
     }
 }
