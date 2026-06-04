@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7765466215191186064}
   - component: {fileID: 6716327938548730076}
   - component: {fileID: 2658795347722530382}
+  - component: {fileID: 1459311417966549849}
   m_Layer: 6
   m_Name: Tower
   m_TagString: Untagged
@@ -235,6 +236,25 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 6873827774982837723}
   aggroRange: 12
   _teamId: 0
+--- !u!114 &1459311417966549849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8663169604516235938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca9fed31b6dc53a381c76bad9b83595, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthComponent: {fileID: 7442033430772146600}
+  floatingDmgPrefab: {fileID: 2763516297145477364, guid: 96afe94c5f7134d4f8ad82ecf130fc7b, type: 3}
+  offset: {x: 0, y: 2, z: 0}
+  physicalColor: {r: 1, g: 0.5, b: 0, a: 1}
+  magicalColor: {r: 0.3, g: 0.5, b: 1, a: 1}
+  trueColor: {r: 1, g: 1, b: 1, a: 1}
+  healColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1001 &2364935602264647269
 PrefabInstance:
   m_ObjectHideFlags: 0

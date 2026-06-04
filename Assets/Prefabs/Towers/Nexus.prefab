@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 5594329217849780581}
   - component: {fileID: 1186521197795132230}
   - component: {fileID: 2558978606909174094}
+  - component: {fileID: 8796273807870513955}
   m_Layer: 6
   m_Name: Nexus
   m_TagString: Untagged
@@ -283,3 +284,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8796273807870513955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8438122482161101419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca9fed31b6dc53a381c76bad9b83595, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthComponent: {fileID: 4003156132206925513}
+  floatingDmgPrefab: {fileID: 2763516297145477364, guid: 96afe94c5f7134d4f8ad82ecf130fc7b, type: 3}
+  offset: {x: 0, y: 2, z: 0}
+  physicalColor: {r: 1, g: 0.5, b: 0, a: 1}
+  magicalColor: {r: 0.3, g: 0.5, b: 1, a: 1}
+  trueColor: {r: 1, g: 1, b: 1, a: 1}
+  healColor: {r: 0, g: 1, b: 0, a: 1}
