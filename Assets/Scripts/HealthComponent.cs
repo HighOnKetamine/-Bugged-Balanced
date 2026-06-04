@@ -13,6 +13,8 @@ public class HealthComponent : NetworkBehaviour
 
     public readonly SyncVar<float> currentHealth = new SyncVar<float>();
     public event Action<float, float> OnHealthChanged;
+    public event Action<float, DamageType> OnDamageTaken;
+    public event Action<float> OnHealed;
     public event Action<GameObject> OnDeath;
 
     public float Current => currentHealth.Value;
@@ -48,6 +50,8 @@ public class HealthComponent : NetworkBehaviour
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
         Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
+        RpcOnDamageTaken(finalDamage, damageType);
+
         if (currentHealth.Value <= 0)
             Die(attacker?.gameObject);
 
@@ -59,7 +63,11 @@ public class HealthComponent : NetworkBehaviour
     {
         if (IsDead) return;
         amount *= GetHealingModifier();
+        float before = currentHealth.Value;
         currentHealth.Value = Mathf.Min(Max, currentHealth.Value + amount);
+        float actual = currentHealth.Value - before;
+        if (actual > 20f)
+            RpcOnHealed(actual);
     }
 
     [Server]
@@ -116,6 +124,18 @@ public class HealthComponent : NetworkBehaviour
     }
 
     private float GetHealingModifier() => 1f;
+
+    [ObserversRpc]
+    private void RpcOnDamageTaken(float amount, DamageType damageType)
+    {
+        OnDamageTaken?.Invoke(amount, damageType);
+    }
+
+    [ObserversRpc]
+    private void RpcOnHealed(float amount)
+    {
+        OnHealed?.Invoke(amount);
+    }
 
     [Server]
     private void Die(GameObject killer)
