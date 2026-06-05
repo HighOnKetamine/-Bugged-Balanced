@@ -34,6 +34,9 @@ public class CharacterStats : MonoBehaviour
     [Header("Misc")]
     public int goldReward;
 
+    public int CurrentLevel { get; private set; } = 1;
+    private const float LevelGrowthMultiplier = 0.08f;
+
     private void Awake()
     {
         if (data == null)
@@ -42,27 +45,40 @@ public class CharacterStats : MonoBehaviour
             return;
         }
 
-        maxHealth.BaseValue = data.baseMaxHealth;
-        healthRegen.BaseValue = data.baseHealthRegen;
-        maxMana.BaseValue = data.baseMaxMana;
-        manaRegen.BaseValue = data.baseManaRegen;
         resourceType = data.resourceType;
+        SetLevel(CurrentLevel);
+    }
 
-        attackDamage.BaseValue = data.baseAttackDamage;
-        abilityPower.BaseValue = data.baseAbilityPower;
-        attackSpeed.BaseValue = data.baseAttackSpeed;
-        attackRange.BaseValue = data.baseAttackRange;
-        abilityHaste.BaseValue = data.baseAbilityHaste;
-        lethality.BaseValue = data.baseLethality;
-        armorPenPercent.BaseValue = data.baseArmorPenPercent;
-        flatMagicPen.BaseValue = data.baseFlatMagicPen;
-        magicPenPercent.BaseValue = data.baseMagicPenPercent;
+    public void SetLevel(int level)
+    {
+        CurrentLevel = Mathf.Max(1, level);
+        RecalculateStats();
+    }
 
-        armor.BaseValue = data.baseArmor;
-        magicResist.BaseValue = data.baseMagicResist;
+    private void RecalculateStats()
+    {
+        float multiplier = 1f + (CurrentLevel - 1) * LevelGrowthMultiplier;
 
-        moveSpeed.BaseValue = data.baseMoveSpeed;
-        visionRange.BaseValue = data.baseVisionRange;
-        goldReward = data.baseGoldReward;
+        maxHealth.BaseValue = data.baseMaxHealth * multiplier;
+        healthRegen.BaseValue = data.baseHealthRegen * multiplier;
+        maxMana.BaseValue = data.baseMaxMana * multiplier;
+        manaRegen.BaseValue = data.baseManaRegen * multiplier;
+
+        attackDamage.BaseValue = data.baseAttackDamage * multiplier;
+        abilityPower.BaseValue = data.baseAbilityPower * multiplier;
+        attackSpeed.BaseValue = data.baseAttackSpeed * multiplier;
+        attackRange.BaseValue = data.baseAttackRange * multiplier;
+        abilityHaste.BaseValue = data.baseAbilityHaste * multiplier;
+        lethality.BaseValue = data.baseLethality * multiplier;
+        armorPenPercent.BaseValue = data.baseArmorPenPercent * multiplier;
+        flatMagicPen.BaseValue = data.baseFlatMagicPen * multiplier;
+        magicPenPercent.BaseValue = data.baseMagicPenPercent * multiplier;
+
+        armor.BaseValue = data.baseArmor * multiplier;
+        magicResist.BaseValue = data.baseMagicResist * multiplier;
+
+        moveSpeed.BaseValue = data.baseMoveSpeed * multiplier;
+        visionRange.BaseValue = data.baseVisionRange * multiplier;
+        goldReward = Mathf.RoundToInt(data.baseGoldReward * multiplier);
     }
 }
