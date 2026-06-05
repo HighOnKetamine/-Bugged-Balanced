@@ -179,16 +179,26 @@ public class PlayerController : NetworkBehaviour
 
         if (!_stateMachine.CanCast) return;
 
-        foreach (AbilityBase ability in _abilities)
+        bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+
+        for (int i = 0; i < _abilities.Length; i++)
         {
-            if (Input.GetKeyDown(ability.Hotkey))
-            {
-                ability.TryCastAbility();
-                break;
-            }
+            if (!Input.GetKeyDown(_abilities[i].Hotkey)) continue;
+            if (ctrl)
+                ServerLevelUpAbility(i);
+            else
+                _abilities[i].TryCastAbility();
+            break;
         }
     }
 
+    [ServerRpc]
+    private void ServerLevelUpAbility(int abilityIndex)
+    {
+        if (abilityIndex < 0 || abilityIndex >= _abilities.Length) return;
+        ExperienceComponent exp = GetComponent<ExperienceComponent>();
+        _abilities[abilityIndex].TryLevelUp(exp);
+    }
     [ServerRpc]
     private void ServerSetTeam(sbyte teamId) => GetComponent<TeamComponent>().SetTeam(teamId);
 

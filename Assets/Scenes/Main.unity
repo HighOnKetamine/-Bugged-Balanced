@@ -2708,6 +2708,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 750627347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1094879145
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1186521197795132230, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: _towerCount
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235373191245244039, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: SceneId
+      value: 4276084539
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235373191245244039, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8438122482161101419, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
+      propertyPath: m_Name
+      value: NexusBlue
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
 --- !u!4 &1111558753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6439836105658338454, guid: 0d544f5b6a9d175f8b20e99eaafba714, type: 3}
@@ -4696,19 +4765,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1186521197795132230, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: _towerCount
-      value: 3
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 85.7
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 84.5
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 3038496749887065323, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4752,7 +4821,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8438122482161101419, guid: e8e482f1873e377f286ab99d2487aecb, type: 3}
       propertyPath: m_Name
-      value: Nexus
+      value: NexusRed
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5209,6 +5278,7 @@ SceneRoots:
   - {fileID: 8195582121316290311}
   - {fileID: 920129940}
   - {fileID: 2197362710839824203}
+  - {fileID: 1094879145}
   - {fileID: 1355568044}
   - {fileID: 1246094564}
   - {fileID: 1616195423}
