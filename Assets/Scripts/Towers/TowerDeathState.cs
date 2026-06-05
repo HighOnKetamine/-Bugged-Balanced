@@ -28,7 +28,20 @@ public class TowerDeathState : State<TowerStateMachine>
     {
         _timer += Time.deltaTime;
         if (_timer >= DespawnDelay)
-            InstanceFinder.ServerManager.Despawn(Machine.NetworkObject);
+        {
+            if (InstanceFinder.ServerManager != null && InstanceFinder.ServerManager.Started && Machine.NetworkObject != null)
+            {
+                InstanceFinder.ServerManager.Despawn(Machine.NetworkObject);
+            }
+            else
+            {
+                Debug.LogWarning("[TowerDeathState] ServerManager not available or NetworkObject null; performing local destroy.");
+                if (Machine.NetworkObject != null)
+                    Object.Destroy(Machine.NetworkObject.gameObject);
+                else
+                    Object.Destroy(Machine.gameObject);
+            }
+        }
     }
 
     public override void Exit() { }

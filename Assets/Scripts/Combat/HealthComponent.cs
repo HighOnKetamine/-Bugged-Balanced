@@ -159,13 +159,15 @@ public class HealthComponent : NetworkBehaviour
             killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
+
+        // Fire on server first, then notify clients
         OnDeath?.Invoke(killer);
 
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);
     }
 
-    [ObserversRpc]
+    [ObserversRpc(ExcludeServer = true)]
     private void RpcOnDeath(NetworkObject killerNob)
     {
         GameObject killerObj = killerNob != null ? killerNob.gameObject : null;
