@@ -52,6 +52,7 @@ public class FloatingDmgSpawner : MonoBehaviour
     private void Spawn(float amount, Color color)
     {
         if (floatingDmgPrefab == null) return;
+        Debug.Log($"[FloatingDmgSpawner] Spawning at {transform.position + offset}");
         GameObject go = Instantiate(floatingDmgPrefab, transform.position + offset, Quaternion.identity);
         go.GetComponent<FloatingDmg>()?.SetDamageValue(Mathf.RoundToInt(amount), color);
     }
