@@ -50,6 +50,8 @@ public class HealthComponent : NetworkBehaviour
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
         Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
+        // Invoke local listeners (server) and notify observers (clients)
+        OnDamageTaken?.Invoke(finalDamage, damageType);
         RpcOnDamageTaken(finalDamage, damageType);
 
         if (currentHealth.Value <= 0)
@@ -66,8 +68,13 @@ public class HealthComponent : NetworkBehaviour
         float before = currentHealth.Value;
         currentHealth.Value = Mathf.Min(Max, currentHealth.Value + amount);
         float actual = currentHealth.Value - before;
-        if (actual > 20f)
-            RpcOnHealed(actual);
+        if (actual > 0f)
+        {
+            OnHealed?.Invoke(actual);
+            // Notify observers if the heal is significant
+            if (actual > 20f)
+                RpcOnHealed(actual);
+        }
     }
 
     [Server]
