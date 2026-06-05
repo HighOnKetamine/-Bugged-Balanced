@@ -17,14 +17,12 @@ public class PlayerScoreComponent : NetworkBehaviour
         Deaths.OnChange += HandleScoreChanged;
     }
 
-    [Server]
     public void AwardKill()
     {
         Kills.Value++;
         Debug.Log($"[PlayerScoreComponent] {gameObject.name} kills={Kills.Value}");
     }
 
-    [Server]
     public void AwardDeath()
     {
         Deaths.Value++;

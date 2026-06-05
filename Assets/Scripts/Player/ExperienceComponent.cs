@@ -33,15 +33,11 @@ public class ExperienceComponent : NetworkBehaviour
     {
         base.OnStartNetwork();
         if (!IsServerInitialized) return;
-        if (Level.Value <= 0)
-            Level.Value = 1;
-        if (XPToNextLevel.Value <= 0)
-            XPToNextLevel.Value = CalculateXPForLevel(Level.Value);
-        if (_stats != null)
-            _stats.SetLevel(Level.Value);
+        if (Level.Value <= 0) Level.Value = 1;
+        if (XPToNextLevel.Value <= 0) XPToNextLevel.Value = CalculateXPForLevel(Level.Value);
+        if (_stats != null) _stats.SetLevel(Level.Value);
     }
 
-    [Server]
     public void AwardExperience(int amount)
     {
         if (amount <= 0) return;
@@ -50,7 +46,6 @@ public class ExperienceComponent : NetworkBehaviour
         TryLevelUp();
     }
 
-    [Server]
     private void TryLevelUp()
     {
         while (CurrentXP.Value >= XPToNextLevel.Value)
@@ -58,8 +53,7 @@ public class ExperienceComponent : NetworkBehaviour
             CurrentXP.Value -= XPToNextLevel.Value;
             Level.Value++;
             XPToNextLevel.Value = CalculateXPForLevel(Level.Value);
-            if (_stats != null)
-                _stats.SetLevel(Level.Value);
+            if (_stats != null) _stats.SetLevel(Level.Value);
             Debug.Log($"[Server] {gameObject.name} reached level {Level.Value}.");
         }
     }
@@ -78,8 +72,7 @@ public class ExperienceComponent : NetworkBehaviour
     private void HandleLevelChanged(int oldValue, int newValue, bool asServer)
     {
         OnLevelChanged?.Invoke(newValue);
-        if (!asServer && _stats != null)
-            _stats.SetLevel(newValue);
+        if (!asServer && _stats != null) _stats.SetLevel(newValue);
         OnXPChanged?.Invoke(CurrentXP.Value, XPToNextLevel.Value, newValue);
     }
 
