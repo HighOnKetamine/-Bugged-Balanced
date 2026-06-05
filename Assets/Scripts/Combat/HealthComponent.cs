@@ -50,8 +50,6 @@ public class HealthComponent : NetworkBehaviour
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
         Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
-        // Invoke local listeners (server) and notify observers (clients)
-        OnDamageTaken?.Invoke(finalDamage, damageType);
         RpcOnDamageTaken(finalDamage, damageType);
 
         if (currentHealth.Value <= 0)
@@ -158,13 +156,11 @@ public class HealthComponent : NetworkBehaviour
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
 
-        OnDeath?.Invoke(killer);
-
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);
     }
 
-    [ObserversRpc(ExcludeServer = true)]
+    [ObserversRpc]
     private void RpcOnDeath(NetworkObject killerNob)
     {
         GameObject killerObj = killerNob != null ? killerNob.gameObject : null;
