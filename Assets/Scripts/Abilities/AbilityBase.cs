@@ -21,10 +21,23 @@ public abstract class AbilityBase : NetworkBehaviour
     public string AbilityName => abilityName;
     public float ManaCost => manaCost;
 
+    [Header("Level Scaling")]
+    [SerializeField] private float levelBonusPercent = 0.05f;
+
     protected virtual void Awake()
     {
         _mana = GetComponent<ManaComponent>();
         _stateMachine = GetComponent<PlayerStateMachine>();
+    }
+
+    protected float GetLevelScalingMultiplier()
+    {
+        ExperienceComponent experience = GetComponent<ExperienceComponent>();
+        int level = 1;
+        if (experience != null)
+            level = Mathf.Max(1, experience.Level.Value);
+
+        return 1f + level * levelBonusPercent;
     }
 
     public virtual bool TryCastAbility()

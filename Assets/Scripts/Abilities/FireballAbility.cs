@@ -1,74 +1,30 @@
-// using FishNet.Object;
-// using UnityEngine;
-// using UnityEngine.AI;
+using UnityEngine;
+using FishNet.Object;
 
-// public class FireballAbility : AbilityBase
-// {
-//     [Header("Fireball Settings")]
-//     [SerializeField] private GameObject fireballPrefab;
-//     [SerializeField] private float damage = 30f;
-//     [SerializeField] private float speed = 10f;
-//     [SerializeField] private float range = 15f;
-//     [SerializeField] private Transform shootPoint;
+public class FireballAbility : SkillshotAbility
+{
+    [Header("Fireball")]
+    [SerializeField] private float damage = 40f;
+    [SerializeField] private DamageType damageType = DamageType.Magical;
+    [SerializeField] private LayerMask targetMask;
 
-//     private NavMeshAgent navMeshAgent;
+    [ServerRpc]
+    protected override void ServerCast(Vector3 origin, Vector3 direction)
+    {
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, range, targetMask))
+        {
+            GameObject hitObject = hit.collider.gameObject;
+            if (hitObject == null || hitObject == gameObject) return;
 
-//     private void Start()
-//     {
-//         navMeshAgent = GetComponent<NavMeshAgent>();
-//     }
+            TeamComponent targetTeam = hitObject.GetComponentInParent<TeamComponent>();
+            TeamComponent myTeam = GetComponent<TeamComponent>();
+            if (myTeam == null || targetTeam == null || !myTeam.IsEnemy(targetTeam)) return;
 
-//     protected override void CastAbility()
-//     {
-//         // Stop the player immediately at current position
-//         if (navMeshAgent != null)
-//         {
-//             navMeshAgent.ResetPath();
-//             navMeshAgent.velocity = Vector3.zero;
-//         }
+            HealthComponent health = hitObject.GetComponentInParent<HealthComponent>();
+            if (health == null || health.IsDead) return;
 
-//         Camera cam = GetComponentInChildren<Camera>();
-//         if (cam == null) cam = Camera.main;
-//         if (cam == null) return;
-
-//         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-//         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
-//         {
-//             // Rotate player towards target (ignore Y difference)
-//             Vector3 lookTarget = hit.point;
-//             lookTarget.y = transform.position.y;
-//             transform.LookAt(lookTarget);
-
-//             // Calculate shoot direction from shootPoint to actual hit point, but flat on Y
-//             Vector3 targetPoint = hit.point;
-//             targetPoint.y = shootPoint.position.y;
-//             Vector3 shootDirection = (targetPoint - shootPoint.position).normalized;
-
-//             ServerSpawnFireball(shootPoint.position, shootDirection);
-//         }
-//         else
-//         {
-//             // Fallback if no hit (e.g. looking at sky): shoot forward
-//             ServerSpawnFireball(shootPoint.position, transform.forward);
-//         }
-//     }
-
-//     [ServerRpc]
-//     private void ServerSpawnFireball(Vector3 position, Vector3 direction)
-//     {
-//         if (fireballPrefab == null) return;
-
-//         GameObject fireball = Instantiate(fireballPrefab, position, Quaternion.LookRotation(direction));
-//         Spawn(fireball);
-
-//         FireballProjectile projectile = fireball.GetComponent<FireballProjectile>();
-//         if (projectile != null)
-//         {
-//             projectile.Initialize(damage, this.gameObject);
-//             projectile.Launch(direction * speed);
-//         }
-
-//         // Destroy after range time
-//         Destroy(fireball, range / speed);
-//     }
-// }
+            float scaledDamage = damage * GetLevelScalingMultiplier();
+            health.TakeDamage(scaledDamage, damageType, GetComponent<CharacterStats>());
+        }
+    }
+}
