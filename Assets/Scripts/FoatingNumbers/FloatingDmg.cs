@@ -16,6 +16,10 @@ public class FloatingDmg : MonoBehaviour
     {
         _textMesh = GetComponentInChildren<TextMeshProUGUI>();
         _canvasGroup = GetComponent<CanvasGroup>();
+
+        if (_textMesh == null) Debug.LogError("[FloatingDmg] Missing TextMeshProUGUI!");
+        if (_canvasGroup == null) Debug.LogError("[FloatingDmg] Missing CanvasGroup!");
+
         _timer = visibleTimer;
     }
 

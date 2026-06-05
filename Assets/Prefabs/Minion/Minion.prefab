@@ -231,7 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthComponent: {fileID: 3365572945153861803}
-  floatingDmgPrefab: {fileID: 2763516297145477364, guid: 96afe94c5f7134d4f8ad82ecf130fc7b, type: 3}
+  floatingDmgPrefab: {fileID: 8635129746981290735, guid: 7102a9584c6b93b588640eb5b05b15cf, type: 3}
   offset: {x: 0, y: 2, z: 0}
   physicalColor: {r: 1, g: 0.5, b: 0, a: 1}
   magicalColor: {r: 0.3, g: 0.5, b: 1, a: 1}
