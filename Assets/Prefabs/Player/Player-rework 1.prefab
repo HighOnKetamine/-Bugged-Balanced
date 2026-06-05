@@ -1079,6 +1079,7 @@ GameObject:
   - component: {fileID: 3302962189199773943}
   - component: {fileID: 5588413251143475360}
   - component: {fileID: 4757311422396229803}
+  - component: {fileID: 5375280483157194987}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1459,6 +1460,7 @@ MonoBehaviour:
   cooldown: 5
   manaCost: 20
   hotkey: 119
+  levelBonusPercent: 0.05
   shape: 0
   radius: 4
   fanAngle: 90
@@ -1522,6 +1524,7 @@ MonoBehaviour:
   cooldown: 5
   manaCost: 20
   hotkey: 101
+  levelBonusPercent: 0.05
   range: 15
   projectileSpeed: 10
   shootPoint: {fileID: 260579401929815904}
@@ -1545,6 +1548,19 @@ MonoBehaviour:
   magicalColor: {r: 0.3, g: 0.5, b: 1, a: 1}
   trueColor: {r: 1, g: 1, b: 1, a: 1}
   healColor: {r: 0, g: 1, b: 0, a: 1}
+--- !u!114 &5375280483157194987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a5f900d12ca43c985615095724ea49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  championType: 0
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0
