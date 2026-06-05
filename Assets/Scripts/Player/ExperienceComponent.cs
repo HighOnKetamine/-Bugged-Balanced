@@ -14,7 +14,7 @@ public class ExperienceComponent : NetworkBehaviour
     public readonly SyncVar<int> CurrentXP = new SyncVar<int>(0);
     public readonly SyncVar<int> XPToNextLevel = new SyncVar<int>(100);
 
-    public event Action<int, int, int> OnXPChanged;
+    public event Action<int, int, int> OnXPChanged;  // xp, xpToNext, level
     public event Action<int> OnLevelChanged;
 
     private CharacterStats _stats;
@@ -42,7 +42,7 @@ public class ExperienceComponent : NetworkBehaviour
     {
         if (amount <= 0) return;
         CurrentXP.Value += amount;
-        Debug.Log($"[Server] {gameObject.name} gained {amount} XP. ({CurrentXP.Value}/{XPToNextLevel.Value})");
+        Debug.Log($"[ExperienceComponent] {gameObject.name} gained {amount} XP. ({CurrentXP.Value}/{XPToNextLevel.Value})");
         TryLevelUp();
     }
 
@@ -54,7 +54,7 @@ public class ExperienceComponent : NetworkBehaviour
             Level.Value++;
             XPToNextLevel.Value = CalculateXPForLevel(Level.Value);
             if (_stats != null) _stats.SetLevel(Level.Value);
-            Debug.Log($"[Server] {gameObject.name} reached level {Level.Value}.");
+            Debug.Log($"[ExperienceComponent] {gameObject.name} reached level {Level.Value}.");
         }
     }
 
@@ -65,9 +65,7 @@ public class ExperienceComponent : NetworkBehaviour
     }
 
     private void HandleXPChanged(int oldValue, int newValue, bool asServer)
-    {
-        OnXPChanged?.Invoke(newValue, XPToNextLevel.Value, Level.Value);
-    }
+        => OnXPChanged?.Invoke(newValue, XPToNextLevel.Value, Level.Value);
 
     private void HandleLevelChanged(int oldValue, int newValue, bool asServer)
     {
@@ -77,7 +75,5 @@ public class ExperienceComponent : NetworkBehaviour
     }
 
     private void HandleXPToNextLevelChanged(int oldValue, int newValue, bool asServer)
-    {
-        OnXPChanged?.Invoke(CurrentXP.Value, newValue, Level.Value);
-    }
+        => OnXPChanged?.Invoke(CurrentXP.Value, newValue, Level.Value);
 }

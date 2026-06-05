@@ -1,10 +1,6 @@
 using UnityEngine;
 
-public enum ChampionType
-{
-    Warrior,
-    Mage
-}
+public enum ChampionType { Warrior, Mage }
 
 [DisallowMultipleComponent]
 public class ChampionLoadout : MonoBehaviour
@@ -14,21 +10,26 @@ public class ChampionLoadout : MonoBehaviour
 
     private void Awake()
     {
-        AddRequiredComponents();
+        ValidateRequiredComponents();
         AddChampionAbilities();
     }
 
-    private void AddRequiredComponents()
+    private void ValidateRequiredComponents()
     {
-        EnsureComponent<EffectComponent>();
-        EnsureComponent<ExperienceComponent>();
-        EnsureComponent<GoldComponent>();
-        EnsureComponent<PlayerScoreComponent>();
-        EnsureComponent<InventoryComponent>();
-        EnsureComponent<ShopComponent>();
-
+        if (GetComponent<EffectComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing EffectComponent — add it to the prefab!");
+        if (GetComponent<ExperienceComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing ExperienceComponent — add it to the prefab!");
+        if (GetComponent<GoldComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing GoldComponent — add it to the prefab!");
+        if (GetComponent<PlayerScoreComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing PlayerScoreComponent — add it to the prefab!");
+        if (GetComponent<InventoryComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing InventoryComponent — add it to the prefab!");
+        if (GetComponent<ShopComponent>() == null)
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing ShopComponent — add it to the prefab!");
         if (GetComponent<CharacterStats>() == null)
-            Debug.LogWarning($"[ChampionLoadout] {gameObject.name} is missing CharacterStats. Add CharacterStats manually for proper stat scaling.");
+            Debug.LogError($"[ChampionLoadout] {gameObject.name} missing CharacterStats — add it to the prefab!");
     }
 
     private void AddChampionAbilities()
@@ -49,12 +50,6 @@ public class ChampionLoadout : MonoBehaviour
     }
 
     private void EnsureAbility<T>() where T : AbilityBase
-    {
-        if (GetComponent<T>() != null) return;
-        gameObject.AddComponent<T>();
-    }
-
-    private void EnsureComponent<T>() where T : Component
     {
         if (GetComponent<T>() != null) return;
         gameObject.AddComponent<T>();

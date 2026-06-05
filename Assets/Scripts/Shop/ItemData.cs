@@ -27,27 +27,10 @@ public struct ItemModifier
 
 public enum CharacterStatType
 {
-    MaxHealth,
-    HealthRegen,
-    MaxMana,
-    ManaRegen,
-    AttackDamage,
-    AbilityPower,
-    AttackSpeed,
-    AttackRange,
-    AbilityHaste,
-    Lethality,
-    ArmorPenPercent,
-    FlatMagicPen,
-    MagicPenPercent,
-    Armor,
-    MagicResist,
-    MoveSpeed,
-    VisionRange
+    MaxHealth, HealthRegen, MaxMana, ManaRegen,
+    AttackDamage, AbilityPower, AttackSpeed, AttackRange,
+    AbilityHaste, Lethality, ArmorPenPercent, FlatMagicPen,
+    MagicPenPercent, Armor, MagicResist, MoveSpeed, VisionRange
 }
 
-public enum ModifierType
-{
-    Flat,
-    Percent
-}
+public enum ModifierType { Flat, Percent }
