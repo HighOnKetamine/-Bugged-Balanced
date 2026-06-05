@@ -131,6 +131,14 @@ PrefabInstance:
       propertyPath: _teamId
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3859744486824730545, guid: 0d544f5b6a9d175f8b20e99eaafba714, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5357342205139194888, guid: 0d544f5b6a9d175f8b20e99eaafba714, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6439836105658338454, guid: 0d544f5b6a9d175f8b20e99eaafba714, type: 3}
       propertyPath: m_LocalPosition.x
       value: -9.032808
