@@ -144,6 +144,15 @@ public class HealthComponent : NetworkBehaviour
         string victimName = gameObject.name;
         KillFeedManager.Instance.ReportKill(killerName, victimName);
 
+        GetComponent<PlayerScoreComponent>()?.AwardDeath();
+
+        if (killer != null)
+        {
+            killer.GetComponent<PlayerScoreComponent>()?.AwardKill();
+            killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
+            killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
+        }
+
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);
     }
@@ -153,6 +162,12 @@ public class HealthComponent : NetworkBehaviour
     {
         GameObject killerObj = killerNob != null ? killerNob.gameObject : null;
         OnDeath?.Invoke(killerObj);
+    }
+
+    private int CalculateExperienceReward()
+    {
+        int reward = Mathf.RoundToInt(_stats.maxHealth.Value * 0.25f + _stats.CurrentLevel * 5f + 10f);
+        return Mathf.Max(10, reward);
     }
 
     private void HandleHealthChanged(float oldValue, float newValue, bool asServer)
