@@ -159,6 +159,7 @@ public class HealthComponent : NetworkBehaviour
             killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
+        OnDeath?.Invoke(killer);
 
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);

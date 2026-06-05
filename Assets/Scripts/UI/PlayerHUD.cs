@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerHUD : MonoBehaviour
 {
     [Header("Player HUD")]
+    [SerializeField] private GameObject hudPanel;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI xpText;
     [SerializeField] private RectTransform xpBarFill;
@@ -15,8 +16,21 @@ public class PlayerHUD : MonoBehaviour
     private PlayerScoreComponent _score;
     private GoldComponent _gold;
 
+    private void Awake()
+    {
+        if (hudPanel != null)
+            hudPanel.SetActive(false);
+        else
+            gameObject.SetActive(false);
+    }
+
     public void Initialize(GameObject playerObject)
     {
+        if (hudPanel != null)
+            hudPanel.SetActive(true);
+        else
+            gameObject.SetActive(true);
+
         _experience = playerObject.GetComponent<ExperienceComponent>();
         _score = playerObject.GetComponent<PlayerScoreComponent>();
         _gold = playerObject.GetComponent<GoldComponent>();
