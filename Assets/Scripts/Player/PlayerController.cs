@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using FishNet.Object;
@@ -19,6 +20,7 @@ public class PlayerController : NetworkBehaviour
     private PlayerStateMachine _stateMachine;
     private TeamComponent _teamComponent;
     private AbilityBase[] _abilities;
+    private Action<sbyte> _gameOverCallback;
     #endregion
 
     private void Awake()
@@ -53,18 +55,22 @@ public class PlayerController : NetworkBehaviour
             else
                 _cam.enabled = true;
 
-            AbilityHUD hud = FindFirstObjectByType<AbilityHUD>();
-            hud?.Initialize(gameObject);
+            AbilityHUD abilityHud = FindFirstObjectByType<AbilityHUD>();
+            abilityHud?.Initialize(gameObject);
 
-            NetworkGameManager.OnGameOver += _ => InputDisabled = true;
+            PlayerHUD playerHud = FindFirstObjectByType<PlayerHUD>();
+            playerHud?.Initialize(gameObject);
+
+            _gameOverCallback = _ => InputDisabled = true;
+            NetworkGameManager.OnGameOver += _gameOverCallback;
         }
     }
 
     public override void OnStopClient()
     {
         base.OnStopClient();
-        if (IsOwner)
-            NetworkGameManager.OnGameOver -= _ => InputDisabled = true;
+        if (IsOwner && _gameOverCallback != null)
+            NetworkGameManager.OnGameOver -= _gameOverCallback;
     }
 
     private void Update()

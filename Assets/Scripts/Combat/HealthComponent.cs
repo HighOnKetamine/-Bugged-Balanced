@@ -50,6 +50,8 @@ public class HealthComponent : NetworkBehaviour
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
         Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
+        // Invoke local listeners (server) and notify observers (clients)
+        OnDamageTaken?.Invoke(finalDamage, damageType);
         RpcOnDamageTaken(finalDamage, damageType);
 
         if (currentHealth.Value <= 0)
@@ -66,8 +68,13 @@ public class HealthComponent : NetworkBehaviour
         float before = currentHealth.Value;
         currentHealth.Value = Mathf.Min(Max, currentHealth.Value + amount);
         float actual = currentHealth.Value - before;
-        if (actual > 20f)
-            RpcOnHealed(actual);
+        if (actual > 0f)
+        {
+            OnHealed?.Invoke(actual);
+            // Notify observers if the heal is significant
+            if (actual > 20f)
+                RpcOnHealed(actual);
+        }
     }
 
     [Server]
@@ -144,15 +151,33 @@ public class HealthComponent : NetworkBehaviour
         string victimName = gameObject.name;
         KillFeedManager.Instance.ReportKill(killerName, victimName);
 
+        GetComponent<PlayerScoreComponent>()?.AwardDeath();
+
+        if (killer != null)
+        {
+            killer.GetComponent<PlayerScoreComponent>()?.AwardKill();
+            killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
+            killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
+        }
+
+        // Fire on server first, then notify clients
+        OnDeath?.Invoke(killer);
+
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);
     }
 
-    [ObserversRpc]
+    [ObserversRpc(ExcludeServer = true)]
     private void RpcOnDeath(NetworkObject killerNob)
     {
         GameObject killerObj = killerNob != null ? killerNob.gameObject : null;
         OnDeath?.Invoke(killerObj);
+    }
+
+    private int CalculateExperienceReward()
+    {
+        int reward = Mathf.RoundToInt(_stats.maxHealth.Value * 0.25f + _stats.CurrentLevel * 5f + 10f);
+        return Mathf.Max(10, reward);
     }
 
     private void HandleHealthChanged(float oldValue, float newValue, bool asServer)

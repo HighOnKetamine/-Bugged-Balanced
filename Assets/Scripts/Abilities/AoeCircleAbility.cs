@@ -28,7 +28,8 @@ public class AoeCircleAbility : AoeAbility
             HealthComponent health = col.GetComponent<HealthComponent>();
             if (health == null || health.IsDead) continue;
 
-            health.TakeDamage(damage, damageType, attackerStats);
+            float scaledDamage = damage * GetLevelScalingMultiplier();
+            health.TakeDamage(scaledDamage, damageType, attackerStats);
         }
 
         RpcSpawnVFX(position);

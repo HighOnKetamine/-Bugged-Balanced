@@ -45,7 +45,7 @@ public class MinionStateMachine : StateMachine<MinionStateMachine>
         CurrentWaypointIndex = 0;
         Team.SetTeam(teamId);
 
-        Health.OnDeath += killer => ChangeState(new MinionDeathState(this, killer));
+        Health.OnDeath += _ => ChangeState(new MinionDeathState(this));
         ChangeState(new MinionRunState(this));
     }
 
