@@ -70,8 +70,6 @@ public class HealthComponent : NetworkBehaviour
         float actual = currentHealth.Value - before;
         if (actual > 0f)
         {
-            OnHealed?.Invoke(actual);
-            // Notify observers if the heal is significant
             if (actual > 20f)
                 RpcOnHealed(actual);
         }
@@ -160,7 +158,6 @@ public class HealthComponent : NetworkBehaviour
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
 
-        // Fire on server first, then notify clients
         OnDeath?.Invoke(killer);
 
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
