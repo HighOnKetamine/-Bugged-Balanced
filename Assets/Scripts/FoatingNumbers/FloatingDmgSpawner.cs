@@ -53,6 +53,15 @@ public class FloatingDmgSpawner : MonoBehaviour
     {
         if (floatingDmgPrefab == null) return;
         GameObject go = Instantiate(floatingDmgPrefab, transform.position + offset, Quaternion.identity);
-        go.GetComponent<FloatingDmg>()?.SetDamageValue(Mathf.RoundToInt(amount), color);
+        var fd = go.GetComponent<FloatingDmg>();
+        if (fd != null)
+        {
+            int val = Mathf.RoundToInt(amount);
+            fd.SetDamageValue(val, color);
+        }
+        else
+        {
+            Debug.LogWarning("[FloatingDmgSpawner] FloatingDmg component missing on prefab.");
+        }
     }
 }
