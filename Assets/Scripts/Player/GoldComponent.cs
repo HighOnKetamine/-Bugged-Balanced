@@ -14,19 +14,16 @@ public class GoldComponent : NetworkBehaviour
         Gold.OnChange += HandleGoldChanged;
     }
 
-    [Server]
     public void Award(int amount)
     {
         Gold.Value += amount;
         Debug.Log($"[GoldComponent] {gameObject.name} received {amount} gold. Total: {Gold.Value}");
     }
 
-    [Server]
     public bool Spend(int amount)
     {
         if (amount <= 0) return false;
         if (Gold.Value < amount) return false;
-
         Gold.Value -= amount;
         Debug.Log($"[GoldComponent] {gameObject.name} spent {amount} gold. Total: {Gold.Value}");
         return true;
