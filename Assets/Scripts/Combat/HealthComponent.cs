@@ -48,7 +48,7 @@ public class HealthComponent : NetworkBehaviour
 
         float finalDamage = CalculateDamage(rawDamage, damageType, attacker);
         currentHealth.Value = Mathf.Max(0, currentHealth.Value - finalDamage);
-        Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
+        // Debug.Log($"[Server] {gameObject.name} took {finalDamage} {damageType} damage. HP: {currentHealth.Value}/{Max}");
 
         RpcOnDamageTaken(finalDamage, damageType);
 
