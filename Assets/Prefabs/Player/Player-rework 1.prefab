@@ -1357,6 +1357,8 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
+  projectilePrefab: {fileID: 0}
+  shootPoint: {fileID: 260579401929815904}
 --- !u!114 &2585458511202501381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,19 +1464,36 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: YAY
-  cooldown: 5
-  manaCost: 20
   hotkey: 119
-  levelBonusPercent: 0.05
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
   shape: 0
   radius: 4
   fanAngle: 90
-  damage: 60
   damageType: 1
   targetMask:
     serializedVersion: 2
     m_Bits: 64
-  vfxPrefab: {fileID: 0}
+  _hitVfxPrefab: {fileID: 0}
 --- !u!114 &6717665880531568710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1526,10 +1545,28 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: NO
-  cooldown: 5
-  manaCost: 20
   hotkey: 101
-  levelBonusPercent: 0.05
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
   range: 15
   projectileSpeed: 10
   shootPoint: {fileID: 260579401929815904}

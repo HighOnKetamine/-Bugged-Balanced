@@ -6,7 +6,9 @@ public class AoeCircleAbility : AoeAbility
     [Header("AoE Circle")]
     [SerializeField] private DamageType damageType = DamageType.Magical;
     [SerializeField] private LayerMask targetMask;
-    [SerializeField] private GameObject vfxPrefab;
+    [SerializeField] private GameObject _hitVfxPrefab;
+
+    protected override GameObject hitVfxPrefab => _hitVfxPrefab;
 
     [ServerRpc]
     protected override void ServerCast(Vector3 position)
@@ -24,14 +26,6 @@ public class AoeCircleAbility : AoeAbility
             if (health == null || health.IsDead) continue;
             health.TakeDamage(GetCurrentDamage(), damageType, attackerStats);
         }
-        RpcSpawnVFX(position);
-    }
-
-    [ObserversRpc]
-    private void RpcSpawnVFX(Vector3 position)
-    {
-        if (vfxPrefab == null) return;
-        GameObject vfx = Instantiate(vfxPrefab, position, Quaternion.identity);
-        Destroy(vfx, 2f);
+        RpcSpawnHitVfx(position);
     }
 }

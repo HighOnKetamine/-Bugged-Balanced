@@ -8,6 +8,9 @@ public class PoisonStrikeAbility : TargetedAbility
     [SerializeField] private uint maxStacks = 3;
     [SerializeField] private float tickInterval = 1f;
     [SerializeField] private float duration = 5f;
+    [SerializeField] private GameObject _hitVfxPrefab;
+
+    protected override GameObject hitVfxPrefab => _hitVfxPrefab;
 
     [ServerRpc]
     protected override void ServerCast(GameObject target)
@@ -25,5 +28,6 @@ public class PoisonStrikeAbility : TargetedAbility
         effectComp.ApplyEffect(new DoTEffect(
             target, duration, GetCurrentDamage(), damageType,
             maxStacks, tickInterval, StackBehavior.RefreshDuration));
+        RpcSpawnHitVfx(target.transform.position);
     }
 }
