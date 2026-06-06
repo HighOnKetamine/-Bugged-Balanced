@@ -127,7 +127,10 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 653619440062382434}
   _networkObjectCache: {fileID: 0}
-  hitEffectPrefab: {fileID: 0}
+  speed: 12
+  maxRange: 20
+  hitVfxPrefab: {fileID: 0}
+  hitSound: {fileID: 0}
 --- !u!114 &653619440062382434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,7 +159,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 65535
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 2988701429686867184
+  <AssetPathHash>k__BackingField: 4107253065041720783
   SceneId: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}

@@ -16,7 +16,11 @@ public abstract class AbilityBase : NetworkBehaviour
     [Header("Leveling")]
     [SerializeField] private int maxAbilityLevel = 5;
 
-    public readonly SyncVar<int> AbilityLevel = new SyncVar<int>(0); // 0 = not learned
+    [Header("Audio / Visual")]
+    [SerializeField] private AudioClip castSound;
+    [SerializeField] private GameObject castVfxPrefab; // spawns at caster on cast
+
+    public readonly SyncVar<int> AbilityLevel = new SyncVar<int>(0);
 
     protected float lastCastTime = -999f;
 
@@ -86,6 +90,7 @@ public abstract class AbilityBase : NetworkBehaviour
         if (!CanCast()) return false;
         lastCastTime = Time.time;
         CastAbility();
+        PlayCastEffects();
         return true;
     }
 
@@ -104,6 +109,31 @@ public abstract class AbilityBase : NetworkBehaviour
 
     [ServerRpc]
     private void ConsumeMana() => _mana?.UseMana(GetCurrentManaCost());
+
+    // Spawns castVfxPrefab at caster + plays sound — runs on owner client
+    // Override SpawnHitVfx in abilities that need precise target-position VFX
+    private void PlayCastEffects()
+    {
+        if (castSound != null)
+            AudioSource.PlayClipAtPoint(castSound, transform.position);
+        if (castVfxPrefab != null)
+        {
+            GameObject vfx = Instantiate(castVfxPrefab, transform.position, Quaternion.identity);
+            Destroy(vfx, 2f);
+        }
+    }
+
+    // Override this in abilities to spawn VFX at a specific world position
+    // Called via RpcSpawnHitVfx from ServerCast
+    protected virtual GameObject hitVfxPrefab => null;
+
+    [ObserversRpc]
+    protected void RpcSpawnHitVfx(Vector3 position)
+    {
+        if (hitVfxPrefab == null) return;
+        GameObject vfx = Instantiate(hitVfxPrefab, position, Quaternion.identity);
+        Destroy(vfx, 2f);
+    }
 
     protected abstract void CastAbility();
 }
