@@ -1079,12 +1079,12 @@ GameObject:
   - component: {fileID: 3302962189199773943}
   - component: {fileID: 5588413251143475360}
   - component: {fileID: 4757311422396229803}
-  - component: {fileID: 5375280483157194987}
   - component: {fileID: 6092566553051789045}
   - component: {fileID: 4554766906303384389}
   - component: {fileID: 4677318968287754128}
   - component: {fileID: 6307393687394471851}
   - component: {fileID: 52906659165587212}
+  - component: {fileID: 7241100598610410662}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1357,8 +1357,6 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
-  projectilePrefab: {fileID: 0}
-  shootPoint: {fileID: 260579401929815904}
 --- !u!114 &2585458511202501381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1590,19 +1588,6 @@ MonoBehaviour:
   magicalColor: {r: 0.3, g: 0.5, b: 1, a: 1}
   trueColor: {r: 1, g: 1, b: 1, a: 1}
   healColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!114 &5375280483157194987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55a5f900d12ca43c985615095724ea49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  championType: 0
 --- !u!114 &6092566553051789045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1682,6 +1667,47 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 0}
+--- !u!114 &7241100598610410662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a70d531abff85df58faa08588e83bc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 0}
+  abilityName: Spanking by mommy
+  hotkey: 113
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
+  duration: 5
+  attackDamagePercent: 0.25
+  moveSpeedPercent: 0.15
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0
