@@ -44,7 +44,11 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!IsOwner)
+        // Only disable the NavMeshAgent on non-owner CLIENT instances.
+        // OnStartClient runs on both client and server (host), so ensure we don't
+        // disable the server-side NavMeshAgent which is responsible for authoritative
+        // movement. Leave the agent enabled on the server.
+        if (!IsOwner && !IsServerInitialized)
             _navMeshAgent.enabled = false;
 
         if (IsOwner)
