@@ -12,8 +12,11 @@ public class IdleState : State<PlayerStateMachine>
 
     public override void Update()
     {
-        if (Machine.NavMeshAgent.pathPending) return;
-        if (Machine.NavMeshAgent.remainingDistance > Machine.NavMeshAgent.stoppingDistance)
+        var agent = Machine.NavMeshAgent;
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return;
+
+        if (agent.pathPending) return;
+        if (agent.remainingDistance > agent.stoppingDistance)
             Machine.ChangeState(new RunState(Machine));
     }
 
