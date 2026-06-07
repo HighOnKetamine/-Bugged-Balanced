@@ -19,9 +19,10 @@ public class MinionRunState : State<MinionStateMachine>
             Machine.ChangeState(new MinionChaseAttackState(Machine));
             return;
         }
+        var agent = Machine.NavMeshAgent;
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return;
 
-        if (!Machine.NavMeshAgent.pathPending &&
-            Machine.NavMeshAgent.remainingDistance < 0.5f)
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             if (Machine.AssignedLane.IsLastWaypoint(Machine.CurrentWaypointIndex))
                 return; // TODO: attack nexus
