@@ -18,7 +18,7 @@ MonoBehaviour:
   baseMaxMana: 500
   baseManaRegen: 3
   resourceType: 0
-  baseAttackDamage: 10000
+  baseAttackDamage: 50
   baseAbilityPower: 20
   baseAttackSpeed: 0.65
   baseAttackRange: 10
@@ -30,5 +30,6 @@ MonoBehaviour:
   basicAttackDamageType: 0
   baseArmor: 20
   baseMagicResist: 20
-  baseMoveSpeed: 350
+  baseMoveSpeed: 10
   baseVisionRange: 1500
+  baseGoldReward: 0

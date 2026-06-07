@@ -12,7 +12,6 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
     public HealthComponent Health { get; private set; }
     public GameObject CurrentAttackTarget { get; set; }
     public GameObject AttackMoveTarget { get; set; }
-
     public bool CanMove { get; set; } = true;
     public bool CanAttack { get; set; } = true;
     public bool CanCast { get; set; } = true;
@@ -42,7 +41,13 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
             CurrentAttackTarget = target;
             ChangeState(new BasicAttackState(this));
         };
-
         ChangeState(new IdleState(this));
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (IsServerInitialized && NavMeshAgent != null && Stats != null)
+            NavMeshAgent.speed = Stats.moveSpeed.Value;
     }
 }

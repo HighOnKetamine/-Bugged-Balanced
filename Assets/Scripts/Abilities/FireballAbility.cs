@@ -16,10 +16,9 @@ public class FireballAbility : SkillshotAbility
             Debug.LogWarning("[FireballAbility] No fireball prefab assigned!");
             return;
         }
-
         NetworkObject proj = Instantiate(fireballPrefab, origin, Quaternion.identity);
         InstanceFinder.ServerManager.Spawn(proj);
         proj.GetComponent<FireballProjectile>()?.Initialize(
-            direction, GetCurrentDamage(), damageType, GetComponent<CharacterStats>(), gameObject);
+            direction, GetScaledDamage(), damageType, GetComponent<CharacterStats>(), gameObject);
     }
 }

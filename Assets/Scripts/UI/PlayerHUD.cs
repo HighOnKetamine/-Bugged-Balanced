@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,10 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI killsText;
     [SerializeField] private TextMeshProUGUI deathsText;
 
+    [Header("Abilities")]
+    [SerializeField] private GameObject abilitySlotPrefab;
+    [SerializeField] private Transform abilitiesContainer;
+
     [Header("Panel")]
     [SerializeField] private GameObject hudPanel;
 
@@ -30,6 +35,7 @@ public class PlayerHUD : MonoBehaviour
     private ExperienceComponent _experience;
     private PlayerScoreComponent _score;
     private GoldComponent _gold;
+    private readonly List<AbilitySlot> _abilitySlots = new List<AbilitySlot>();
 
     private void Awake()
     {
@@ -78,6 +84,29 @@ public class PlayerHUD : MonoBehaviour
         {
             _gold.OnGoldChanged += RefreshGold;
             RefreshGold(_gold.Gold.Value);
+        }
+
+        InitializeAbilities(playerObject);
+    }
+
+    private void InitializeAbilities(GameObject playerObject)
+    {
+        if (abilitySlotPrefab == null || abilitiesContainer == null) return;
+
+        foreach (Transform child in abilitiesContainer)
+            Destroy(child.gameObject);
+        _abilitySlots.Clear();
+
+        AbilityBase[] abilities = playerObject.GetComponents<AbilityBase>();
+        foreach (AbilityBase ability in abilities)
+        {
+            GameObject slotGO = Instantiate(abilitySlotPrefab, abilitiesContainer);
+            AbilitySlot slot = slotGO.GetComponent<AbilitySlot>();
+            if (slot != null)
+            {
+                slot.Initialize(ability, null);
+                _abilitySlots.Add(slot);
+            }
         }
     }
 

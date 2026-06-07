@@ -42,18 +42,17 @@ public class FireballProjectile : NetworkBehaviour
         }
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServerInitialized) return;
         if (other.gameObject == _ownerObject) return;
 
-        // Ignore triggers (like ability zones)
         if (other.isTrigger) return;
 
         TeamComponent myTeam = _ownerObject?.GetComponent<TeamComponent>();
         TeamComponent otherTeam = other.GetComponentInParent<TeamComponent>();
 
-        // Don't hit teammates
         if (myTeam != null && otherTeam != null && !myTeam.IsEnemy(otherTeam)) return;
 
         HealthComponent health = other.GetComponentInParent<HealthComponent>();

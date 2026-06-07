@@ -9,6 +9,8 @@ public class RunState : State<PlayerStateMachine>
 
     public override void Update()
     {
+        Machine.NavMeshAgent.speed = Machine.Stats.moveSpeed.Value;
+
         if (Machine.NavMeshAgent.pathPending) return;
 
         if (Machine.AttackMoveTarget != null)
@@ -20,14 +22,12 @@ public class RunState : State<PlayerStateMachine>
                 Machine.ChangeState(new IdleState(Machine));
                 return;
             }
-
             if (!Machine.BasicAttack.IsOffCooldown())
             {
                 Machine.AttackMoveTarget = null;
                 Machine.ChangeState(new IdleState(Machine));
                 return;
             }
-
             if (Machine.BasicAttack.IsInRange(Machine.AttackMoveTarget))
             {
                 var target = Machine.AttackMoveTarget;

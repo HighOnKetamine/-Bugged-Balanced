@@ -12,12 +12,14 @@ public class StatModifierEffect : Effect
     private readonly CharacterStats _stats;
     private readonly Func<CharacterStats, Stat> _statSelector;
     private readonly ModifierType _modifierType;
+    private bool _applied = false;
+    private bool _removed = false;
 
     /// <param name="target">The unit to modify.</param>
     /// <param name="duration">How long the modifier lasts in seconds.</param>
     /// <param name="statSelector">Selects which stat to modify, e.g. <c>stats => stats.moveSpeed</c>.</param>
-    /// <param name="value">Amount to add. Use negative values for reductions (e.g. slows).</param>
-    /// <param name="modifierType">Whether <paramref name="value"/> is a flat or percent modifier.</param>
+    /// <param name="value">Amount to add. Use negative values for reductions.</param>
+    /// <param name="modifierType">Whether value is a flat or percent modifier.</param>
     public StatModifierEffect(
         GameObject target,
         float duration,
@@ -29,16 +31,16 @@ public class StatModifierEffect : Effect
         _stats = target.GetComponent<CharacterStats>();
         _statSelector = statSelector;
         _modifierType = modifierType;
-
         if (_stats == null)
             throw new Exception($"StatModifierEffect: target {target.name} has no CharacterStats!");
-
         OnStart += ApplyModifier;
         OnEnd += RemoveModifier;
     }
 
     private void ApplyModifier()
     {
+        if (_applied) return;
+        _applied = true;
         var stat = _statSelector(_stats);
         if (_modifierType == ModifierType.Flat)
             stat.AddFlat(value);
@@ -48,6 +50,8 @@ public class StatModifierEffect : Effect
 
     private void RemoveModifier()
     {
+        if (_removed) return;
+        _removed = true;
         var stat = _statSelector(_stats);
         if (_modifierType == ModifierType.Flat)
             stat.RemoveFlat(value);

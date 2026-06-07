@@ -42,10 +42,10 @@ public abstract class Effect
     /// <summary>Fired once when the effect duration expires.</summary>
     public event Action OnEnd;
 
-    /// <param name="target">The unit this effect is applied to. Each instance targets exactly one unit.</param>
+    /// <param name="target">The unit this effect is applied to.</param>
     /// <param name="duration">How long the effect lasts in seconds.</param>
-    /// <param name="value">Generic magnitude — damage, heal amount, modifier value, etc.</param>
-    /// <param name="maxStacks">Maximum number of times this effect can stack on one target.</param>
+    /// <param name="value">Generic magnitude.</param>
+    /// <param name="maxStacks">Maximum number of times this effect can stack.</param>
     /// <param name="interval">How often <see cref="Apply"/> is called, in seconds.</param>
     /// <param name="stackBehavior">Whether stacks refresh the shared duration or decay independently.</param>
     public Effect(
@@ -70,9 +70,7 @@ public abstract class Effect
         _stackBehavior = stackBehavior;
     }
 
-    /// <summary>
-    /// Activates the effect. Must be called by <c>EffectComponent</c> when the effect is first applied to a unit.
-    /// </summary>
+    /// <summary>Activates the effect.</summary>
     public void Start()
     {
         elapsed = 0f;
@@ -82,30 +80,19 @@ public abstract class Effect
         OnStart?.Invoke();
     }
 
-    /// <summary>
-    /// Adds a stack. For <see cref="StackBehavior.RefreshDuration"/>, resets the shared timer.
-    /// For <see cref="StackBehavior.IndependentDecay"/>, adds a new independent timer.
-    /// No-op if the effect cannot stack or is already at max stacks.
-    /// </summary>
+    /// <summary>Adds a stack.</summary>
     public void AddStack()
     {
         if (!CanStack || stacks >= maxStacks) return;
         stacks++;
 
         if (_stackBehavior == StackBehavior.RefreshDuration)
-        {
             elapsed = 0f;
-        }
         else
-        {
             _stackElapsed.Add(0f);
-        }
     }
 
-    /// <summary>
-    /// Advances the effect by <paramref name="deltaTime"/> seconds. Called every frame by <c>EffectComponent</c>.
-    /// Fires <see cref="Apply"/> on each interval and raises <see cref="OnEnd"/> when expired.
-    /// </summary>
+    /// <summary>Advances the effect by deltaTime seconds.</summary>
     public void Tick(float deltaTime)
     {
         if (!IsActive && _stackBehavior == StackBehavior.RefreshDuration) return;
@@ -133,7 +120,10 @@ public abstract class Effect
             }
 
             if (stacks == 0)
+            {
                 OnEnd?.Invoke();
+                stacks = uint.MaxValue; // prevent re-firing
+            }
         }
         else
         {
@@ -148,13 +138,13 @@ public abstract class Effect
             }
 
             if (IsExpired)
+            {
                 OnEnd?.Invoke();
+                elapsed = float.MaxValue; // prevent re-firing
+            }
         }
     }
 
-    /// <summary>
-    /// Defines the actual effect behavior. Called automatically on each interval tick.
-    /// Implement this to deal damage, apply a stat modifier, trigger a proc, etc.
-    /// </summary>
+    /// <summary>Defines the actual effect behavior, called on each interval tick.</summary>
     protected abstract void Apply();
 }

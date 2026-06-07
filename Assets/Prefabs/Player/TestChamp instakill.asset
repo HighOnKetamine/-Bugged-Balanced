@@ -30,6 +30,6 @@ MonoBehaviour:
   basicAttackDamageType: 0
   baseArmor: 20
   baseMagicResist: 20
-  baseMoveSpeed: 350
+  baseMoveSpeed: 10
   baseVisionRange: 1500
   baseGoldReward: 0

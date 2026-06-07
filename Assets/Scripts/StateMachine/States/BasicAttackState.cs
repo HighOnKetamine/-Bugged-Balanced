@@ -13,6 +13,7 @@ public class BasicAttackState : State<PlayerStateMachine>
 
     public override void Update()
     {
+        // Rotate toward target
         if (Machine.CurrentAttackTarget != null)
         {
             Vector3 direction = (Machine.CurrentAttackTarget.transform.position - Machine.transform.position).normalized;
@@ -21,8 +22,31 @@ public class BasicAttackState : State<PlayerStateMachine>
                 Machine.transform.rotation = Quaternion.LookRotation(direction);
         }
 
-        if (!Machine.Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        // Target died or gone
+        if (Machine.CurrentAttackTarget == null ||
+            Machine.CurrentAttackTarget.GetComponent<HealthComponent>()?.IsDead == true)
+        {
+            Machine.CurrentAttackTarget = null;
             Machine.ChangeState(new IdleState(Machine));
+            return;
+        }
+
+        // Out of range — chase
+        if (!Machine.BasicAttack.IsInRange(Machine.CurrentAttackTarget))
+        {
+            Machine.NavMeshAgent.SetDestination(Machine.CurrentAttackTarget.transform.position);
+            return;
+        }
+
+        // Stop moving and attack
+        Machine.NavMeshAgent.ResetPath();
+        Machine.NavMeshAgent.velocity = Vector3.zero;
+
+        if (Machine.BasicAttack.IsOffCooldown())
+        {
+            Machine.NetworkAnimator.SetTrigger("Attack");
+            Machine.BasicAttack.Attack(Machine.CurrentAttackTarget);
+        }
     }
 
     public override void Exit() { }

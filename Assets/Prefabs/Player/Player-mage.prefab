@@ -1074,20 +1074,20 @@ GameObject:
   - component: {fileID: 7342036148961670440}
   - component: {fileID: 1326120678031281589}
   - component: {fileID: 4849787816764113830}
-  - component: {fileID: 4528726647532828206}
   - component: {fileID: 6717665880531568710}
   - component: {fileID: 3302962189199773943}
-  - component: {fileID: 5588413251143475360}
   - component: {fileID: 4757311422396229803}
   - component: {fileID: 6092566553051789045}
   - component: {fileID: 4554766906303384389}
   - component: {fileID: 4677318968287754128}
   - component: {fileID: 6307393687394471851}
   - component: {fileID: 52906659165587212}
-  - component: {fileID: 7241100598610410662}
-  - component: {fileID: 1175397733885867844}
+  - component: {fileID: 7629014877064466561}
+  - component: {fileID: 397165413345155626}
+  - component: {fileID: 8570667340831214778}
+  - component: {fileID: 1460696523124285876}
   m_Layer: 6
-  m_Name: Player-rework 1
+  m_Name: Player-mage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1213,9 +1213,9 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 22
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 17913525889748278210
+  <AssetPathHash>k__BackingField: 8641304862130116570
   SceneId: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 1.49, z: 2.29}
@@ -1237,16 +1237,16 @@ MonoBehaviour:
   - {fileID: 2585458511202501381}
   - {fileID: 7342036148961670440}
   - {fileID: 1326120678031281589}
-  - {fileID: 4528726647532828206}
   - {fileID: 6717665880531568710}
   - {fileID: 3302962189199773943}
-  - {fileID: 5588413251143475360}
   - {fileID: 6092566553051789045}
   - {fileID: 4554766906303384389}
   - {fileID: 4677318968287754128}
   - {fileID: 6307393687394471851}
   - {fileID: 52906659165587212}
-  - {fileID: 7241100598610410662}
+  - {fileID: 7629014877064466561}
+  - {fileID: 397165413345155626}
+  - {fileID: 8570667340831214778}
   - {fileID: 7611761869268265707}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
@@ -1258,7 +1258,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584208110856609918
+  _initializedTimestamp: -8584208122768675618
 --- !u!195 &88117526587501377
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1453,54 +1453,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4528726647532828206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d47772fe082e4aa7d985171587970eb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 8
-  _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 2606557240988048400}
-  abilityName: YAY
-  hotkey: 119
-  damageLevels:
-  - 60
-  - 90
-  - 120
-  - 150
-  - 180
-  cooldownLevels:
-  - 10
-  - 9
-  - 8
-  - 7
-  - 6
-  manaCostLevels:
-  - 50
-  - 55
-  - 60
-  - 65
-  - 70
-  apRatio: 0.5
-  adRatio: 0
-  maxAbilityLevel: 5
-  castSound: {fileID: 0}
-  castVfxPrefab: {fileID: 0}
-  shape: 0
-  radius: 4
-  fanAngle: 90
-  damageType: 1
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _hitVfxPrefab: {fileID: 0}
 --- !u!114 &6717665880531568710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1513,7 +1465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 143650222b527ec1fad04321d83fbf4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 9
+  _componentIndexCache: 8
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
 --- !u!114 &3302962189199773943
@@ -1528,7 +1480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aeb26fb089dc037a90469db7214cdf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 10
+  _componentIndexCache: 9
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
   health: {fileID: 6152039501473825873}
@@ -1536,50 +1488,6 @@ MonoBehaviour:
   stateMachine: {fileID: 7342036148961670440}
   agent: {fileID: 88117526587501377}
   visualObjects: []
---- !u!114 &5588413251143475360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b1535dbe1d12dd5b6b49fccd6bb658, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 11
-  _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 2606557240988048400}
-  abilityName: NO
-  hotkey: 101
-  damageLevels:
-  - 60
-  - 90
-  - 120
-  - 150
-  - 180
-  cooldownLevels:
-  - 10
-  - 9
-  - 8
-  - 7
-  - 6
-  manaCostLevels:
-  - 50
-  - 55
-  - 60
-  - 65
-  - 70
-  apRatio: 0.5
-  adRatio: 0
-  maxAbilityLevel: 5
-  castSound: {fileID: 0}
-  castVfxPrefab: {fileID: 0}
-  range: 15
-  projectileSpeed: 10
-  shootPoint: {fileID: 260579401929815904}
-  dashDistance: 5
 --- !u!114 &4757311422396229803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1611,7 +1519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d8085aceaaf6973b53f48765902ea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 12
+  _componentIndexCache: 10
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
 --- !u!114 &4554766906303384389
@@ -1626,7 +1534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b306e4a8c9e35d10b6de6adda545fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 13
+  _componentIndexCache: 11
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
 --- !u!114 &4677318968287754128
@@ -1641,7 +1549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d22d12e4367d2a79ba315f2715e4c39b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 14
+  _componentIndexCache: 12
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
   baseXpToLevel: 100
@@ -1659,7 +1567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff73d8fbacc626fd8a286abc50dee29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 15
+  _componentIndexCache: 13
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
   maxItemCount: 6
@@ -1675,10 +1583,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50cf5be11ac87b4f1a1f3330130d803b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 16
+  _componentIndexCache: 14
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
---- !u!114 &7241100598610410662
+--- !u!114 &7629014877064466561
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1687,13 +1595,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3420293684764454004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a70d531abff85df58faa08588e83bc7, type: 3}
+  m_Script: {fileID: 11500000, guid: 44642c438e6bb8143824951f383463a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 17
+  _componentIndexCache: 15
   _addedNetworkObject: {fileID: 2606557240988048400}
   _networkObjectCache: {fileID: 2606557240988048400}
-  abilityName: Spanking by mommy
+  abilityName: boom
   hotkey: 113
   damageLevels:
   - 60
@@ -1718,10 +1626,108 @@ MonoBehaviour:
   maxAbilityLevel: 5
   castSound: {fileID: 0}
   castVfxPrefab: {fileID: 0}
+  range: 15
+  projectileSpeed: 10
+  shootPoint: {fileID: 0}
+  damageType: 1
+  fireballPrefab: {fileID: 2602132459217602048, guid: 4c135b64d847cdf0fbcddc2f39a4919c, type: 3}
+--- !u!114 &397165413345155626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ccbf594725f5e8ab93a6f2fd5e83af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 16
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 2606557240988048400}
+  abilityName: poison
+  hotkey: 119
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  apRatio: 0.5
+  adRatio: 0
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
+  castRange: 10
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 64
+  damageType: 1
+  maxStacks: 3
+  tickInterval: 1
   duration: 5
-  attackDamagePercent: 0.25
-  moveSpeedPercent: 0.15
---- !u!114 &1175397733885867844
+  spreadRadius: 5
+  spreadMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _hitVfxPrefab: {fileID: 0}
+--- !u!114 &8570667340831214778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96c8278dec57bdb998bec0b647a9e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 17
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 2606557240988048400}
+  abilityName: protect me
+  hotkey: 101
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  apRatio: 0.5
+  adRatio: 0
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
+  armorBonus: 15
+  magicResistBonus: 15
+  duration: 5
+--- !u!114 &1460696523124285876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

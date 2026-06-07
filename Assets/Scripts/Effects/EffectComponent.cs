@@ -18,15 +18,13 @@ public class EffectComponent : NetworkBehaviour
      [Server]
      public void ApplyEffect(Effect effect)
      {
-          var existing = _activeEffects.Find(e => e.GetType() == effect.GetType());
-
+          var existing = _activeEffects.Find(e => e.GetType() == effect.GetType() && e == effect);
           if (existing != null)
           {
                if (existing.CanStack)
                     existing.AddStack();
                return;
           }
-
           effect.OnEnd += () => _toRemove.Add(effect);
           effect.Start();
           _activeEffects.Add(effect);
