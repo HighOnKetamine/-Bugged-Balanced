@@ -43,18 +43,30 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        // Ensure camera reference is always retrieved. Enable the camera only for the owner
-        // so other clients (and server instances) do not render another player's view.
-        _cam = GetComponentInChildren<Camera>();
+
+        // Pass 'true' to find the camera even if it starts disabled in the prefab
+        _cam = GetComponentInChildren<Camera>(true);
+
         if (_cam != null)
-            _cam.enabled = IsOwner;
+        {
+            // Toggle the ENTIRE game object so cameras and audio listeners don't fight
+            _cam.gameObject.SetActive(IsOwner);
+
+            // Explicitly handle the AudioListener component if it's attached to the camera
+            AudioListener audioListener = _cam.GetComponent<AudioListener>();
+            if (audioListener != null)
+            {
+                audioListener.enabled = IsOwner;
+            }
+        }
         else if (IsOwner)
+        {
             Debug.LogError("[PlayerController] No Camera found!");
+        }
 
         // Only disable the NavMeshAgent on non-owner CLIENT instances.
         // OnStartClient runs on both client and server (host), so ensure we don't
-        // disable the server-side NavMeshAgent which is responsible for authoritative
-        // movement. Leave the agent enabled on the server.
+        // disable the server-side NavMeshAgent which is responsible for authoritative movement.
         if (!IsOwner && !IsServer)
             _navMeshAgent.enabled = false;
 
@@ -80,31 +92,8 @@ public class PlayerController : NetworkBehaviour
                 }
                 shopUi.Initialize(gameObject, baseTransform);
             }
-
-            // StartCoroutine(InitializeShopDelayed());
         }
     }
-
-    // private System.Collections.IEnumerator InitializeShopDelayed()
-    // {
-    //     // Wait for team assignment and RespawnManager to be ready
-    //     yield return new WaitForSeconds(0.5f);
-
-    //     ShopUI shopUi = FindFirstObjectByType<ShopUI>();
-    //     if (shopUi != null)
-    //     {
-    //         TeamComponent team = GetComponent<TeamComponent>();
-    //         Transform baseTransform = null;
-    //         if (team != null && RespawnManager.Instance != null)
-    //         {
-    //             Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
-    //             GameObject baseMarker = new GameObject("BaseMarker");
-    //             baseMarker.transform.position = basePos;
-    //             baseTransform = baseMarker.transform;
-    //         }
-    //         shopUi.Initialize(gameObject, baseTransform);
-    //     }
-    // }
 
     public override void OnStopClient()
     {
@@ -118,7 +107,9 @@ public class PlayerController : NetworkBehaviour
         if (IsServerInitialized)
             RotateTowardMovement();
 
-        if (!IsOwner || _cam == null || _navMeshAgent == null) return;
+        // If the camera is deactivated on remote clients, _cam will be inactive 
+        // but still referenced, so we check if it is active in the hierarchy.
+        if (!IsOwner || _cam == null || !_cam.gameObject.activeInHierarchy || _navMeshAgent == null) return;
         if (InputDisabled) return;
 
         HandleMovement();
@@ -239,6 +230,7 @@ public class PlayerController : NetworkBehaviour
         ExperienceComponent exp = GetComponent<ExperienceComponent>();
         _abilities[abilityIndex].TryLevelUp(exp);
     }
+
     [ServerRpc]
     private void ServerSetTeam(sbyte teamId) => GetComponent<TeamComponent>().SetTeam(teamId);
 

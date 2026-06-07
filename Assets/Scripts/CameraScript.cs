@@ -3,8 +3,6 @@ using FishNet.Object;
 
 public class CameraScript : NetworkBehaviour
 {
-
-
     private Quaternion initialRotation;
     private Vector3 initialOffset;
     private Transform parentTransform;
@@ -13,12 +11,12 @@ public class CameraScript : NetworkBehaviour
     {
         base.OnStartClient();
 
+        // If this is our local player's camera, cache the offsets for movement calculation
         if (IsOwner)
         {
-            Camera cam = GetComponent<Camera>();
-            cam.enabled = true;
             initialRotation = transform.rotation;
             parentTransform = transform.parent;
+
             if (parentTransform != null)
             {
                 initialOffset = transform.position - parentTransform.position;
@@ -28,6 +26,7 @@ public class CameraScript : NetworkBehaviour
 
     private void LateUpdate()
     {
+        // Only run the camera follow logic for the local player who owns this camera
         if (IsOwner)
         {
             transform.rotation = initialRotation;
@@ -37,6 +36,4 @@ public class CameraScript : NetworkBehaviour
             }
         }
     }
-
-
 }
