@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf84b3a3e04fe28b18044aeccdccbb6a, type: 3}
   m_Name: Test item 2
   m_EditorClassIdentifier: 
-  itemId: 1
+  itemId: 2
   itemName: vro
   description: YEEEEEEE
   cost: 100
