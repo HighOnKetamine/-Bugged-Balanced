@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using FishNet.Object;
-using FishNet.Connection;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -46,17 +44,16 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        // Only disable on pure clients that don't own this object
-        // Server/host must keep NavMesh enabled for pathfinding
-        if (!IsOwner && !IsServerInitialized)
+        if (!IsOwner)
             _navMeshAgent.enabled = false;
 
         if (IsOwner)
         {
-            // CameraScript handles enabling — just grab the reference for raycasting
-            _cam = GetComponentInChildren<Camera>(true);
+            _cam = GetComponentInChildren<Camera>();
             if (_cam == null)
                 Debug.LogError("[PlayerController] No Camera found!");
+            else
+                _cam.enabled = true;
 
             PlayerHUD playerHud = FindFirstObjectByType<PlayerHUD>();
             playerHud?.Initialize(gameObject);
@@ -64,29 +61,45 @@ public class PlayerController : NetworkBehaviour
             _gameOverCallback = _ => InputDisabled = true;
             NetworkGameManager.OnGameOver += _gameOverCallback;
 
-            StartCoroutine(InitializeShopDelayed());
-        }
-    }
-
-    private IEnumerator InitializeShopDelayed()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        ShopUI shopUi = FindFirstObjectByType<ShopUI>();
-        if (shopUi != null)
-        {
-            TeamComponent team = GetComponent<TeamComponent>();
-            Transform baseTransform = null;
-            if (team != null && RespawnManager.Instance != null)
+            ShopUI shopUi = FindFirstObjectByType<ShopUI>();
+            if (shopUi != null)
             {
-                Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
-                GameObject baseMarker = new GameObject("BaseMarker");
-                baseMarker.transform.position = basePos;
-                baseTransform = baseMarker.transform;
+                TeamComponent team = GetComponent<TeamComponent>();
+                Transform baseTransform = null;
+                if (team != null && RespawnManager.Instance != null)
+                {
+                    Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
+                    GameObject baseMarker = new GameObject("BaseMarker");
+                    baseMarker.transform.position = basePos;
+                    baseTransform = baseMarker.transform;
+                }
+                shopUi.Initialize(gameObject, baseTransform);
             }
-            shopUi.Initialize(gameObject, baseTransform);
+
+            // StartCoroutine(InitializeShopDelayed());
         }
     }
+
+    // private System.Collections.IEnumerator InitializeShopDelayed()
+    // {
+    //     // Wait for team assignment and RespawnManager to be ready
+    //     yield return new WaitForSeconds(0.5f);
+
+    //     ShopUI shopUi = FindFirstObjectByType<ShopUI>();
+    //     if (shopUi != null)
+    //     {
+    //         TeamComponent team = GetComponent<TeamComponent>();
+    //         Transform baseTransform = null;
+    //         if (team != null && RespawnManager.Instance != null)
+    //         {
+    //             Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
+    //             GameObject baseMarker = new GameObject("BaseMarker");
+    //             baseMarker.transform.position = basePos;
+    //             baseTransform = baseMarker.transform;
+    //         }
+    //         shopUi.Initialize(gameObject, baseTransform);
+    //     }
+    // }
 
     public override void OnStopClient()
     {
@@ -221,7 +234,6 @@ public class PlayerController : NetworkBehaviour
         ExperienceComponent exp = GetComponent<ExperienceComponent>();
         _abilities[abilityIndex].TryLevelUp(exp);
     }
-
     [ServerRpc]
     private void ServerSetTeam(sbyte teamId) => GetComponent<TeamComponent>().SetTeam(teamId);
 
@@ -242,13 +254,8 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void ServerSetDestination(Vector3 destination, NetworkConnection sender = null)
+    private void ServerSetDestination(Vector3 destination)
     {
-        if (sender == null || sender.ClientId != NetworkObject.Owner.ClientId)
-        {
-            Debug.LogWarning($"[ServerSetDestination] Ignored RPC from client {sender?.ClientId}.");
-            return;
-        }
         _stateMachine.AttackMoveTarget = null;
         StopMovement();
         _navMeshAgent.SetDestination(destination);
@@ -257,13 +264,8 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void ServerChaseForAttack(NetworkObject target, NetworkConnection sender = null)
+    private void ServerChaseForAttack(NetworkObject target)
     {
-        if (sender == null || sender.ClientId != NetworkObject.Owner.ClientId)
-        {
-            Debug.LogWarning($"[ServerChaseForAttack] Ignored RPC from client {sender?.ClientId}.");
-            return;
-        }
         _stateMachine.AttackMoveTarget = target.gameObject;
         StopMovement();
         _navMeshAgent.SetDestination(target.transform.position);
@@ -272,13 +274,8 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void ServerRequestAttack(NetworkObject target, NetworkConnection sender = null)
+    private void ServerRequestAttack(NetworkObject target)
     {
-        if (sender == null || sender.ClientId != NetworkObject.Owner.ClientId)
-        {
-            Debug.LogWarning($"[ServerRequestAttack] Ignored RPC from client {sender?.ClientId}.");
-            return;
-        }
         if (target == null) return;
         _basicAttack.Attack(target.gameObject);
     }
