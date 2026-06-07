@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 200fb782a6adfa3949c9815b2923aef8, type: 3}
   m_Name: TestChar
   m_EditorClassIdentifier: 
-  characterName: sad character
+  characterName: warrior
   thumbnail: {fileID: 21300000, guid: 8afe6f2548a6c664fbc0dd5ec95642d1, type: 3}
   playerPrefab: {fileID: 2606557240988048400, guid: 98cc8e57f52478745981549d3ab985e8, type: 3}
