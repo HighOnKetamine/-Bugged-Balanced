@@ -19,6 +19,6 @@ MonoBehaviour:
   icon: {fileID: 0}
   allowMultiple: 0
   modifiers:
-  - stat: 15
-    modifierType: 1
-    value: 100
+  - stat: 0
+    modifierType: 0
+    value: 10000

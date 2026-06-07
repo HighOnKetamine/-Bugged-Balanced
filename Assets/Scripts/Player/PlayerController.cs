@@ -60,20 +60,29 @@ public class PlayerController : NetworkBehaviour
 
             _gameOverCallback = _ => InputDisabled = true;
             NetworkGameManager.OnGameOver += _gameOverCallback;
-            ShopUI shopUi = FindFirstObjectByType<ShopUI>();
-            if (shopUi != null)
+
+            StartCoroutine(InitializeShopDelayed());
+        }
+    }
+
+    private System.Collections.IEnumerator InitializeShopDelayed()
+    {
+        // Wait for team assignment and RespawnManager to be ready
+        yield return new WaitForSeconds(0.5f);
+
+        ShopUI shopUi = FindFirstObjectByType<ShopUI>();
+        if (shopUi != null)
+        {
+            TeamComponent team = GetComponent<TeamComponent>();
+            Transform baseTransform = null;
+            if (team != null && RespawnManager.Instance != null)
             {
-                TeamComponent team = GetComponent<TeamComponent>();
-                Transform baseTransform = null;
-                if (team != null && RespawnManager.Instance != null)
-                {
-                    Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
-                    GameObject baseMarker = new GameObject("BaseMarker");
-                    baseMarker.transform.position = basePos;
-                    baseTransform = baseMarker.transform;
-                }
-                shopUi.Initialize(gameObject, baseTransform);
+                Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
+                GameObject baseMarker = new GameObject("BaseMarker");
+                baseMarker.transform.position = basePos;
+                baseTransform = baseMarker.transform;
             }
+            shopUi.Initialize(gameObject, baseTransform);
         }
     }
 
