@@ -1,39 +1,28 @@
 using UnityEngine;
-using FishNet.Object;
 
-public class CameraScript : NetworkBehaviour
+public class CameraScript : MonoBehaviour // Changed from NetworkBehaviour to MonoBehaviour to simplify
 {
     private Quaternion initialRotation;
     private Vector3 initialOffset;
     private Transform parentTransform;
+    private bool isInitialized = false;
 
-    public override void OnStartClient()
+    // The PlayerController will call this to manually kick off the camera logic safely
+    public void InitializeCamera(Transform playerTransform)
     {
-        base.OnStartClient();
-
-        // If this is our local player's camera, cache the offsets for movement calculation
-        if (IsOwner)
-        {
-            initialRotation = transform.rotation;
-            parentTransform = transform.parent;
-
-            if (parentTransform != null)
-            {
-                initialOffset = transform.position - parentTransform.position;
-            }
-        }
+        parentTransform = playerTransform;
+        initialRotation = transform.rotation;
+        initialOffset = transform.position - parentTransform.position;
+        isInitialized = true;
     }
 
     private void LateUpdate()
     {
-        // Only run the camera follow logic for the local player who owns this camera
-        if (IsOwner)
+        // Only follow if initialized (which only happens for the local owner)
+        if (isInitialized && parentTransform != null)
         {
             transform.rotation = initialRotation;
-            if (parentTransform != null)
-            {
-                transform.position = parentTransform.position + initialOffset;
-            }
+            transform.position = parentTransform.position + initialOffset;
         }
     }
 }
