@@ -61,30 +61,45 @@ public class PlayerController : NetworkBehaviour
             _gameOverCallback = _ => InputDisabled = true;
             NetworkGameManager.OnGameOver += _gameOverCallback;
 
-            StartCoroutine(InitializeShopDelayed());
-        }
-    }
-
-    private System.Collections.IEnumerator InitializeShopDelayed()
-    {
-        // Wait for team assignment and RespawnManager to be ready
-        yield return new WaitForSeconds(0.5f);
-
-        ShopUI shopUi = FindFirstObjectByType<ShopUI>();
-        if (shopUi != null)
-        {
-            TeamComponent team = GetComponent<TeamComponent>();
-            Transform baseTransform = null;
-            if (team != null && RespawnManager.Instance != null)
+            ShopUI shopUi = FindFirstObjectByType<ShopUI>();
+            if (shopUi != null)
             {
-                Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
-                GameObject baseMarker = new GameObject("BaseMarker");
-                baseMarker.transform.position = basePos;
-                baseTransform = baseMarker.transform;
+                TeamComponent team = GetComponent<TeamComponent>();
+                Transform baseTransform = null;
+                if (team != null && RespawnManager.Instance != null)
+                {
+                    Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
+                    GameObject baseMarker = new GameObject("BaseMarker");
+                    baseMarker.transform.position = basePos;
+                    baseTransform = baseMarker.transform;
+                }
+                shopUi.Initialize(gameObject, baseTransform);
             }
-            shopUi.Initialize(gameObject, baseTransform);
+
+            // StartCoroutine(InitializeShopDelayed());
         }
     }
+
+    // private System.Collections.IEnumerator InitializeShopDelayed()
+    // {
+    //     // Wait for team assignment and RespawnManager to be ready
+    //     yield return new WaitForSeconds(0.5f);
+
+    //     ShopUI shopUi = FindFirstObjectByType<ShopUI>();
+    //     if (shopUi != null)
+    //     {
+    //         TeamComponent team = GetComponent<TeamComponent>();
+    //         Transform baseTransform = null;
+    //         if (team != null && RespawnManager.Instance != null)
+    //         {
+    //             Vector3 basePos = RespawnManager.Instance.GetSpawnPoint(team.teamId.Value);
+    //             GameObject baseMarker = new GameObject("BaseMarker");
+    //             baseMarker.transform.position = basePos;
+    //             baseTransform = baseMarker.transform;
+    //         }
+    //         shopUi.Initialize(gameObject, baseTransform);
+    //     }
+    // }
 
     public override void OnStopClient()
     {
