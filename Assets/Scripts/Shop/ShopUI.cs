@@ -40,32 +40,41 @@ public class ShopUI : MonoBehaviour
 
     private void Update()
     {
-        if (!Input.GetKeyDown(KeyCode.P)) return;
-
-        if (_isOpen)
+        // --- AUTO-CLOSE LOGIC ---
+        // If the shop is open and the player walks too far away, close it automatically.
+        if (_isOpen && !IsNearBase())
         {
             CloseShop();
-            return;
         }
 
-        if (!IsNearBase())
+        // Handle manual opening/closing via keypress
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            if (statusText != null)
+            if (_isOpen)
             {
-                statusText.text = "Return to base to shop!";
-                statusText.gameObject.SetActive(true);
-                CancelInvoke(nameof(HideStatus));
-                Invoke(nameof(HideStatus), 2f);
+                CloseShop();
+                return;
             }
-            return;
-        }
 
-        OpenShop();
+            if (!IsNearBase())
+            {
+                if (statusText != null)
+                {
+                    statusText.text = "Return to base to shop!";
+                    statusText.gameObject.SetActive(true);
+                    CancelInvoke(nameof(HideStatus));
+                    Invoke(nameof(HideStatus), 2f);
+                }
+                return;
+            }
+
+            OpenShop();
+        }
     }
 
     private bool IsNearBase()
     {
-        if (_baseTransform == null) return false;
+        if (_baseTransform == null || _shopComponent == null) return false;
         return Vector3.Distance(
             _shopComponent.transform.position,
             _baseTransform.position) <= shopRadius;
@@ -110,17 +119,17 @@ public class ShopUI : MonoBehaviour
         if (icon != null && item.icon != null)
             icon.sprite = item.icon;
 
-        // Name
+        // Name (Fixed sub-child path)
         TextMeshProUGUI nameText = slot.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
         if (nameText != null)
             nameText.text = item.itemName;
 
-        // Cost
+        // Cost (Fixed sub-child path)
         TextMeshProUGUI costText = slot.transform.Find("Cost")?.GetComponent<TextMeshProUGUI>();
         if (costText != null)
             costText.text = $"{item.cost}g";
 
-        // Description
+        // Description (Fixed sub-child path)
         TextMeshProUGUI descText = slot.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
         if (descText != null)
             descText.text = item.description;
