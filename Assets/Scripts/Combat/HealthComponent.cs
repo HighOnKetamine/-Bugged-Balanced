@@ -147,11 +147,17 @@ public class HealthComponent : NetworkBehaviour
         string victimName = gameObject.name;
         KillFeedManager.Instance.ReportKill(killerName, victimName);
 
+        // Award death if victim is a player
         GetComponent<PlayerScoreComponent>()?.AwardDeath();
 
         if (killer != null)
         {
-            killer.GetComponent<PlayerScoreComponent>()?.AwardKill();
+            // Only award a kill to the killer's score if the victim was a player.
+            if (GetComponent<PlayerScoreComponent>() != null && killer.GetComponent<PlayerScoreComponent>() != null)
+            {
+                killer.GetComponent<PlayerScoreComponent>()?.AwardKill();
+            }
+
             killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
