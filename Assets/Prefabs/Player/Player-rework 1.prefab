@@ -1074,10 +1074,8 @@ GameObject:
   - component: {fileID: 7342036148961670440}
   - component: {fileID: 1326120678031281589}
   - component: {fileID: 4849787816764113830}
-  - component: {fileID: 4528726647532828206}
   - component: {fileID: 6717665880531568710}
   - component: {fileID: 3302962189199773943}
-  - component: {fileID: 5588413251143475360}
   - component: {fileID: 4757311422396229803}
   - component: {fileID: 6092566553051789045}
   - component: {fileID: 4554766906303384389}
@@ -1085,6 +1083,8 @@ GameObject:
   - component: {fileID: 6307393687394471851}
   - component: {fileID: 52906659165587212}
   - component: {fileID: 7241100598610410662}
+  - component: {fileID: 4528726647532828206}
+  - component: {fileID: 5588413251143475360}
   - component: {fileID: 1175397733885867844}
   m_Layer: 6
   m_Name: Player-rework 1
@@ -1453,54 +1453,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4528726647532828206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d47772fe082e4aa7d985171587970eb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 8
-  _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 2606557240988048400}
-  abilityName: YAY
-  hotkey: 119
-  damageLevels:
-  - 60
-  - 90
-  - 120
-  - 150
-  - 180
-  cooldownLevels:
-  - 10
-  - 9
-  - 8
-  - 7
-  - 6
-  manaCostLevels:
-  - 50
-  - 55
-  - 60
-  - 65
-  - 70
-  apRatio: 0.5
-  adRatio: 0
-  maxAbilityLevel: 5
-  castSound: {fileID: 0}
-  castVfxPrefab: {fileID: 0}
-  shape: 0
-  radius: 4
-  fanAngle: 90
-  damageType: 1
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _hitVfxPrefab: {fileID: 0}
 --- !u!114 &6717665880531568710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1536,50 +1488,6 @@ MonoBehaviour:
   stateMachine: {fileID: 7342036148961670440}
   agent: {fileID: 88117526587501377}
   visualObjects: []
---- !u!114 &5588413251143475360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3420293684764454004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b1535dbe1d12dd5b6b49fccd6bb658, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 11
-  _addedNetworkObject: {fileID: 2606557240988048400}
-  _networkObjectCache: {fileID: 2606557240988048400}
-  abilityName: NO
-  hotkey: 101
-  damageLevels:
-  - 60
-  - 90
-  - 120
-  - 150
-  - 180
-  cooldownLevels:
-  - 10
-  - 9
-  - 8
-  - 7
-  - 6
-  manaCostLevels:
-  - 50
-  - 55
-  - 60
-  - 65
-  - 70
-  apRatio: 0.5
-  adRatio: 0
-  maxAbilityLevel: 5
-  castSound: {fileID: 0}
-  castVfxPrefab: {fileID: 0}
-  range: 15
-  projectileSpeed: 10
-  shootPoint: {fileID: 260579401929815904}
-  dashDistance: 5
 --- !u!114 &4757311422396229803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1695,6 +1603,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: Spanking by mommy
   hotkey: 113
+  abilityIcon: {fileID: 21300000, guid: 4675f6720e2f69145b1d090835c48b8f, type: 3}
   damageLevels:
   - 60
   - 90
@@ -1721,6 +1630,100 @@ MonoBehaviour:
   duration: 5
   attackDamagePercent: 0.25
   moveSpeedPercent: 0.15
+--- !u!114 &4528726647532828206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d47772fe082e4aa7d985171587970eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 8
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 2606557240988048400}
+  abilityName: YAY
+  hotkey: 119
+  abilityIcon: {fileID: 21300000, guid: ab61dc61db5b7b746a8c22c0a12eb33d, type: 3}
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  apRatio: 0.5
+  adRatio: 0
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
+  shape: 0
+  radius: 4
+  fanAngle: 90
+  damageType: 1
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _hitVfxPrefab: {fileID: 0}
+--- !u!114 &5588413251143475360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0b1535dbe1d12dd5b6b49fccd6bb658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 11
+  _addedNetworkObject: {fileID: 2606557240988048400}
+  _networkObjectCache: {fileID: 2606557240988048400}
+  abilityName: NO
+  hotkey: 101
+  abilityIcon: {fileID: 0}
+  damageLevels:
+  - 60
+  - 90
+  - 120
+  - 150
+  - 180
+  cooldownLevels:
+  - 10
+  - 9
+  - 8
+  - 7
+  - 6
+  manaCostLevels:
+  - 50
+  - 55
+  - 60
+  - 65
+  - 70
+  apRatio: 0.5
+  adRatio: 0
+  maxAbilityLevel: 5
+  castSound: {fileID: 0}
+  castVfxPrefab: {fileID: 0}
+  range: 15
+  projectileSpeed: 10
+  shootPoint: {fileID: 260579401929815904}
+  dashDistance: 5
 --- !u!114 &1175397733885867844
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1603,6 +1603,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: boom
   hotkey: 113
+  abilityIcon: {fileID: 21300000, guid: ea98c795b6b7a684d8006116d06883e4, type: 3}
   damageLevels:
   - 60
   - 90
@@ -1648,6 +1649,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: poison
   hotkey: 119
+  abilityIcon: {fileID: 0}
   damageLevels:
   - 60
   - 90
@@ -1701,6 +1703,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 2606557240988048400}
   abilityName: protect me
   hotkey: 101
+  abilityIcon: {fileID: 21300000, guid: 1d2a70a868bae4f4f9750b746f068f34, type: 3}
   damageLevels:
   - 60
   - 90

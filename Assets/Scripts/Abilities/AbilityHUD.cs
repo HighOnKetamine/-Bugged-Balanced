@@ -9,7 +9,7 @@ public class AbilityHUD : MonoBehaviour
     // Call this from PlayerController once IsOwner is confirmed
     public void Initialize(GameObject playerObject)
     {
-        AbilityBase[] abilities = playerObject.GetComponents<AbilityBase>();
+        AbilityBase[] abilities = playerObject.GetComponentsInChildren<AbilityBase>(true);
 
         foreach (AbilityBase ability in abilities)
         {
@@ -17,7 +17,7 @@ public class AbilityHUD : MonoBehaviour
             AbilitySlot slot = slotGO.GetComponent<AbilitySlot>();
 
             if (slot != null)
-                slot.Initialize(ability, null); // pass icon sprite here later
+                slot.Initialize(ability, ability.AbilityIcon);
         }
     }
 }

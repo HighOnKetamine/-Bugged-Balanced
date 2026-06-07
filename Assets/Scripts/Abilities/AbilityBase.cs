@@ -7,6 +7,7 @@ public abstract class AbilityBase : NetworkBehaviour
     [Header("Ability Settings")]
     [SerializeField] protected string abilityName;
     [SerializeField] protected KeyCode hotkey = KeyCode.Q;
+    [SerializeField] private Sprite abilityIcon;
 
     [Header("Per-Level Stats (index 0 = level 1)")]
     [SerializeField] private float[] damageLevels = { 60f, 90f, 120f, 150f, 180f };
@@ -32,6 +33,7 @@ public abstract class AbilityBase : NetworkBehaviour
 
     public KeyCode Hotkey => hotkey;
     public string AbilityName => abilityName;
+    public Sprite AbilityIcon => abilityIcon;
     public int MaxAbilityLevel => maxAbilityLevel;
     public bool IsLearned => AbilityLevel.Value > 0;
     public bool IsOnCooldown => RemainingCooldown > 0f;
