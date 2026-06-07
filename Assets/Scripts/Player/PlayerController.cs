@@ -46,18 +46,17 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        // Only disable NavMesh on pure clients that don't own this object
-        // Server (host) must keep it enabled for pathfinding
+        // Only disable on pure clients that don't own this object
+        // Server/host must keep NavMesh enabled for pathfinding
         if (!IsOwner && !IsServerInitialized)
             _navMeshAgent.enabled = false;
 
         if (IsOwner)
         {
-            _cam = GetComponentInChildren<Camera>(true); // true = include inactive
+            // CameraScript handles enabling — just grab the reference for raycasting
+            _cam = GetComponentInChildren<Camera>(true);
             if (_cam == null)
                 Debug.LogError("[PlayerController] No Camera found!");
-            else
-                _cam.enabled = true;
 
             PlayerHUD playerHud = FindFirstObjectByType<PlayerHUD>();
             playerHud?.Initialize(gameObject);
