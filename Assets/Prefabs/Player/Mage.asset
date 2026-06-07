@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: 
   characterName: Mage
-  thumbnail: {fileID: 0}
+  thumbnail: {fileID: 21300000, guid: c4de93b860d8662409039cf1c4cabe4d, type: 3}
   playerPrefab: {fileID: 2606557240988048400, guid: 1420e15870c9be677a51dd0c67e169b7, type: 3}

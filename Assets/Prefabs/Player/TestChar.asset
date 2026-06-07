@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: TestChar
   m_EditorClassIdentifier: 
   characterName: sad character
-  thumbnail: {fileID: 0}
+  thumbnail: {fileID: 21300000, guid: 8afe6f2548a6c664fbc0dd5ec95642d1, type: 3}
   playerPrefab: {fileID: 2606557240988048400, guid: 98cc8e57f52478745981549d3ab985e8, type: 3}

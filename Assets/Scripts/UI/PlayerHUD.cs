@@ -97,14 +97,14 @@ public class PlayerHUD : MonoBehaviour
             Destroy(child.gameObject);
         _abilitySlots.Clear();
 
-        AbilityBase[] abilities = playerObject.GetComponents<AbilityBase>();
+        AbilityBase[] abilities = playerObject.GetComponentsInChildren<AbilityBase>(true);
         foreach (AbilityBase ability in abilities)
         {
             GameObject slotGO = Instantiate(abilitySlotPrefab, abilitiesContainer);
             AbilitySlot slot = slotGO.GetComponent<AbilitySlot>();
             if (slot != null)
             {
-                slot.Initialize(ability, null);
+                slot.Initialize(ability, ability.AbilityIcon);
                 _abilitySlots.Add(slot);
             }
         }
