@@ -13,11 +13,21 @@ public class RecallAbility : NetworkBehaviour
     private Coroutine _recallCoroutine;
     private PlayerStateMachine _stateMachine;
     private NavMeshAgent _agent;
+    private HealthComponent _health;
 
     private void Awake()
     {
         _stateMachine = GetComponent<PlayerStateMachine>();
         _agent = GetComponent<NavMeshAgent>();
+        _health = GetComponent<HealthComponent>();
+        if (_health != null)
+            _health.OnDamageTaken += HandleDamageTaken;
+    }
+
+    private void OnDestroy()
+    {
+        if (_health != null)
+            _health.OnDamageTaken -= HandleDamageTaken;
     }
 
     private void Update()
@@ -34,6 +44,12 @@ public class RecallAbility : NetworkBehaviour
         }
 
         if (_isRecalling && Vector3.Distance(transform.position, _recallStartPosition) > 0.1f)
+            CancelRecall();
+    }
+
+    private void HandleDamageTaken(float amount, DamageType damageType)
+    {
+        if (_isRecalling)
             CancelRecall();
     }
 
