@@ -1391,7 +1391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 651245f1ad7ed5f7c805154e8d001841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 2e4e5b3155b10763b86a31eed3f6335a, type: 2}
+  data: {fileID: 11400000, guid: fcba06cd98842372887359fe7b93b6fc, type: 2}
   resourceType: 0
   goldReward: 0
 --- !u!114 &7342036148961670440
