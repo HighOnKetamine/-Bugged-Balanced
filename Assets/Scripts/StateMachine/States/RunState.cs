@@ -9,9 +9,15 @@ public class RunState : State<PlayerStateMachine>
 
     public override void Update()
     {
-        Machine.NavMeshAgent.speed = Machine.Stats.moveSpeed.Value;
+        var agent = Machine.NavMeshAgent;
+        if (agent != null && Machine.Stats != null)
+            agent.speed = Machine.Stats.moveSpeed.Value;
 
-        if (Machine.NavMeshAgent.pathPending) return;
+        // If agent is not ready (disabled / not on NavMesh / null), skip nav-specific checks.
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh)
+            return;
+
+        if (agent.pathPending) return;
 
         if (Machine.AttackMoveTarget != null)
         {
@@ -37,7 +43,7 @@ public class RunState : State<PlayerStateMachine>
             return;
         }
 
-        if (Machine.NavMeshAgent.remainingDistance <= Machine.NavMeshAgent.stoppingDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance)
             Machine.ChangeState(new IdleState(Machine));
     }
 
