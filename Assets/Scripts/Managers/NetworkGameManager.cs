@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using FishNet;
 using FishNet.Connection;
+using FishNet.Component.Transforming;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
@@ -147,6 +148,9 @@ public class NetworkGameManager : NetworkBehaviour
         Vector3 pos = _respawnManager.GetSpawnPoint(data.TeamId);
 
         NetworkObject nob = Instantiate(def.playerPrefab, pos, Quaternion.identity);
+        if (nob.GetComponent<NetworkTransform>() == null)
+            nob.gameObject.AddComponent<NetworkTransform>();
+
         ServerManager.Spawn(nob, conn); // gives ownership to this client
         nob.GetComponent<TeamComponent>()?.SetTeam(data.TeamId);
     }
