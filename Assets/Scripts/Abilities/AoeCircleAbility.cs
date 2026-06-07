@@ -24,7 +24,7 @@ public class AoeCircleAbility : AoeAbility
             if (!myTeam.IsEnemy(targetTeam)) continue;
             HealthComponent health = col.GetComponent<HealthComponent>();
             if (health == null || health.IsDead) continue;
-            health.TakeDamage(GetCurrentDamage(), damageType, attackerStats);
+            health.TakeDamage(GetScaledDamage(), damageType, attackerStats);
         }
         RpcSpawnHitVfx(position);
     }

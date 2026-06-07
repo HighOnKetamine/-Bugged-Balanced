@@ -13,12 +13,16 @@ public abstract class AbilityBase : NetworkBehaviour
     [SerializeField] private float[] cooldownLevels = { 10f, 9f, 8f, 7f, 6f };
     [SerializeField] private float[] manaCostLevels = { 50f, 55f, 60f, 65f, 70f };
 
+    [Header("Scaling")]
+    [SerializeField] private float apRatio = 0.5f;
+    [SerializeField] private float adRatio = 0f;
+
     [Header("Leveling")]
     [SerializeField] private int maxAbilityLevel = 5;
 
     [Header("Audio / Visual")]
     [SerializeField] private AudioClip castSound;
-    [SerializeField] private GameObject castVfxPrefab; // spawns at caster on cast
+    [SerializeField] private GameObject castVfxPrefab;
 
     public readonly SyncVar<int> AbilityLevel = new SyncVar<int>(0);
 
@@ -59,6 +63,16 @@ public abstract class AbilityBase : NetworkBehaviour
     {
         int idx = Mathf.Clamp(AbilityLevel.Value - 1, 0, manaCostLevels.Length - 1);
         return manaCostLevels[idx];
+    }
+
+    protected float GetScaledDamage()
+    {
+        CharacterStats stats = GetComponent<CharacterStats>();
+        float baseDamage = GetCurrentDamage();
+        if (stats == null) return baseDamage;
+        return baseDamage
+            + (stats.abilityPower.Value * apRatio)
+            + (stats.attackDamage.Value * adRatio);
     }
 
     [Server]
@@ -110,8 +124,6 @@ public abstract class AbilityBase : NetworkBehaviour
     [ServerRpc]
     private void ConsumeMana() => _mana?.UseMana(GetCurrentManaCost());
 
-    // Spawns castVfxPrefab at caster + plays sound — runs on owner client
-    // Override SpawnHitVfx in abilities that need precise target-position VFX
     private void PlayCastEffects()
     {
         if (castSound != null)
@@ -123,8 +135,6 @@ public abstract class AbilityBase : NetworkBehaviour
         }
     }
 
-    // Override this in abilities to spawn VFX at a specific world position
-    // Called via RpcSpawnHitVfx from ServerCast
     protected virtual GameObject hitVfxPrefab => null;
 
     [ObserversRpc]

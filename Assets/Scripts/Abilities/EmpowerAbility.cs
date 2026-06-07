@@ -1,3 +1,4 @@
+using FishNet.Object;
 using UnityEngine;
 
 public class EmpowerAbility : AbilityBase
@@ -9,8 +10,12 @@ public class EmpowerAbility : AbilityBase
 
     protected override void CastAbility()
     {
-        // GetCurrentDamage() not used here — Empower scales its own fields via level multiplier
-        // You can add per-level arrays for these in the Inspector via base class
+        ServerCast();
+    }
+
+    [ServerRpc]
+    private void ServerCast()
+    {
         EffectComponent effectComp = GetComponent<EffectComponent>();
         if (effectComp == null)
         {

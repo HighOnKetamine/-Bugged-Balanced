@@ -5,9 +5,11 @@ using TMPro;
 public class AbilitySlot : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
-    [SerializeField] private Image cooldownOverlay;  // dark radial fill
+    [SerializeField] private Image cooldownOverlay;
+    [SerializeField] private Image notLearnedOverlay;
     [SerializeField] private TextMeshProUGUI hotkeyText;
     [SerializeField] private TextMeshProUGUI cooldownText;
+    [SerializeField] private TextMeshProUGUI levelText;
 
     private AbilityBase _ability;
 
@@ -34,17 +36,26 @@ public class AbilitySlot : MonoBehaviour
     {
         if (_ability == null) return;
 
+        bool learned = _ability.IsLearned;
         bool onCooldown = _ability.IsOnCooldown;
 
+        if (notLearnedOverlay != null)
+            notLearnedOverlay.gameObject.SetActive(!learned);
+
+        if (levelText != null)
+            levelText.text = learned
+                ? $"{_ability.AbilityLevel.Value}/{_ability.MaxAbilityLevel}"
+                : "-";
+
         if (cooldownOverlay != null)
-            cooldownOverlay.fillAmount = onCooldown
+            cooldownOverlay.fillAmount = (learned && onCooldown)
                 ? 1f - _ability.CooldownProgress
                 : 0f;
 
         if (cooldownText != null)
         {
-            cooldownText.gameObject.SetActive(onCooldown);
-            if (onCooldown)
+            cooldownText.gameObject.SetActive(learned && onCooldown);
+            if (learned && onCooldown)
                 cooldownText.text = Mathf.CeilToInt(_ability.RemainingCooldown).ToString();
         }
     }

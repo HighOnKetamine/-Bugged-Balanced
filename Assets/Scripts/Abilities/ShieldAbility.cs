@@ -1,3 +1,4 @@
+using FishNet.Object;
 using UnityEngine;
 
 public class ShieldAbility : AbilityBase
@@ -9,10 +10,15 @@ public class ShieldAbility : AbilityBase
 
     protected override void CastAbility()
     {
-        // GetCurrentDamage() used as heal amount here
+        ServerCast();
+    }
+
+    [ServerRpc]
+    private void ServerCast()
+    {
         HealthComponent health = GetComponent<HealthComponent>();
         if (health != null)
-            health.Heal(GetCurrentDamage());
+            health.Heal(GetScaledDamage());
 
         EffectComponent effectComp = GetComponent<EffectComponent>();
         if (effectComp == null)
