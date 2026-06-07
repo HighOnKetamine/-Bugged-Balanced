@@ -43,22 +43,23 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+        // Ensure camera reference is always retrieved. Enable the camera only for the owner
+        // so other clients (and server instances) do not render another player's view.
+        _cam = GetComponentInChildren<Camera>();
+        if (_cam != null)
+            _cam.enabled = IsOwner;
+        else if (IsOwner)
+            Debug.LogError("[PlayerController] No Camera found!");
 
         // Only disable the NavMeshAgent on non-owner CLIENT instances.
         // OnStartClient runs on both client and server (host), so ensure we don't
         // disable the server-side NavMeshAgent which is responsible for authoritative
         // movement. Leave the agent enabled on the server.
-        if (!IsOwner && !IsServerInitialized)
+        if (!IsOwner && !IsServer)
             _navMeshAgent.enabled = false;
 
         if (IsOwner)
         {
-            _cam = GetComponentInChildren<Camera>();
-            if (_cam == null)
-                Debug.LogError("[PlayerController] No Camera found!");
-            else
-                _cam.enabled = true;
-
             PlayerHUD playerHud = FindFirstObjectByType<PlayerHUD>();
             playerHud?.Initialize(gameObject);
 
