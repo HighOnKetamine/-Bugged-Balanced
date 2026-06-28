@@ -16,6 +16,7 @@ public abstract class Effect
     protected uint maxStacks;
     protected float value;
     protected GameObject target;
+    protected CharacterStats attacker;
 
     private readonly List<float> _stackElapsed = new List<float>();
     private readonly StackBehavior _stackBehavior;
@@ -55,6 +56,7 @@ public abstract class Effect
         uint maxStacks = 1,
         float interval = 1f,
         StackBehavior stackBehavior = StackBehavior.RefreshDuration
+        , CharacterStats attacker = null
     )
     {
         if (target == null) throw new Exception("Target cannot be null!");
@@ -68,6 +70,7 @@ public abstract class Effect
         this.interval = interval;
         this.elapsed = -1f;
         _stackBehavior = stackBehavior;
+        this.attacker = attacker;
     }
 
     /// <summary>Activates the effect.</summary>

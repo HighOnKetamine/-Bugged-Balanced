@@ -17,21 +17,27 @@ public class PoisonStrikeAbility : TargetedAbility
     [ServerRpc]
     protected override void ServerCast(GameObject target)
     {
+        ApplyEffect(target);
+    }
+
+    [Server]
+    private void ApplyEffect(GameObject target)
+    {
         if (target == null) return;
         TeamComponent myTeam = GetComponent<TeamComponent>();
         TeamComponent targetTeam = target.GetComponentInParent<TeamComponent>();
         if (myTeam == null || targetTeam == null || !myTeam.IsEnemy(targetTeam)) return;
-
         EffectComponent effectComp = target.GetComponent<EffectComponent>();
         if (effectComp == null)
         {
             Debug.LogWarning("[PoisonStrikeAbility] Target has no EffectComponent.");
             return;
         }
+        CharacterStats characterStats = GetComponent<CharacterStats>();
 
         effectComp.ApplyEffect(new DoTEffect(
-            target, duration, GetScaledDamage(), damageType,
-            maxStacks, tickInterval, StackBehavior.RefreshDuration));
+        target, duration, GetScaledDamage(), damageType,
+        maxStacks, tickInterval, StackBehavior.RefreshDuration, characterStats));
         RpcSpawnHitVfx(target.transform.position);
 
         SubscribeToDeathForSpread(target, target.transform.position, myTeam);
@@ -84,14 +90,6 @@ public class PoisonStrikeAbility : TargetedAbility
 
         Debug.Log($"[PoisonStrike] Spreading to {nearest.name}");
 
-        EffectComponent effectComp = nearest.GetComponent<EffectComponent>();
-        if (effectComp == null) return;
-
-        effectComp.ApplyEffect(new DoTEffect(
-            nearest, duration, GetScaledDamage(), damageType,
-            maxStacks, tickInterval, StackBehavior.RefreshDuration));
-        RpcSpawnHitVfx(nearest.transform.position);
-
-        SubscribeToDeathForSpread(nearest, nearest.transform.position, myTeam);
+        ApplyEffect(nearest);
     }
 }
