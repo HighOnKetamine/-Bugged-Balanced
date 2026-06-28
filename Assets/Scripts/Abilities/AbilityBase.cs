@@ -119,12 +119,11 @@ public abstract class AbilityBase : NetworkBehaviour
             Debug.Log($"[{abilityName}] Not enough mana — need {cost}, have {_mana.Current:F0}");
             return false;
         }
-        ConsumeMana();
         return true;
     }
 
     [ServerRpc]
-    private void ConsumeMana() => _mana?.UseMana(GetCurrentManaCost());
+    protected void ConsumeMana() => _mana?.UseMana(GetCurrentManaCost());
 
     private void PlayCastEffects()
     {

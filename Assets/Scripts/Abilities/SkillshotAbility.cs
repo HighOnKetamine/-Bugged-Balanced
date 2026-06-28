@@ -36,6 +36,7 @@ public abstract class SkillshotAbility : AbilityBase
         lookTarget.y = transform.position.y;
         transform.LookAt(lookTarget);
 
+        ConsumeMana();
         ServerCast(ShootOrigin, ShootDirection);
     }
 

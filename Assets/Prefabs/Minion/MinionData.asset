@@ -32,4 +32,4 @@ MonoBehaviour:
   baseMagicResist: 15
   baseMoveSpeed: 5
   baseVisionRange: 10
-  baseGoldReward: 0
+  baseGoldReward: 100

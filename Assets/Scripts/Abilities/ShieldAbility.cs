@@ -10,6 +10,7 @@ public class ShieldAbility : AbilityBase
 
     protected override void CastAbility()
     {
+        ConsumeMana();
         ServerCast();
     }
 

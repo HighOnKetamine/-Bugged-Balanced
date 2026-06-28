@@ -11,12 +11,14 @@ public class PoisonStrikeAbility : TargetedAbility
     [SerializeField] private float spreadRadius = 5f;
     [SerializeField] private LayerMask spreadMask;
     [SerializeField] private GameObject _hitVfxPrefab;
+    private float damage;
 
     protected override GameObject hitVfxPrefab => _hitVfxPrefab;
 
     [ServerRpc]
     protected override void ServerCast(GameObject target)
     {
+        damage = GetScaledDamage();
         ApplyEffect(target);
     }
 
@@ -36,7 +38,7 @@ public class PoisonStrikeAbility : TargetedAbility
         CharacterStats characterStats = GetComponent<CharacterStats>();
 
         effectComp.ApplyEffect(new DoTEffect(
-        target, duration, GetScaledDamage(), damageType,
+        target, duration, damage, damageType,
         maxStacks, tickInterval, StackBehavior.RefreshDuration, characterStats));
         RpcSpawnHitVfx(target.transform.position);
 

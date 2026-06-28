@@ -22,6 +22,7 @@ public abstract class TargetedAbility : AbilityBase
             CurrentTarget.transform.position.x,
             transform.position.y,
             CurrentTarget.transform.position.z));
+        ConsumeMana();
         ServerCast(CurrentTarget);
     }
 
