@@ -20,7 +20,7 @@ public abstract class AoeAbility : AbilityBase
 
     protected override void CastAbility()
     {
-        Camera cam = Camera.main;
+        Camera cam = _cam;
         if (cam == null) return;
 
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);

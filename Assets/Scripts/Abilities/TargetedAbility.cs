@@ -28,7 +28,7 @@ public abstract class TargetedAbility : AbilityBase
 
     private GameObject GetTargetUnderMouse()
     {
-        Camera cam = Camera.main;
+        Camera cam = _cam;
         if (cam == null) return null;
 
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);

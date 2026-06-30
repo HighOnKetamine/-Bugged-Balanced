@@ -30,6 +30,7 @@ public abstract class AbilityBase : NetworkBehaviour
     protected float lastCastTime = -999f;
 
     private ManaComponent _mana;
+    protected Camera _cam;
 
     public KeyCode Hotkey => hotkey;
     public string AbilityName => abilityName;
@@ -47,6 +48,13 @@ public abstract class AbilityBase : NetworkBehaviour
     protected virtual void Awake()
     {
         _mana = GetComponent<ManaComponent>();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (IsOwner)
+            _cam = GetComponentInChildren<Camera>();
     }
 
     protected float GetCurrentDamage()

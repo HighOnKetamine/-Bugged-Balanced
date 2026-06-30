@@ -13,16 +13,21 @@ public class CameraScript : NetworkBehaviour
     {
         base.OnStartClient();
 
+        Camera cam = GetComponent<Camera>();
         if (IsOwner)
         {
-            Camera cam = GetComponent<Camera>();
             cam.enabled = true;
+            cam.depth = 1; // Render above any scene cameras
             initialRotation = transform.rotation;
             parentTransform = transform.parent;
             if (parentTransform != null)
             {
                 initialOffset = transform.position - parentTransform.position;
             }
+        }
+        else
+        {
+            cam.enabled = false;
         }
     }
 

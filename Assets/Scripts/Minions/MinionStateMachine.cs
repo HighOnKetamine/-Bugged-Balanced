@@ -38,6 +38,13 @@ public class MinionStateMachine : StateMachine<MinionStateMachine>
         if (Stats == null) Debug.LogError($"[MinionStateMachine] Missing CharacterStats on {gameObject.name}");
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsServerInitialized)
+            NavMeshAgent.enabled = false;
+    }
+
     [Server]
     public void Initialize(Lane lane, sbyte teamId)
     {

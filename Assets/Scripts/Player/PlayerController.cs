@@ -44,8 +44,18 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!IsOwner)
-            _navMeshAgent.enabled = false;
+        if (!IsServerInitialized)
+        {
+            if (IsOwner)
+            {
+                _navMeshAgent.updatePosition = false;
+                _navMeshAgent.updateRotation = false;
+            }
+            else
+            {
+                _navMeshAgent.enabled = false;
+            }
+        }
 
         if (IsOwner)
         {
