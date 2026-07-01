@@ -8,10 +8,13 @@ public class InhibitorStateMachine : StateMachine<InhibitorStateMachine>
 {
     [SerializeField] private sbyte _teamId;
     [SerializeField] public float respawnTime = 90f;
+    [SerializeField] public TowerStateMachine frontTower;
 
     public HealthComponent Health { get; private set; }
     public TeamComponent Team { get; private set; }
     public CharacterStats Stats { get; private set; }
+
+
 
     private void Awake()
     {
@@ -21,6 +24,7 @@ public class InhibitorStateMachine : StateMachine<InhibitorStateMachine>
         if (Health == null) Debug.LogError($"[InhibitorStateMachine] Missing HealthComponent on {gameObject.name}");
         if (Team == null) Debug.LogError($"[InhibitorStateMachine] Missing TeamComponent on {gameObject.name}");
         if (Stats == null) Debug.LogError($"[InhibitorStateMachine] Missing CharacterStats on {gameObject.name}");
+        if (frontTower == null) Debug.LogError($"[InhibitorStateMachine] Missing frontTower on {gameObject.name}");
     }
 
     public override void OnStartServer()
@@ -41,8 +45,7 @@ public class InhibitorStateMachine : StateMachine<InhibitorStateMachine>
 
     private void OnTowerDied(TowerStateMachine tower)
     {
-        if (tower.Team.teamId.Value != _teamId) return;
-        // Tower of same team died — inhibitor is now exposed
+        if (tower != frontTower) return;
         ChangeState(new InhibitorVulnerableState(this));
     }
     private void OnDied(GameObject killer)

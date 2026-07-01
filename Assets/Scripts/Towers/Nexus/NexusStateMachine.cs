@@ -14,7 +14,7 @@ public class NexusStateMachine : StateMachine<NexusStateMachine>
     public CharacterStats Stats { get; private set; }
 
     private int _towersRemaining;
-    private int _inhibitorsDead; // how many inhibitors are currently down
+    private int _inhibitorsDead;
 
     private void Awake()
     {
