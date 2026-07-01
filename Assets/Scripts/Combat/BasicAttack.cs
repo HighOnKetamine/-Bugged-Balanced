@@ -46,6 +46,7 @@ public class BasicAttack : NetworkBehaviour
         return IsOffCooldown() && IsInRange(target);
     }
 
+
     public void Attack(GameObject target)
     {
         if (!CanAttack(target)) return;
@@ -60,7 +61,7 @@ public class BasicAttack : NetworkBehaviour
         ServerAttack(targetNetObj);
     }
 
-    [ServerRpc]
+    [Server]
     private void ServerAttack(NetworkObject targetNetObj)
     {
         if (targetNetObj == null) return;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using FishNet.Component.Animating;
 using UnityEngine.AI;
+using FishNet.Object;
 
 public class PlayerStateMachine : StateMachine<PlayerStateMachine>
 {
@@ -33,6 +34,7 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
         if (Health == null) Debug.LogError($"[PlayerStateMachine] Missing HealthComponent on {gameObject.name}");
     }
 
+    // [Server]
     private void Start()
     {
         Health.OnDeath += _ => ChangeState(new DeathState(this));
@@ -44,6 +46,7 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
         ChangeState(new IdleState(this));
     }
 
+    // [Server]
     protected override void Update()
     {
         base.Update();
