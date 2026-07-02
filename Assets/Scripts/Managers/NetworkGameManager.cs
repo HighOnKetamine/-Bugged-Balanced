@@ -37,8 +37,9 @@ public class NetworkGameManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        _respawnManager = FindFirstObjectByType<RespawnManager>();
-        _waveSpawners = FindObjectsByType<WaveSpawner>(FindObjectsSortMode.None);
+        _respawnManager = FindFirstObjectByType<RespawnManager>(FindObjectsInactive.Include);
+        _waveSpawners = FindObjectsByType<WaveSpawner>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Debug.Log($"[NetworkGameManager] OnStartServer — RespawnManager found: {_respawnManager != null}, WaveSpawners: {_waveSpawners.Length}");
         ServerManager.OnRemoteConnectionState += OnRemoteConnectionState;
     }
 
@@ -127,11 +128,33 @@ public class NetworkGameManager : NetworkBehaviour
         State.Value = GameState.InGame;
         RpcOnGameStarted();
 
-        // Spawn one player per frame to avoid a spike
+        Debug.Log($"[NetworkGameManager] Starting game. Players: {Players.Count}, characters: {characters?.Length}");
+
         foreach (var data in Players)
         {
-            if (InstanceFinder.ServerManager.Clients.TryGetValue(data.ClientId, out NetworkConnection conn))
+            Debug.Log($"[NetworkGameManager] Looking up connection for ClientId {data.ClientId}...");
+
+            if (!InstanceFinder.ServerManager.Clients.TryGetValue(data.ClientId, out NetworkConnection conn))
+            {
+                // Fallback for host: local client connection may not be keyed in Clients by the time
+                // this runs, but ClientManager.Connection is always the host's authoritative reference.
+                if (InstanceFinder.IsClientStarted &&
+                    InstanceFinder.ClientManager.Connection?.ClientId == data.ClientId)
+                {
+                    conn = InstanceFinder.ClientManager.Connection;
+                    Debug.LogWarning($"[NetworkGameManager] Clients dict missed ClientId {data.ClientId}; using ClientManager.Connection as fallback.");
+                }
+            }
+
+            if (conn != null)
+            {
+                Debug.Log($"[NetworkGameManager] Spawning player for ClientId {data.ClientId} (IsLocalClient: {conn.IsLocalClient})");
                 SpawnPlayer(conn, data);
+            }
+            else
+            {
+                Debug.LogError($"[NetworkGameManager] Cannot spawn player for ClientId {data.ClientId} — connection not found. Host ClientId: {InstanceFinder.ClientManager.Connection?.ClientId}");
+            }
             yield return null;
         }
 
@@ -142,12 +165,38 @@ public class NetworkGameManager : NetworkBehaviour
     [Server]
     private void SpawnPlayer(NetworkConnection conn, LobbyPlayerData data)
     {
+        if (characters == null || characters.Length == 0)
+        {
+            Debug.LogError("[NetworkGameManager] No characters assigned in the inspector!");
+            return;
+        }
+
         int charIndex = Mathf.Clamp(data.CharacterIndex, 0, characters.Length - 1);
         CharacterDefinition def = characters[charIndex];
+
+        if (def == null)
+        {
+            Debug.LogError($"[NetworkGameManager] CharacterDefinition at index {charIndex} is null. Re-save the Main scene to fix prefab array serialization.");
+            return;
+        }
+        if (def.playerPrefab == null)
+        {
+            Debug.LogError($"[NetworkGameManager] playerPrefab on '{def.name}' is not assigned!");
+            return;
+        }
+        if (_respawnManager == null)
+            _respawnManager = FindFirstObjectByType<RespawnManager>(FindObjectsInactive.Include);
+        if (_respawnManager == null)
+        {
+            Debug.LogError("[NetworkGameManager] RespawnManager not found — cannot get spawn point.");
+            return;
+        }
+
         Vector3 pos = _respawnManager.GetSpawnPoint(data.TeamId);
+        Debug.Log($"[NetworkGameManager] Spawning '{def.name}' for ClientId {conn.ClientId} at {pos}");
 
         NetworkObject nob = Instantiate(def.playerPrefab, pos, Quaternion.identity);
-        ServerManager.Spawn(nob, conn); // gives ownership to this client
+        ServerManager.Spawn(nob, conn);
         nob.GetComponent<TeamComponent>()?.SetTeam(data.TeamId);
     }
 

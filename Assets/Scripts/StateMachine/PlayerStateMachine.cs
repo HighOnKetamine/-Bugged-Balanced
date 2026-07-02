@@ -34,9 +34,9 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
         if (Health == null) Debug.LogError($"[PlayerStateMachine] Missing HealthComponent on {gameObject.name}");
     }
 
-    // [Server]
-    private void Start()
+    public override void OnStartServer()
     {
+        base.OnStartServer();
         Health.OnDeath += _ => ChangeState(new DeathState(this));
         BasicAttack.OnPreAttack += target =>
         {
@@ -45,6 +45,7 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
         };
         ChangeState(new IdleState(this));
     }
+
 
     // [Server]
     protected override void Update()

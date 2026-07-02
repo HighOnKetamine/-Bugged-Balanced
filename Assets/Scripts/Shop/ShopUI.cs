@@ -19,6 +19,11 @@ public class ShopUI : MonoBehaviour
     private Transform _baseTransform;
     private bool _isOpen = false;
 
+    private void Awake()
+    {
+        if (shopPanel != null) shopPanel.SetActive(false);
+    }
+
     public void Initialize(GameObject playerObject, Transform baseTransform)
     {
         _shopComponent = playerObject.GetComponent<ShopComponent>();

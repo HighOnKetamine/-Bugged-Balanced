@@ -59,14 +59,20 @@ public class PlayerController : NetworkBehaviour
 
         if (IsOwner)
         {
-            _cam = GetComponentInChildren<Camera>();
+            Debug.Log($"[PlayerController] OnStartClient as owner — IsServerInitialized: {IsServerInitialized}");
+
+            _cam = GetComponentInChildren<Camera>(true);
             if (_cam == null)
-                Debug.LogError("[PlayerController] No Camera found!");
+                Debug.LogError("[PlayerController] No Camera found in children!");
             else
+            {
                 _cam.enabled = true;
+                Debug.Log($"[PlayerController] Camera found: {_cam.name}, depth: {_cam.depth}");
+            }
 
             PlayerHUD playerHud = FindFirstObjectByType<PlayerHUD>();
-            playerHud?.Initialize(gameObject);
+            if (playerHud != null) playerHud.Initialize(gameObject);
+            else Debug.LogWarning("[PlayerController] No PlayerHUD found in scene.");
 
             _gameOverCallback = _ => InputDisabled = true;
             NetworkGameManager.OnGameOver += _gameOverCallback;
@@ -84,9 +90,16 @@ public class PlayerController : NetworkBehaviour
                     baseTransform = baseMarker.transform;
                 }
                 shopUi.Initialize(gameObject, baseTransform);
+                Debug.Log("[PlayerController] ShopUI initialized.");
             }
-
-            // StartCoroutine(InitializeShopDelayed());
+            else
+            {
+                Debug.LogWarning("[PlayerController] No ShopUI found in scene.");
+            }
+        }
+        else
+        {
+            Debug.Log($"[PlayerController] OnStartClient — not owner (IsServerInitialized: {IsServerInitialized})");
         }
     }
 

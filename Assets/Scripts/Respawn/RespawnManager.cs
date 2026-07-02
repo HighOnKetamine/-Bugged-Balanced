@@ -74,9 +74,9 @@ public class RespawnManager : NetworkBehaviour
     // Public so NetworkGameManager can use it for initial player spawning.
     public Vector3 GetSpawnPoint(sbyte teamId)
     {
-        if (teamId == TeamComponent.Neutral || !_spawnMap.TryGetValue(teamId, out var points))
+        if (_spawnMap == null || teamId == TeamComponent.Neutral || !_spawnMap.TryGetValue(teamId, out var points) || points.Length == 0)
         {
-            Debug.LogWarning($"[RespawnManager] No spawn config for team {teamId}.");
+            Debug.LogWarning($"[RespawnManager] No spawn config for team {teamId} (spawnMap ready: {_spawnMap != null}).");
             return Vector3.zero;
         }
         return points[Random.Range(0, points.Length)].position;
