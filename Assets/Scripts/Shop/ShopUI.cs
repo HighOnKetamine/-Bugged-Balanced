@@ -12,11 +12,9 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private GameObject itemSlotPrefab;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI statusText;
-    [SerializeField] private float shopRadius = 8f;
 
     private ShopComponent _shopComponent;
     private GoldComponent _goldComponent;
-    private Transform _baseTransform;
     private bool _isOpen = false;
 
     private void Awake()
@@ -24,11 +22,10 @@ public class ShopUI : MonoBehaviour
         if (shopPanel != null) shopPanel.SetActive(false);
     }
 
-    public void Initialize(GameObject playerObject, Transform baseTransform)
+    public void Initialize(GameObject playerObject)
     {
         _shopComponent = playerObject.GetComponent<ShopComponent>();
         _goldComponent = playerObject.GetComponent<GoldComponent>();
-        _baseTransform = baseTransform;
 
         if (_goldComponent != null)
             _goldComponent.OnGoldChanged += UpdateGold;
@@ -77,13 +74,7 @@ public class ShopUI : MonoBehaviour
         }
     }
 
-    private bool IsNearBase()
-    {
-        if (_baseTransform == null || _shopComponent == null) return false;
-        return Vector3.Distance(
-            _shopComponent.transform.position,
-            _baseTransform.position) <= shopRadius;
-    }
+    private static bool IsNearBase() => ShopZone.LocalPlayerInShop;
 
     private void OpenShop()
     {
