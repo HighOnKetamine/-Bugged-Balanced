@@ -1,23 +1,42 @@
+using FishNet;
 using UnityEngine;
 
 /// <summary>
 /// Add to any unit (player, minion, tower) to make it reveal the area around it.
-/// FogOfWarManager only uses sources whose team matches the local player's team.
+///
+/// Vision radius is read from CharacterStats.visionRange.Value when that component
+/// is present; otherwise falls back to the inspectable fallback field.
 /// </summary>
 public class VisionSource : MonoBehaviour
 {
-    [Tooltip("World-unit radius this unit reveals around itself.")]
-    [SerializeField] public float visionRadius = 12f;
+    [Tooltip("Used only if CharacterStats is absent (e.g. ward or custom object).")]
+    [SerializeField] private float _fallbackRadius = 8f;
 
-    private TeamComponent _team;
+    private CharacterStats _stats;
+    private TeamComponent  _team;
+
+    /// <summary>World-unit reveal radius, sourced from CharacterStats when available.</summary>
+    public float VisionRadius => _stats != null ? _stats.visionRange.Value : _fallbackRadius;
 
     private void Awake()
     {
-        _team = GetComponent<TeamComponent>();
+        _stats = GetComponent<CharacterStats>();
+        _team  = GetComponent<TeamComponent>();
     }
 
-    private void OnEnable()  => FogOfWarManager.RegisterSource(this);
-    private void OnDisable() => FogOfWarManager.UnregisterSource(this);
+    private void OnEnable()
+    {
+        FogOfWarManager.RegisterSource(this);           // client: drives the visual fog texture
+        if (InstanceFinder.IsServerStarted)
+            ServerVisionTracker.RegisterSource(this);   // server: drives FogOfWarCondition checks
+    }
+
+    private void OnDisable()
+    {
+        FogOfWarManager.UnregisterSource(this);
+        if (InstanceFinder.IsServerStarted)
+            ServerVisionTracker.UnregisterSource(this);
+    }
 
     public sbyte GetTeamId() => _team != null ? _team.teamId.Value : TeamComponent.Neutral;
 }

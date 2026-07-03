@@ -230,6 +230,13 @@ public class NetworkGameManager : NetworkBehaviour
         }
     }
 
+    public sbyte GetClientTeam(int clientId)
+    {
+        foreach (var p in Players)
+            if (p.ClientId == clientId) return p.TeamId;
+        return TeamComponent.Neutral;
+    }
+
     private void UpdatePlayer(int clientId, Func<LobbyPlayerData, LobbyPlayerData> update)
     {
         for (int i = 0; i < Players.Count; i++)

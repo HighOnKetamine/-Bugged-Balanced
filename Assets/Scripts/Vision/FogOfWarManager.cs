@@ -193,7 +193,7 @@ public class FogOfWarManager : MonoBehaviour
         {
             if (src == null) continue;
             if (_localTeamId != TeamComponent.Neutral && src.GetTeamId() != _localTeamId) continue;
-            PaintCircle(src.transform.position, src.visionRadius);
+            PaintCircle(src.transform.position, src.VisionRadius);
         }
 
         _visionTex.SetPixels32(_pixels);
@@ -235,6 +235,31 @@ public class FogOfWarManager : MonoBehaviour
     }
 
     // ── Enemy visibility ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Immediately re-evaluate a single target.
+    /// Called by VisibilityTarget.OnTeamChanged so the renderer correction
+    /// happens the frame the team SyncVar arrives, not on the next FoW tick.
+    /// </summary>
+    public void EvaluateTarget(VisibilityTarget tgt)
+    {
+        if (tgt == null) return;
+        sbyte teamId = tgt.GetTeamId();
+        if (_localTeamId == TeamComponent.Neutral || teamId == _localTeamId)
+        {
+            tgt.SetVisible(true);
+            return;
+        }
+        float mapW = mapMaxX - mapMinX;
+        float mapH = mapMaxZ - mapMinZ;
+        int   res  = textureResolution;
+        float u = (tgt.transform.position.x - mapMinX) / mapW;
+        float v = (tgt.transform.position.z - mapMinZ) / mapH;
+        int   px = Mathf.Clamp(Mathf.RoundToInt(u * (res - 1)), 0, res - 1);
+        int   py = Mathf.Clamp(Mathf.RoundToInt(v * (res - 1)), 0, res - 1);
+        tgt.SetVisible(_pixels[py * res + px].r > 25);
+    }
+
     private void UpdateTargetVisibility()
     {
         float mapW = mapMaxX - mapMinX;
