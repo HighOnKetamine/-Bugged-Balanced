@@ -43,7 +43,21 @@ public class BasicAttack : NetworkBehaviour
     public bool CanAttack(GameObject target)
     {
         if (target == null) return false;
-        return IsOffCooldown() && IsInRange(target);
+        if (!IsOffCooldown() || !IsInRange(target)) return false;
+
+        // Server-authoritative vision check: blocks the attack if the target is
+        // outside the attacker's team vision.  Clients skip this — they can't
+        // even reference un-spawned objects, so the check is redundant there.
+        if (IsServerInitialized)
+        {
+            sbyte myTeam = _team != null ? _team.teamId.Value : TeamComponent.Neutral;
+            if (myTeam != TeamComponent.Neutral &&
+                ServerVisionTracker.Instance != null &&
+                !ServerVisionTracker.Instance.CanSee(myTeam, target.transform.position))
+                return false;
+        }
+
+        return true;
     }
 
 

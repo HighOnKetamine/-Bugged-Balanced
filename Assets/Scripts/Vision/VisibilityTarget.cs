@@ -46,6 +46,9 @@ public class VisibilityTarget : MonoBehaviour
 
     public sbyte GetTeamId() => _team != null ? _team.teamId.Value : TeamComponent.Neutral;
 
+    /// <summary>Whether this target is currently rendered (i.e. in vision).</summary>
+    public bool IsCurrentlyVisible => _visible;
+
     public void SetVisible(bool visible)
     {
         if (_visible == visible) return;

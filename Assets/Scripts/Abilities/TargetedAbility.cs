@@ -12,7 +12,15 @@ public abstract class TargetedAbility : AbilityBase
     {
         if (!base.CanCast()) return false;
         CurrentTarget = GetTargetUnderMouse();
-        return CurrentTarget != null;
+        if (CurrentTarget == null) return false;
+
+        // On the host, hidden enemies still have active colliders so a raycast
+        // can land on them.  Block targeting anything not currently visible.
+        VisibilityTarget vt = CurrentTarget.GetComponent<VisibilityTarget>();
+        if (vt != null && !vt.IsCurrentlyVisible)
+            return false;
+
+        return true;
     }
 
     protected override void CastAbility()
