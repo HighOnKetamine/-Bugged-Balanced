@@ -189,6 +189,15 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
+        // On the host, enemies outside vision still have active colliders.
+        // Treat them as if no enemy was found — just move to the clicked position.
+        if (nearestEnemy != null)
+        {
+            VisibilityTarget vt = nearestEnemy.GetComponent<VisibilityTarget>();
+            if (vt != null && !vt.IsCurrentlyVisible)
+                nearestEnemy = null;
+        }
+
         if (nearestEnemy != null)
         {
             NetworkObject targetNob = nearestEnemy.GetComponent<NetworkObject>();

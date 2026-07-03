@@ -28,6 +28,18 @@ public class RunState : State<PlayerStateMachine>
                 Machine.ChangeState(new IdleState(Machine));
                 return;
             }
+
+            // Stop chasing if the target leaves vision
+            TeamComponent myTeam = Machine.GetComponent<TeamComponent>();
+            if (myTeam != null && myTeam.teamId.Value != TeamComponent.Neutral &&
+                ServerVisionTracker.Instance != null &&
+                !ServerVisionTracker.Instance.CanSee(myTeam.teamId.Value, Machine.AttackMoveTarget.transform.position))
+            {
+                Machine.AttackMoveTarget = null;
+                Machine.ChangeState(new IdleState(Machine));
+                return;
+            }
+
             if (!Machine.BasicAttack.IsOffCooldown())
             {
                 Machine.AttackMoveTarget = null;

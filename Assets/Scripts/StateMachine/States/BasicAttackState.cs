@@ -31,6 +31,17 @@ public class BasicAttackState : State<PlayerStateMachine>
             return;
         }
 
+        // Stop chasing if the target leaves vision
+        TeamComponent myTeam = Machine.GetComponent<TeamComponent>();
+        if (myTeam != null && myTeam.teamId.Value != TeamComponent.Neutral &&
+            ServerVisionTracker.Instance != null &&
+            !ServerVisionTracker.Instance.CanSee(myTeam.teamId.Value, Machine.CurrentAttackTarget.transform.position))
+        {
+            Machine.CurrentAttackTarget = null;
+            Machine.ChangeState(new IdleState(Machine));
+            return;
+        }
+
         // Out of range — chase
         if (!Machine.BasicAttack.IsInRange(Machine.CurrentAttackTarget))
         {
