@@ -42,7 +42,10 @@ public class MinionStateMachine : StateMachine<MinionStateMachine>
     {
         base.OnStartClient();
         if (!IsServerInitialized)
+        {
+            enabled = false;             // state machine runs server-only
             NavMeshAgent.enabled = false;
+        }
     }
 
     [Server]

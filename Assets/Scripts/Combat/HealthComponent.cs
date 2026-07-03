@@ -147,20 +147,22 @@ public class HealthComponent : NetworkBehaviour
         string victimName = gameObject.name;
         KillFeedManager.Instance.ReportKill(killerName, victimName);
 
-        // Award death if victim is a player
         GetComponent<PlayerScoreComponent>()?.AwardDeath();
 
         if (killer != null)
         {
-            // Only award a kill to the killer's score if the victim was a player.
             if (GetComponent<PlayerScoreComponent>() != null && killer.GetComponent<PlayerScoreComponent>() != null)
-            {
                 killer.GetComponent<PlayerScoreComponent>()?.AwardKill();
-            }
 
             killer.GetComponent<ExperienceComponent>()?.AwardExperience(CalculateExperienceReward());
             killer.GetComponent<GoldComponent>()?.Award(_stats.goldReward);
         }
+
+        // Fire the event directly on the server so server-side state machines
+        // (MinionStateMachine, TowerStateMachine, PlayerStateMachine) can react.
+        // RpcOnDeath fires it again on clients; ChangeState's type-guard makes
+        // the duplicate call on the host a no-op.
+        OnDeath?.Invoke(killer);
 
         NetworkObject killerNob = killer != null ? killer.GetComponent<NetworkObject>() : null;
         RpcOnDeath(killerNob);

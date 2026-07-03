@@ -37,6 +37,13 @@ public class TowerStateMachine : StateMachine<TowerStateMachine>
         if (Stats == null) Debug.LogError($"[TowerStateMachine] Missing CharacterStats on {gameObject.name}");
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsServerInitialized)
+            enabled = false;             // state machine runs server-only
+    }
+
     [Server]
     public void Initialize(sbyte teamId)
     {

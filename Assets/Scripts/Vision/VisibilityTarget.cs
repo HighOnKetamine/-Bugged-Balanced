@@ -12,12 +12,14 @@ using UnityEngine;
 public class VisibilityTarget : MonoBehaviour
 {
     private Renderer[]    _renderers;
+    private Canvas[]      _canvases;   // world-space health bars
     private TeamComponent _team;
     private bool          _visible = true;
 
     private void Awake()
     {
         _renderers = GetComponentsInChildren<Renderer>(true);
+        _canvases  = GetComponentsInChildren<Canvas>(true);
         _team      = GetComponent<TeamComponent>();
     }
 
@@ -48,7 +50,7 @@ public class VisibilityTarget : MonoBehaviour
     {
         if (_visible == visible) return;
         _visible = visible;
-        foreach (var r in _renderers)
-            if (r != null) r.enabled = visible;
+        foreach (var r in _renderers) if (r != null) r.enabled = visible;
+        foreach (var c in _canvases)  if (c != null) c.enabled = visible;
     }
 }

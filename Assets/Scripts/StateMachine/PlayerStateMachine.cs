@@ -34,6 +34,13 @@ public class PlayerStateMachine : StateMachine<PlayerStateMachine>
         if (Health == null) Debug.LogError($"[PlayerStateMachine] Missing HealthComponent on {gameObject.name}");
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsServerInitialized)
+            enabled = false;             // state machine runs server-only
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
