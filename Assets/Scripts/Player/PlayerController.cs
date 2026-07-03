@@ -167,9 +167,34 @@ public class PlayerController : NetworkBehaviour
         Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer)) return;
 
-        Collider[] cols = Physics.OverlapSphere(hit.point, attackMoveRadius, enemyLayer);
-        GameObject nearestEnemy = null;
-        float nearestDistance = Mathf.Infinity;
+        GameObject nearestEnemy = FindNearestVisibleEnemy(hit.point);
+
+        if (nearestEnemy != null && _basicAttack.IsOffCooldown())
+        {
+            NetworkObject targetNob = nearestEnemy.GetComponent<NetworkObject>();
+            if (targetNob != null)
+            {
+                if (_basicAttack.IsInRange(nearestEnemy))
+                    ServerRequestAttack(targetNob);
+                else
+                    ServerChaseForAttack(targetNob);
+                return;
+            }
+        }
+
+        // No attackable target — move to the ground position the player clicked.
+        if (_stateMachine.CanMove)
+            ServerSetDestination(hit.point);
+    }
+
+    // Returns the nearest alive enemy within attackMoveRadius that is currently
+    // visible to the local player.  Skipping invisible enemies here avoids passing
+    // an unreachable NavMesh destination when enemies are found but hidden by fog.
+    private GameObject FindNearestVisibleEnemy(Vector3 center)
+    {
+        Collider[] cols = Physics.OverlapSphere(center, attackMoveRadius, enemyLayer);
+        GameObject nearest  = null;
+        float      nearestD = Mathf.Infinity;
 
         foreach (Collider col in cols)
         {
@@ -181,51 +206,15 @@ public class PlayerController : NetworkBehaviour
             TeamComponent targetTeam = col.GetComponent<TeamComponent>();
             if (targetTeam == null || !_teamComponent.IsEnemy(targetTeam)) continue;
 
-            float distance = Vector3.Distance(hit.point, col.transform.position);
-            if (distance < nearestDistance)
-            {
-                nearestDistance = distance;
-                nearestEnemy = col.gameObject;
-            }
+            // On the host, invisible enemies have active colliders — skip them.
+            VisibilityTarget vt = col.GetComponent<VisibilityTarget>();
+            if (vt != null && !vt.IsCurrentlyVisible) continue;
+
+            float d = Vector3.Distance(center, col.transform.position);
+            if (d < nearestD) { nearestD = d; nearest = col.gameObject; }
         }
 
-        // On the host, enemies outside vision still have active colliders.
-        // Treat them as if no enemy was found — just move to the clicked position.
-        if (nearestEnemy != null)
-        {
-            VisibilityTarget vt = nearestEnemy.GetComponent<VisibilityTarget>();
-            if (vt != null && !vt.IsCurrentlyVisible)
-                nearestEnemy = null;
-        }
-
-        if (nearestEnemy != null)
-        {
-            NetworkObject targetNob = nearestEnemy.GetComponent<NetworkObject>();
-            if (targetNob == null)
-            {
-                Debug.LogWarning("[PlayerController] Attack-move target has no NetworkObject!");
-                return;
-            }
-
-            if (!_basicAttack.IsOffCooldown())
-            {
-                if (_stateMachine.CanMove)
-                    ServerSetDestination(hit.point);
-            }
-            else if (_basicAttack.IsInRange(nearestEnemy))
-            {
-                ServerRequestAttack(targetNob);
-            }
-            else
-            {
-                ServerChaseForAttack(targetNob);
-            }
-        }
-        else
-        {
-            if (_stateMachine.CanMove)
-                ServerSetDestination(hit.point);
-        }
+        return nearest;
     }
 
     private void HandleAbilities()
