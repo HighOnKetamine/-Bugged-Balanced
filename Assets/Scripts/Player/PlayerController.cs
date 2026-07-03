@@ -270,6 +270,12 @@ public class PlayerController : NetworkBehaviour
     {
         _stateMachine.AttackMoveTarget = null;
         StopMovement();
+        // A stationary enemy's NavMeshObstacle carves a hole in the NavMesh.
+        // Clicking inside that carved region makes SetDestination return an
+        // invalid path and the agent never moves.  Snap to the nearest valid
+        // point so the player always walks as close as possible to the click.
+        if (NavMesh.SamplePosition(destination, out NavMeshHit navHit, 5f, NavMesh.AllAreas))
+            destination = navHit.position;
         _navMeshAgent.SetDestination(destination);
         _navMeshAgent.isStopped = false;
         _stateMachine.ChangeState(new RunState(_stateMachine));
