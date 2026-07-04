@@ -47,9 +47,16 @@ public class FogOfWarManager : MonoBehaviour
     public static void RegisterTarget  (VisibilityTarget t) { if (!_targets.Contains(t)) _targets.Add(t); }
     public static void UnregisterTarget(VisibilityTarget t) => _targets.Remove(t);
 
+    [Header("Fog Animation")]
+    [Tooltip("How fast fog clears as an area enters vision (brightness units/s, 0-255 scale).")]
+    [SerializeField] private float revealSpeed = 2000f;
+    [Tooltip("How fast fog returns as an area leaves vision.")]
+    [SerializeField] private float hideSpeed   = 400f;
+
     // ── Internal state ───────────────────────────────────────────────────────
     private Texture2D _visionTex;
-    private Color32[] _pixels;
+    private Color32[] _targetPixels;   // rebuilt at 10 Hz — gameplay truth
+    private Color32[] _displayPixels;  // lerped toward target every frame — what the shader sees
     private Material  _fogMaterial;
     private float     _nextUpdate;
     private sbyte     _localTeamId = TeamComponent.Neutral;
@@ -81,10 +88,15 @@ public class FogOfWarManager : MonoBehaviour
             filterMode = FilterMode.Bilinear,
             wrapMode   = TextureWrapMode.Clamp,
         };
-        _pixels = new Color32[textureResolution * textureResolution];
-        // Start fully fogged.
-        for (int i = 0; i < _pixels.Length; i++) _pixels[i] = new Color32(0, 0, 0, 255);
-        _visionTex.SetPixels32(_pixels);
+        int n = textureResolution * textureResolution;
+        _targetPixels  = new Color32[n];
+        _displayPixels = new Color32[n];
+        for (int i = 0; i < n; i++)
+        {
+            _targetPixels[i]  = new Color32(0, 0, 0, 255);
+            _displayPixels[i] = new Color32(0, 0, 0, 255);
+        }
+        _visionTex.SetPixels32(_displayPixels);
         _visionTex.Apply(false);
     }
 
@@ -159,11 +171,37 @@ public class FogOfWarManager : MonoBehaviour
         if (_localTeamId == TeamComponent.Neutral)
             TryFindLocalTeam();
 
-        if (Time.time < _nextUpdate) return;
-        _nextUpdate = Time.time + 1f / updatesPerSecond;
+        if (Time.time >= _nextUpdate)
+        {
+            _nextUpdate = Time.time + 1f / updatesPerSecond;
+            RebuildVisionTexture();
+            UpdateTargetVisibility();
+        }
 
-        RebuildVisionTexture();
-        UpdateTargetVisibility();
+        LerpDisplayToTarget();
+    }
+
+    private void LerpDisplayToTarget()
+    {
+        float reveal = revealSpeed * Time.deltaTime;
+        float hide   = hideSpeed   * Time.deltaTime;
+        bool dirty = false;
+
+        for (int i = 0; i < _displayPixels.Length; i++)
+        {
+            float t = _targetPixels[i].r;
+            float d = _displayPixels[i].r;
+            if (d == t) continue;
+
+            dirty = true;
+            float next = d < t ? Mathf.Min(d + reveal, t)
+                                : Mathf.Max(d - hide,   t);
+            _displayPixels[i] = new Color32((byte)next, 0, 0, 255);
+        }
+
+        if (!dirty) return;
+        _visionTex.SetPixels32(_displayPixels);
+        _visionTex.Apply(false);
     }
 
     // Inspect already-registered VisionSources for the locally-owned one.
@@ -186,7 +224,7 @@ public class FogOfWarManager : MonoBehaviour
     private void RebuildVisionTexture()
     {
         // Clear to fully fogged.
-        for (int i = 0; i < _pixels.Length; i++) _pixels[i] = new Color32(0, 0, 0, 255);
+        for (int i = 0; i < _targetPixels.Length; i++) _targetPixels[i] = new Color32(0, 0, 0, 255);
 
         // Paint a circle for each friendly vision source.
         foreach (var src in _sources)
@@ -196,8 +234,6 @@ public class FogOfWarManager : MonoBehaviour
             PaintCircle(src.transform.position, src.VisionRadius);
         }
 
-        _visionTex.SetPixels32(_pixels);
-        _visionTex.Apply(false);
     }
 
     private void PaintCircle(Vector3 worldPos, float worldRadius)
@@ -228,8 +264,8 @@ public class FogOfWarManager : MonoBehaviour
                     : (byte)(255 * (1f - (dist - r) / edgeSoftnessPx));
 
                 int idx = y * res + x;
-                if (_pixels[idx].r < brightness)
-                    _pixels[idx] = new Color32(brightness, brightness, brightness, 255);
+                if (_targetPixels[idx].r < brightness)
+                    _targetPixels[idx] = new Color32(brightness, brightness, brightness, 255);
             }
         }
     }
@@ -247,7 +283,7 @@ public class FogOfWarManager : MonoBehaviour
         float v = (worldPos.z - mapMinZ) / (mapMaxZ - mapMinZ);
         int   px = Mathf.Clamp(Mathf.RoundToInt(u * (textureResolution - 1)), 0, textureResolution - 1);
         int   py = Mathf.Clamp(Mathf.RoundToInt(v * (textureResolution - 1)), 0, textureResolution - 1);
-        return _pixels[py * textureResolution + px].r > 25;
+        return _targetPixels[py * textureResolution + px].r > 25;
     }
 
     /// <summary>
@@ -271,7 +307,7 @@ public class FogOfWarManager : MonoBehaviour
         float v = (tgt.transform.position.z - mapMinZ) / mapH;
         int   px = Mathf.Clamp(Mathf.RoundToInt(u * (res - 1)), 0, res - 1);
         int   py = Mathf.Clamp(Mathf.RoundToInt(v * (res - 1)), 0, res - 1);
-        tgt.SetVisible(_pixels[py * res + px].r > 25);
+        tgt.SetVisible(_targetPixels[py * res + px].r > 25);
     }
 
     private void UpdateTargetVisibility()
@@ -300,7 +336,7 @@ public class FogOfWarManager : MonoBehaviour
             int   py = Mathf.Clamp(Mathf.RoundToInt(v * (res - 1)), 0, res - 1);
 
             // Threshold: >25 avoids hiding targets exactly at the edge circle.
-            tgt.SetVisible(_pixels[py * res + px].r > 25);
+            tgt.SetVisible(_targetPixels[py * res + px].r > 25);
         }
     }
 }
