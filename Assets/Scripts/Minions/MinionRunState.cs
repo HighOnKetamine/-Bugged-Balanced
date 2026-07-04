@@ -60,24 +60,25 @@ public class MinionRunState : State<MinionStateMachine>
 
         foreach (Collider col in hits)
         {
-            if (IsStructure(col.gameObject)) continue;
+            GameObject root = col.transform.root.gameObject;
+            if (IsStructure(root)) continue;
 
-            TeamComponent   targetTeam   = col.GetComponent<TeamComponent>();
-            HealthComponent targetHealth = col.GetComponent<HealthComponent>();
+            TeamComponent   targetTeam   = root.GetComponent<TeamComponent>();
+            HealthComponent targetHealth = root.GetComponent<HealthComponent>();
 
             if (targetTeam == null || targetHealth == null || targetHealth.IsDead) continue;
             if (!Machine.Team.IsEnemy(targetTeam)) continue;
 
-            float d = Vector3.Distance(Machine.transform.position, col.transform.position);
-            if (d < nearestD) { nearestD = d; nearest = col.gameObject; }
+            float d = Vector3.Distance(Machine.transform.position, root.transform.position);
+            if (d < nearestD) { nearestD = d; nearest = root; }
         }
 
         return nearest;
     }
 
     // Returns the nearest alive enemy STRUCTURE (tower / inhibitor / nexus).
-    // Uses all-layers search with a wider radius since structures may not be on
-    // the "Targetable" layer and sit at the end of each lane segment.
+    // Uses all-layers search: structure colliders are often on child meshes so
+    // each hit is resolved to its transform root before component checks.
     private GameObject FindNearestStructure()
     {
         Collider[] hits = Physics.OverlapSphere(
@@ -88,19 +89,23 @@ public class MinionRunState : State<MinionStateMachine>
 
         GameObject nearest  = null;
         float      nearestD = Mathf.Infinity;
+        // Deduplicate: multiple child colliders on the same structure root.
+        var seen = new System.Collections.Generic.HashSet<GameObject>();
 
         foreach (Collider col in hits)
         {
-            if (!IsStructure(col.gameObject)) continue;
+            GameObject root = col.transform.root.gameObject;
+            if (!seen.Add(root)) continue;
+            if (!IsStructure(root)) continue;
 
-            TeamComponent   targetTeam   = col.GetComponent<TeamComponent>();
-            HealthComponent targetHealth = col.GetComponent<HealthComponent>();
+            TeamComponent   targetTeam   = root.GetComponent<TeamComponent>();
+            HealthComponent targetHealth = root.GetComponent<HealthComponent>();
 
             if (targetTeam == null || targetHealth == null || targetHealth.IsDead) continue;
             if (!Machine.Team.IsEnemy(targetTeam)) continue;
 
-            float d = Vector3.Distance(Machine.transform.position, col.transform.position);
-            if (d < nearestD) { nearestD = d; nearest = col.gameObject; }
+            float d = Vector3.Distance(Machine.transform.position, root.transform.position);
+            if (d < nearestD) { nearestD = d; nearest = root; }
         }
 
         return nearest;
