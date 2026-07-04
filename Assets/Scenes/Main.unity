@@ -2264,7 +2264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8471665333098174912, guid: b37621bb7983c19e4a78b44d7ddb172f, type: 3}
       propertyPath: fogPlaneY
-      value: 10
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8471665333098174912, guid: b37621bb7983c19e4a78b44d7ddb172f, type: 3}
       propertyPath: fogShader

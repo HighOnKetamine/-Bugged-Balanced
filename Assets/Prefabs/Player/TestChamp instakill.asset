@@ -21,7 +21,7 @@ MonoBehaviour:
   baseAttackDamage: 500
   baseAbilityPower: 10000
   baseAttackSpeed: 1
-  baseAttackRange: 10
+  baseAttackRange: 100000
   baseAbilityHaste: 100
   baseLethality: 0
   baseArmorPenPercent: 0
@@ -31,5 +31,5 @@ MonoBehaviour:
   baseArmor: 20
   baseMagicResist: 20
   baseMoveSpeed: 50
-  baseVisionRange: 10
+  baseVisionRange: 12
   baseGoldReward: 0
