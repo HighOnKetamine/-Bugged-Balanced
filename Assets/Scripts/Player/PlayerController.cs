@@ -207,8 +207,9 @@ public class PlayerController : NetworkBehaviour
             if (targetTeam == null || !_teamComponent.IsEnemy(targetTeam)) continue;
 
             // On the host, invisible enemies have active colliders — skip them.
-            VisibilityTarget vt = col.GetComponent<VisibilityTarget>();
-            if (vt != null && !vt.IsCurrentlyVisible) continue;
+            // Use the fog texture directly so this works for towers too (no VisibilityTarget).
+            if (FogOfWarManager.Instance != null &&
+                !FogOfWarManager.Instance.IsPositionVisible(col.transform.position)) continue;
 
             float d = Vector3.Distance(center, col.transform.position);
             if (d < nearestD) { nearestD = d; nearest = col.gameObject; }

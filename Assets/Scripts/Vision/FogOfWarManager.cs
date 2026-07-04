@@ -237,6 +237,20 @@ public class FogOfWarManager : MonoBehaviour
     // ── Enemy visibility ─────────────────────────────────────────────────────
 
     /// <summary>
+    /// Returns true if worldPos is currently inside the local team's vision.
+    /// Works for any unit type — does not require a VisibilityTarget component.
+    /// </summary>
+    public bool IsPositionVisible(Vector3 worldPos)
+    {
+        if (_localTeamId == TeamComponent.Neutral) return true;
+        float u = (worldPos.x - mapMinX) / (mapMaxX - mapMinX);
+        float v = (worldPos.z - mapMinZ) / (mapMaxZ - mapMinZ);
+        int   px = Mathf.Clamp(Mathf.RoundToInt(u * (textureResolution - 1)), 0, textureResolution - 1);
+        int   py = Mathf.Clamp(Mathf.RoundToInt(v * (textureResolution - 1)), 0, textureResolution - 1);
+        return _pixels[py * textureResolution + px].r > 25;
+    }
+
+    /// <summary>
     /// Immediately re-evaluate a single target.
     /// Called by VisibilityTarget.OnTeamChanged so the renderer correction
     /// happens the frame the team SyncVar arrives, not on the next FoW tick.
