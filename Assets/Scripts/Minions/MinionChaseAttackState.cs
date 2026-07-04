@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class MinionChaseAttackState : State<MinionStateMachine>
 {
-    private bool _isStopped = false;
+    private bool    _isStopped      = false;
     private Vector3 _leashPoint;
+    private bool    _isStructure;   // structures are never abandoned mid-fight
     private const float LeashRadius = 10f;
 
     public MinionChaseAttackState(MinionStateMachine machine) : base(machine) { }
 
     public override void Enter()
     {
-        _isStopped = false;
-        _leashPoint = Machine.transform.position;
+        _isStopped   = false;
+        _leashPoint  = Machine.transform.position;
+        _isStructure = Machine.CurrentTarget != null && MinionRunState.IsStructure(Machine.CurrentTarget);
         Machine.SetMoving(true);
     }
 
@@ -25,22 +27,28 @@ public class MinionChaseAttackState : State<MinionStateMachine>
             return;
         }
 
-        float distFromLeash = Vector3.Distance(Machine.transform.position, _leashPoint);
-        if (distFromLeash > LeashRadius)
+        // Units can be abandoned (leash / kite range).
+        // Structures are stationary — once committed, fight until dead.
+        if (!_isStructure)
         {
-            Machine.CurrentTarget = null;
-            Machine.ChangeState(new MinionRunState(Machine));
-            return;
+            float distFromLeash = Vector3.Distance(Machine.transform.position, _leashPoint);
+            if (distFromLeash > LeashRadius)
+            {
+                Machine.CurrentTarget = null;
+                Machine.ChangeState(new MinionRunState(Machine));
+                return;
+            }
+
+            float distToTarget = Vector3.Distance(Machine.transform.position, Machine.CurrentTarget.transform.position);
+            if (distToTarget > Machine.aggroRange * 1.5f)
+            {
+                Machine.CurrentTarget = null;
+                Machine.ChangeState(new MinionRunState(Machine));
+                return;
+            }
         }
 
         float dist = Vector3.Distance(Machine.transform.position, Machine.CurrentTarget.transform.position);
-
-        if (dist > Machine.aggroRange * 1.5f)
-        {
-            Machine.CurrentTarget = null;
-            Machine.ChangeState(new MinionRunState(Machine));
-            return;
-        }
 
         if (dist <= Machine.Stats.attackRange.Value)
         {
