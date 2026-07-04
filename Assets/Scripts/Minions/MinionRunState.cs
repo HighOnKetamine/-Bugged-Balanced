@@ -60,25 +60,26 @@ public class MinionRunState : State<MinionStateMachine>
 
         foreach (Collider col in hits)
         {
-            GameObject root = col.transform.root.gameObject;
-            if (IsStructure(root)) continue;
+            // Skip anything that is part of a structure hierarchy.
+            if (GetStructureRoot(col) != null) continue;
 
-            TeamComponent   targetTeam   = root.GetComponent<TeamComponent>();
-            HealthComponent targetHealth = root.GetComponent<HealthComponent>();
+            TeamComponent   targetTeam   = col.GetComponentInParent<TeamComponent>();
+            HealthComponent targetHealth = col.GetComponentInParent<HealthComponent>();
 
             if (targetTeam == null || targetHealth == null || targetHealth.IsDead) continue;
             if (!Machine.Team.IsEnemy(targetTeam)) continue;
 
-            float d = Vector3.Distance(Machine.transform.position, root.transform.position);
-            if (d < nearestD) { nearestD = d; nearest = root; }
+            GameObject go = targetTeam.gameObject;
+            float d = Vector3.Distance(Machine.transform.position, go.transform.position);
+            if (d < nearestD) { nearestD = d; nearest = go; }
         }
 
         return nearest;
     }
 
     // Returns the nearest alive enemy STRUCTURE (tower / inhibitor / nexus).
-    // Uses all-layers search: structure colliders are often on child meshes so
-    // each hit is resolved to its transform root before component checks.
+    // Uses all-layers search and GetComponentInParent so colliders nested
+    // anywhere under the structure — or under a scene parent group — are found.
     private GameObject FindNearestStructure()
     {
         Collider[] hits = Physics.OverlapSphere(
@@ -89,30 +90,44 @@ public class MinionRunState : State<MinionStateMachine>
 
         GameObject nearest  = null;
         float      nearestD = Mathf.Infinity;
-        // Deduplicate: multiple child colliders on the same structure root.
         var seen = new System.Collections.Generic.HashSet<GameObject>();
 
         foreach (Collider col in hits)
         {
-            GameObject root = col.transform.root.gameObject;
-            if (!seen.Add(root)) continue;
-            if (!IsStructure(root)) continue;
+            GameObject structureRoot = GetStructureRoot(col);
+            if (structureRoot == null) continue;
+            if (!seen.Add(structureRoot)) continue;
 
-            TeamComponent   targetTeam   = root.GetComponent<TeamComponent>();
-            HealthComponent targetHealth = root.GetComponent<HealthComponent>();
+            TeamComponent   targetTeam   = structureRoot.GetComponent<TeamComponent>();
+            HealthComponent targetHealth = structureRoot.GetComponent<HealthComponent>();
 
             if (targetTeam == null || targetHealth == null || targetHealth.IsDead) continue;
             if (!Machine.Team.IsEnemy(targetTeam)) continue;
 
-            float d = Vector3.Distance(Machine.transform.position, root.transform.position);
-            if (d < nearestD) { nearestD = d; nearest = root; }
+            float d = Vector3.Distance(Machine.transform.position, structureRoot.transform.position);
+            if (d < nearestD) { nearestD = d; nearest = structureRoot; }
         }
 
         return nearest;
     }
 
+    // Walks up from a collider using GetComponentInParent so the structure is
+    // found whether the collider is a direct child or nested several levels deep,
+    // and regardless of scene-level parent groups.
+    private static GameObject GetStructureRoot(Collider col)
+    {
+        var ts = col.GetComponentInParent<TowerStateMachine>();
+        if (ts  != null) return ts.gameObject;
+        var ims = col.GetComponentInParent<InhibitorStateMachine>();
+        if (ims != null) return ims.gameObject;
+        var ns  = col.GetComponentInParent<NexusStateMachine>();
+        if (ns  != null) return ns.gameObject;
+        return null;
+    }
+
+    // Used by MinionChaseAttackState to identify a structure target.
     internal static bool IsStructure(GameObject go) =>
-        go.GetComponent<TowerStateMachine>()      != null ||
-        go.GetComponent<InhibitorStateMachine>()  != null ||
-        go.GetComponent<NexusStateMachine>()      != null;
+        go.GetComponent<TowerStateMachine>()     != null ||
+        go.GetComponent<InhibitorStateMachine>() != null ||
+        go.GetComponent<NexusStateMachine>()     != null;
 }
