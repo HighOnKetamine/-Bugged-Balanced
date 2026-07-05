@@ -65,7 +65,7 @@ public class WaveSpawner : NetworkBehaviour
             return;
         }
         NetworkObject nob = Instantiate(minionPrefab, spawnPoint.position, spawnPoint.rotation);
-        InstanceFinder.ServerManager.Spawn(nob);
         nob.GetComponent<MinionStateMachine>().Initialize(lane, teamId);
+        InstanceFinder.ServerManager.Spawn(nob);
     }
 }

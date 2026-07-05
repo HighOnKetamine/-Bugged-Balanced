@@ -41,7 +41,11 @@ public class VisibilityTarget : MonoBehaviour
         FogOfWarManager.Instance?.EvaluateTarget(this);
     }
 
-    private void OnEnable()  => FogOfWarManager.RegisterTarget(this);
+    private void OnEnable()
+    {
+        FogOfWarManager.RegisterTarget(this);
+        FogOfWarManager.Instance?.EvaluateTarget(this);
+    }
     private void OnDisable() => FogOfWarManager.UnregisterTarget(this);
 
     public sbyte GetTeamId() => _team != null ? _team.teamId.Value : TeamComponent.Neutral;

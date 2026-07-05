@@ -16,7 +16,7 @@ public class HealthBarUI : MonoBehaviour
 
     private void Awake()
     {
-        _canvas = GetComponentInChildren<Canvas>();
+        _canvas = GetComponentInChildren<Canvas>(true);
         if (_canvas != null)
             _canvas.renderMode = RenderMode.WorldSpace;
     }

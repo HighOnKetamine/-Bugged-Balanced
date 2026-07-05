@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 1459311417966549849}
   - component: {fileID: 3022780124744137275}
   - component: {fileID: 9174392289585274757}
+  - component: {fileID: 507804178194489378}
   m_Layer: 6
   m_Name: Tower
   m_TagString: Untagged
@@ -298,7 +299,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8ef7cf99c9834f19ed87066e3e5e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visionRadius: 12
+  _fallbackRadius: 8
+--- !u!114 &507804178194489378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8663169604516235938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0bb49564ae4a9c1f87bfc6afaf02122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 2
+  MinimapSprite: {fileID: 0}
 --- !u!1001 &2364935602264647269
 PrefabInstance:
   m_ObjectHideFlags: 0

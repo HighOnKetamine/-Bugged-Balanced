@@ -1088,6 +1088,7 @@ GameObject:
   - component: {fileID: 1545987755254304567}
   - component: {fileID: 1246898394001470008}
   - component: {fileID: 8502829126222757419}
+  - component: {fileID: 3224931956087905037}
   m_Layer: 6
   m_Name: Player-rework 1
   m_TagString: Untagged
@@ -1777,6 +1778,20 @@ MonoBehaviour:
   _updateHostVisibility: 1
   _observerConditions:
   - {fileID: 11400000, guid: d98890a98db12faa488b95e1e2d04f67, type: 2}
+--- !u!114 &3224931956087905037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0bb49564ae4a9c1f87bfc6afaf02122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 0
+  MinimapSprite: {fileID: 0}
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0

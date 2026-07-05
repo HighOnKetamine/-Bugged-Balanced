@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 8796273807870513955}
   - component: {fileID: 540381998048850351}
   - component: {fileID: 1543445214958043328}
+  - component: {fileID: 155007638496790448}
   m_Layer: 6
   m_Name: Inhibitor
   m_TagString: Untagged
@@ -296,7 +297,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8ef7cf99c9834f19ed87066e3e5e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visionRadius: 12
+  _fallbackRadius: 8
+--- !u!114 &155007638496790448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8438122482161101419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0bb49564ae4a9c1f87bfc6afaf02122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 2
+  MinimapSprite: {fileID: 0}
 --- !u!1001 &1525653712951411257
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -270,6 +270,12 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
+    // ── Minimap accessors ────────────────────────────────────────────────────
+    public sbyte     LocalTeamId       => _localTeamId;
+    public Color32[] TargetPixels      => _targetPixels;
+    public Color32[] DisplayPixels     => _displayPixels;
+    public int       TextureResolution => textureResolution;
+
     // ── Enemy visibility ─────────────────────────────────────────────────────
 
     /// <summary>

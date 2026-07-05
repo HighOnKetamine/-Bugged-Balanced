@@ -1088,6 +1088,7 @@ GameObject:
   - component: {fileID: 1778319402446071278}
   - component: {fileID: 4626163448490213844}
   - component: {fileID: 8637674701026614613}
+  - component: {fileID: 3221132080361118540}
   m_Layer: 6
   m_Name: Player-mage
   m_TagString: Untagged
@@ -1785,6 +1786,20 @@ MonoBehaviour:
   _updateHostVisibility: 1
   _observerConditions:
   - {fileID: 11400000, guid: d98890a98db12faa488b95e1e2d04f67, type: 2}
+--- !u!114 &3221132080361118540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3420293684764454004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0bb49564ae4a9c1f87bfc6afaf02122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 0
+  MinimapSprite: {fileID: 0}
 --- !u!1 &3565706969508238751
 GameObject:
   m_ObjectHideFlags: 0
