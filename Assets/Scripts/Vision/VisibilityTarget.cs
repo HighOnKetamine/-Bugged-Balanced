@@ -21,10 +21,6 @@ public class VisibilityTarget : MonoBehaviour
         _renderers = GetComponentsInChildren<Renderer>(true);
         _canvases  = GetComponentsInChildren<Canvas>(true);
         _team      = GetComponent<TeamComponent>();
-    }
-
-    private void Start()
-    {
         if (_team != null)
             _team.teamId.OnChange += OnTeamChanged;
     }

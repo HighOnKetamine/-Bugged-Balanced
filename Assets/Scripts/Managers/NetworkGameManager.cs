@@ -196,8 +196,8 @@ public class NetworkGameManager : NetworkBehaviour
         Debug.Log($"[NetworkGameManager] Spawning '{def.name}' for ClientId {conn.ClientId} at {pos}");
 
         NetworkObject nob = Instantiate(def.playerPrefab, pos, Quaternion.identity);
-        nob.GetComponent<TeamComponent>()?.SetTeam(data.TeamId);
         ServerManager.Spawn(nob, conn);
+        nob.GetComponent<TeamComponent>()?.SetTeam(data.TeamId);
     }
 
     [ObserversRpc]
