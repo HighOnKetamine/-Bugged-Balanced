@@ -27,6 +27,11 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private GameObject abilitySlotPrefab;
     [SerializeField] private Transform abilitiesContainer;
 
+    [Header("Inventory")]
+    [SerializeField] private GameObject inventorySlotPrefab;
+    [SerializeField] private Transform inventoryContainer;
+    [SerializeField] private InventoryTooltipUI inventoryTooltip;
+
     [Header("Panel")]
     [SerializeField] private GameObject hudPanel;
 
@@ -35,7 +40,10 @@ public class PlayerHUD : MonoBehaviour
     private ExperienceComponent _experience;
     private PlayerScoreComponent _score;
     private GoldComponent _gold;
+    private InventoryComponent _inventory;
+    private ShopComponent _shopComponent;
     private readonly List<AbilitySlot> _abilitySlots = new List<AbilitySlot>();
+    private readonly List<InventorySlotUI> _inventorySlots = new List<InventorySlotUI>();
 
     private void Awake()
     {
@@ -53,6 +61,7 @@ public class PlayerHUD : MonoBehaviour
         _experience = playerObject.GetComponent<ExperienceComponent>();
         _score = playerObject.GetComponent<PlayerScoreComponent>();
         _gold = playerObject.GetComponent<GoldComponent>();
+        _shopComponent = playerObject.GetComponent<ShopComponent>();
 
         if (_health != null)
         {
@@ -87,6 +96,7 @@ public class PlayerHUD : MonoBehaviour
         }
 
         InitializeAbilities(playerObject);
+        InitializeInventory(playerObject);
     }
 
     private void InitializeAbilities(GameObject playerObject)
@@ -110,6 +120,70 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
+    private void InitializeInventory(GameObject playerObject)
+    {
+        _inventory = playerObject.GetComponent<InventoryComponent>();
+        if (_inventory == null || inventorySlotPrefab == null || inventoryContainer == null) return;
+
+        _inventory.OnItemAdded += HandleInventoryChanged;
+        _inventory.OnItemRemoved += HandleInventoryChanged;
+
+        foreach (Transform child in inventoryContainer)
+            Destroy(child.gameObject);
+        _inventorySlots.Clear();
+
+        for (int i = 0; i < _inventory.MaxItemCount; i++)
+        {
+            GameObject slotGO = Instantiate(inventorySlotPrefab, inventoryContainer);
+            InventorySlotUI slot = slotGO.GetComponent<InventorySlotUI>();
+            if (slot != null)
+            {
+                slot.SetEmpty();
+                slot.OnClicked += HandleInventorySlotClicked;
+                slot.OnHoverEnter += HandleInventorySlotHoverEnter;
+                slot.OnHoverExit += HandleInventorySlotHoverExit;
+                _inventorySlots.Add(slot);
+            }
+        }
+
+        RefreshInventory(null);
+    }
+
+    private void HandleInventoryChanged(ItemData item) => RefreshInventory(item);
+
+    private void RefreshInventory(ItemData _)
+    {
+        if (_inventory == null) return;
+
+        for (int i = 0; i < _inventorySlots.Count; i++)
+        {
+            ItemData item = i < _inventory.OwnedItemIds.Count
+                ? ShopManager.Instance?.GetItem(_inventory.OwnedItemIds[i])
+                : null;
+
+            if (item != null)
+                _inventorySlots[i].SetItem(item);
+            else
+                _inventorySlots[i].SetEmpty();
+        }
+    }
+
+    private void HandleInventorySlotClicked(ItemData item)
+    {
+        if (!ShopZone.LocalPlayerInShop) return;
+        _shopComponent?.ServerRequestSell(item.GetId());
+    }
+
+    private void HandleInventorySlotHoverEnter(ItemData item, InventorySlotUI slot)
+    {
+        inventoryTooltip?.Show(item, slot.GetComponent<RectTransform>());
+    }
+
+    private void HandleInventorySlotHoverExit(InventorySlotUI slot)
+    {
+        inventoryTooltip?.Hide();
+    }
+
     private void OnDestroy()
     {
         if (_health != null) _health.OnHealthChanged -= RefreshHealth;
@@ -121,6 +195,11 @@ public class PlayerHUD : MonoBehaviour
         }
         if (_score != null) _score.OnScoreChanged -= RefreshScore;
         if (_gold != null) _gold.OnGoldChanged -= RefreshGold;
+        if (_inventory != null)
+        {
+            _inventory.OnItemAdded -= HandleInventoryChanged;
+            _inventory.OnItemRemoved -= HandleInventoryChanged;
+        }
     }
 
     private void RefreshHealth(float current, float max)

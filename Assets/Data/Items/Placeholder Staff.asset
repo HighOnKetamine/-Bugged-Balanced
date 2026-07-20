@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf84b3a3e04fe28b18044aeccdccbb6a, type: 3}
+  m_Name: Placeholder Staff
+  m_EditorClassIdentifier:
+  itemId: mock_ap_staff
+  itemName: Placeholder Staff
+  category: 0
+  description: A generic ability power item used for shop UI testing.
+  flavorText: "Power given form, form given purpose."
+  cost: 450
+  icon: {fileID: 0}
+  allowMultiple: 0
+  modifiers:
+  - stat: 5
+    modifierType: 0
+    value: 40

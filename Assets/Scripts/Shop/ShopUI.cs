@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using TMPro;
@@ -8,29 +9,57 @@ public class ShopUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject shopPanel;
-    [SerializeField] private Transform itemsContainer;
-    [SerializeField] private GameObject itemSlotPrefab;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI statusText;
+    [SerializeField] private Button closeButton;
+
+    [Header("Filter Bar")]
+    [SerializeField] private Transform filterBarContainer;
+    [SerializeField] private GameObject filterButtonPrefab;
+
+    [Header("Grid")]
+    [SerializeField] private Transform itemsContainer;
+    [SerializeField] private GameObject itemSlotPrefab;
+
+    [Header("Details Panel")]
+    [SerializeField] private ShopDetailsPanelUI detailsPanel;
 
     private ShopComponent _shopComponent;
     private GoldComponent _goldComponent;
+    private InventoryComponent _inventory;
     private bool _isOpen = false;
+
+    private ItemCategory? _activeCategory = null;
+    private ItemData _selectedItem;
+    private readonly List<ShopItemSlotUI> _spawnedSlots = new List<ShopItemSlotUI>();
+    private readonly List<(ShopFilterButtonUI button, ItemCategory? category)> _filterButtons = new List<(ShopFilterButtonUI, ItemCategory?)>();
 
     private void Awake()
     {
         if (shopPanel != null) shopPanel.SetActive(false);
+        if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
     }
 
     public void Initialize(GameObject playerObject)
     {
         _shopComponent = playerObject.GetComponent<ShopComponent>();
         _goldComponent = playerObject.GetComponent<GoldComponent>();
+        _inventory = playerObject.GetComponent<InventoryComponent>();
 
         if (_goldComponent != null)
             _goldComponent.OnGoldChanged += UpdateGold;
 
+        if (_inventory != null)
+        {
+            _inventory.OnItemAdded += HandleInventoryChanged;
+            _inventory.OnItemRemoved += HandleInventoryChanged;
+        }
+
+        if (detailsPanel != null)
+            detailsPanel.OnBuyClicked += OnBuyClicked;
+
         shopPanel.SetActive(false);
+        BuildFilterBar();
         PopulateItems();
     }
 
@@ -38,7 +67,18 @@ public class ShopUI : MonoBehaviour
     {
         if (_goldComponent != null)
             _goldComponent.OnGoldChanged -= UpdateGold;
+
+        if (_inventory != null)
+        {
+            _inventory.OnItemAdded -= HandleInventoryChanged;
+            _inventory.OnItemRemoved -= HandleInventoryChanged;
+        }
+
+        if (detailsPanel != null)
+            detailsPanel.OnBuyClicked -= OnBuyClicked;
     }
+
+    private void HandleInventoryChanged(ItemData item) => RefreshBuyState();
 
     private void Update()
     {
@@ -81,6 +121,12 @@ public class ShopUI : MonoBehaviour
         _isOpen = true;
         shopPanel.SetActive(true);
         UpdateGold(_goldComponent?.Gold.Value ?? 0);
+
+        if (_selectedItem == null)
+            detailsPanel?.ShowEmpty();
+        else
+            RefreshBuyState();
+
         PlayerController.InputDisabled = true;
     }
 
@@ -91,52 +137,85 @@ public class ShopUI : MonoBehaviour
         PlayerController.InputDisabled = false;
     }
 
+    private void BuildFilterBar()
+    {
+        if (filterBarContainer == null || filterButtonPrefab == null) return;
+
+        foreach (Transform child in filterBarContainer)
+            Destroy(child.gameObject);
+        _filterButtons.Clear();
+
+        CreateFilterButton("All", null);
+        foreach (ItemCategory category in Enum.GetValues(typeof(ItemCategory)))
+            CreateFilterButton(category.ToString(), category);
+
+        ApplyFilter(null);
+    }
+
+    private void CreateFilterButton(string label, ItemCategory? category)
+    {
+        GameObject buttonObj = Instantiate(filterButtonPrefab, filterBarContainer);
+        ShopFilterButtonUI filterButton = buttonObj.GetComponent<ShopFilterButtonUI>();
+        if (filterButton == null) return;
+
+        filterButton.Setup(label);
+        filterButton.OnClicked += () => ApplyFilter(category);
+        _filterButtons.Add((filterButton, category));
+    }
+
+    private void ApplyFilter(ItemCategory? category)
+    {
+        _activeCategory = category;
+
+        foreach (ShopItemSlotUI slot in _spawnedSlots)
+            slot.gameObject.SetActive(category == null || slot.Item.category == category);
+
+        foreach ((ShopFilterButtonUI button, ItemCategory? buttonCategory) in _filterButtons)
+            button.SetSelected(buttonCategory == category);
+    }
+
     private void PopulateItems()
     {
-        if (ShopManager.Instance == null) return;
+        if (ShopManager.Instance == null || itemsContainer == null || itemSlotPrefab == null) return;
+
         ItemData[] items = ShopManager.Instance.GetAvailableItems();
         if (items == null) return;
 
         foreach (Transform child in itemsContainer)
             Destroy(child.gameObject);
+        _spawnedSlots.Clear();
 
         foreach (ItemData item in items)
         {
             if (item == null) continue;
-            GameObject slot = Instantiate(itemSlotPrefab, itemsContainer);
-            SetupItemSlot(slot, item);
+            GameObject slotObj = Instantiate(itemSlotPrefab, itemsContainer);
+            ShopItemSlotUI slot = slotObj.GetComponent<ShopItemSlotUI>();
+            if (slot == null) continue;
+
+            slot.Setup(item);
+            slot.OnClicked += SelectItem;
+            _spawnedSlots.Add(slot);
         }
+
+        ApplyFilter(_activeCategory);
     }
 
-    private void SetupItemSlot(GameObject slot, ItemData item)
+    private void SelectItem(ItemData item)
     {
-        // Icon
-        Image icon = slot.transform.Find("Icon")?.GetComponent<Image>();
-        if (icon != null && item.icon != null)
-            icon.sprite = item.icon;
+        _selectedItem = item;
+        detailsPanel?.Show(item);
+        RefreshBuyState();
 
-        // Name (Fixed sub-child path)
-        TextMeshProUGUI nameText = slot.transform.Find("Name")?.GetComponent<TextMeshProUGUI>();
-        if (nameText != null)
-            nameText.text = item.itemName;
+        foreach (ShopItemSlotUI slot in _spawnedSlots)
+            slot.SetSelected(slot.Item == item);
+    }
 
-        // Cost (Fixed sub-child path)
-        TextMeshProUGUI costText = slot.transform.Find("Cost")?.GetComponent<TextMeshProUGUI>();
-        if (costText != null)
-            costText.text = $"{item.cost}g";
+    private void RefreshBuyState()
+    {
+        if (_selectedItem == null || detailsPanel == null || ShopManager.Instance == null) return;
 
-        // Description (Fixed sub-child path)
-        TextMeshProUGUI descText = slot.transform.Find("Description")?.GetComponent<TextMeshProUGUI>();
-        if (descText != null)
-            descText.text = item.description;
-
-        // Buy button
-        Button buyButton = slot.transform.Find("BuyButton")?.GetComponent<Button>();
-        if (buyButton != null)
-        {
-            string itemId = item.GetId();
-            buyButton.onClick.AddListener(() => OnBuyClicked(itemId));
-        }
+        bool canBuy = ShopManager.Instance.CanPurchase(_goldComponent, _inventory, _selectedItem, out string reason);
+        detailsPanel.SetBuyable(canBuy, reason);
     }
 
     private void OnBuyClicked(string itemId)
@@ -148,6 +227,8 @@ public class ShopUI : MonoBehaviour
     {
         if (goldText != null)
             goldText.text = $"Gold: {gold}";
+
+        RefreshBuyState();
     }
 
     private void HideStatus()

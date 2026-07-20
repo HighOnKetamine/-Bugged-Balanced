@@ -42,24 +42,44 @@ public class InventoryComponent : NetworkBehaviour
     // Called from ShopManager — already on server
     public bool AddItem(ItemData item)
     {
-        if (item == null) return false;
-        if (!CanAddItem(item)) return false;
-        string itemId = item.GetId();
-        if (string.IsNullOrWhiteSpace(itemId)) return false;
-        if (!item.allowMultiple && OwnedItemIds.Contains(itemId)) return false;
-        OwnedItemIds.Add(itemId);
+        if (item == null || !CanAddItem(item, out _)) return false;
+        OwnedItemIds.Add(item.GetId());
         return true;
     }
 
-    public bool CanAddItem(ItemData item)
+    public bool CanAddItem(ItemData item, out string reason)
     {
-        if (item == null) return false;
-        if (OwnedItemIds.Count >= maxItemCount) return false;
-        if (!item.allowMultiple && OwnedItemIds.Contains(item.GetId())) return false;
+        reason = null;
+        if (item == null) { reason = "Item not found."; return false; }
+        if (!item.allowMultiple && OwnedItemIds.Contains(item.GetId())) { reason = "Already owned."; return false; }
+        if (OwnedItemIds.Count >= maxItemCount) { reason = "Inventory full."; return false; }
+        if (item.categoryOwnLimit > 0 && CountOwnedInCategory(item.category) >= item.categoryOwnLimit)
+        {
+            reason = $"Only {item.categoryOwnLimit} {item.category} item(s) allowed.";
+            return false;
+        }
         return true;
+    }
+
+    private int CountOwnedInCategory(ItemCategory category)
+    {
+        int count = 0;
+        foreach (string ownedId in OwnedItemIds)
+        {
+            ItemData owned = ShopManager.Instance?.GetItem(ownedId);
+            if (owned != null && owned.category == category) count++;
+        }
+        return count;
     }
 
     public bool HasItem(string itemId) => OwnedItemIds.Contains(itemId);
+
+    // Called from ShopManager — already on server
+    public bool TryRemoveItem(string itemId)
+    {
+        if (string.IsNullOrWhiteSpace(itemId)) return false;
+        return OwnedItemIds.Remove(itemId);
+    }
 
     private void RebuildItems()
     {
@@ -89,9 +109,13 @@ public class InventoryComponent : NetworkBehaviour
         }
     }
 
+    // _appliedItemIds mirrors OwnedItemIds one-for-one (not a deduplicated
+    // set) so a stackable item's 2nd, 3rd, ... copy each independently
+    // applies its own modifiers and fires OnItemAdded, instead of being
+    // silently dropped because "this id was already applied once."
     private void ApplyItem(string itemId)
     {
-        if (string.IsNullOrWhiteSpace(itemId) || _appliedItemIds.Contains(itemId)) return;
+        if (string.IsNullOrWhiteSpace(itemId)) return;
         ItemData item = ShopManager.Instance?.GetItem(itemId);
         if (item == null) { Debug.LogWarning($"[InventoryComponent] Item {itemId} not found."); return; }
         if (_stats == null) { Debug.LogWarning($"[InventoryComponent] Missing CharacterStats."); return; }
@@ -103,12 +127,14 @@ public class InventoryComponent : NetworkBehaviour
 
     private void RemoveItem(string itemId)
     {
-        if (string.IsNullOrWhiteSpace(itemId) || !_appliedItemIds.Contains(itemId)) return;
+        if (string.IsNullOrWhiteSpace(itemId)) return;
+        int index = _appliedItemIds.IndexOf(itemId);
+        if (index < 0) return;
         ItemData item = ShopManager.Instance?.GetItem(itemId);
         if (item == null || _stats == null) return;
         foreach (ItemModifier modifier in item.modifiers)
             RemoveModifier(modifier);
-        _appliedItemIds.Remove(itemId);
+        _appliedItemIds.RemoveAt(index);
         OnItemRemoved?.Invoke(item);
     }
 

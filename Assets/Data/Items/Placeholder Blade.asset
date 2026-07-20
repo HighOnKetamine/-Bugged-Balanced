@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf84b3a3e04fe28b18044aeccdccbb6a, type: 3}
+  m_Name: Placeholder Blade
+  m_EditorClassIdentifier:
+  itemId: mock_ad_blade
+  itemName: Placeholder Blade
+  category: 0
+  description: A generic attack damage item used for shop UI testing.
+  flavorText: "Sharp enough to end an argument."
+  cost: 400
+  icon: {fileID: 0}
+  allowMultiple: 0
+  modifiers:
+  - stat: 4
+    modifierType: 0
+    value: 25
+  - stat: 6
+    modifierType: 1
+    value: 0.1
